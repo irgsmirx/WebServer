@@ -35,6 +35,9 @@ public abstract class HttpMessage extends HttpCodes implements HttpConstants, Ht
 
 	protected Map<String, String> header;
 
+  protected Map<String, HttpCookie> cookies = null;
+
+  
 	protected static void clearBuffer(byte[] buf) {
 		for (int i = 0; i < BUF_SIZE; i++) {
 			buf[i] = 0;

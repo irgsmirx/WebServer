@@ -19,7 +19,9 @@ public class HttpRequest extends HttpMessage implements HttpConstants {
 
 	protected int ch = -1;
 
-	protected Map<String, String> query = null;
+	protected Map<String, String> queryString = null;
+	protected Map<String, String> form = null;
+	protected Map<String, String> serverVariables = null;
 
 	protected HttpHeaders headers = null;
 
@@ -80,7 +82,7 @@ public class HttpRequest extends HttpMessage implements HttpConstants {
 		minor = 1;
 		body = null;
 
-		query = null;
+		queryString = null;
 
 		headers = new HttpHeaders();
 	}
@@ -336,8 +338,8 @@ public class HttpRequest extends HttpMessage implements HttpConstants {
 
 		if (query != null) {
 			result = new HashMap<>();
-			if (this.query == null) {
-				this.query = new HashMap<>();
+			if (this.queryString == null) {
+				this.queryString = new HashMap<>();
 			}
 
 			try {
@@ -350,7 +352,7 @@ public class HttpRequest extends HttpMessage implements HttpConstants {
 						String key = URLDecoder.decode(fields[0], "UTF-8");
 						String value = URLDecoder.decode(fields[1], "UTF-8");
 						result.put(key, value);
-						this.query.put(key, value);
+						this.queryString.put(key, value);
 					} else {
 						throw new HttpException(HTTP_BAD_REQUEST, "Query part'" + pairs[i] + "' is not valid!");
 					}
@@ -505,18 +507,26 @@ public class HttpRequest extends HttpMessage implements HttpConstants {
 	/**
 	 * @return Returns the query.
 	 */
-	public Map<String, String> getQuery() {
-		return query;
+	public Map<String, String> getQueryString() {
+		return queryString;
 	}
 
+  public String getQueryString(String key) {
+    return queryString.get(key);
+  }
+  
 	/**
 	 * @param query
 	 *          The query to set.
 	 */
-	public void setQuery(Map<String, String> query) {
-		this.query = query;
+	public void setQueryString(Map<String, String> query) {
+		this.queryString = query;
 	}
 
+  public void setQueryString(String key, String value) {
+    this.queryString.put(key, value);
+  }
+  
 	/**
 	 * @return Returns the uri.
 	 */
