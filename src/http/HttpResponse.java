@@ -1,12 +1,12 @@
 package http;
 
 import java.io.File;
-import webserver.WebServer;
 import java.io.PrintStream;
 import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.Map.Entry;
+import java.util.*;
+import webserver.WebServer;
 
 public class HttpResponse extends HttpMessage {
 
