@@ -16,6 +16,8 @@ import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WebServerThread extends WebServer implements Runnable, HttpConstants, HttpMethods {
 
@@ -63,11 +65,10 @@ public class WebServerThread extends WebServer implements Runnable, HttpConstant
 					continue;
 				}
 			}
-
 			try {
 				handleClient();
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (IOException ex) {
+				Logger.getLogger(WebServerThread.class.getName()).log(Level.SEVERE, null, ex);
 			}
 
 			/*

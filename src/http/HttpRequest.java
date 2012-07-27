@@ -15,7 +15,12 @@ public class HttpRequest extends HttpMessage implements HttpConstants {
 	protected int major;
 	protected int minor;
 	protected byte[] body;
-	protected int length = -1;
+	
+	protected HttpBrowserCapabilities browser;
+	
+	protected String contentEncoding;
+	protected int contentLength = -1;
+	protected String contentType;
 
 	protected int ch = -1;
 
@@ -23,8 +28,16 @@ public class HttpRequest extends HttpMessage implements HttpConstants {
 	protected Map<String, String> form = null;
 	protected Map<String, String> serverVariables = null;
 
+	protected URI urlReferrer;
+	
+	protected String userAgent;
+	protected String userHostAddress;
+	protected String userHostName;
+	protected String[] userLanguages;
+	
 	protected HttpHeaders headers = null;
 
+	
 	public static boolean isCHAR(int ch) {
 		return (ch >= 0 && ch <= 127);
 	}
@@ -379,7 +392,7 @@ public class HttpRequest extends HttpMessage implements HttpConstants {
 			} else {
 				if (contentType.compareTo("application/x-www-form-urlencoded") == 0) {
 					try {
-						length = Integer.parseInt(contentLength);
+						this.contentLength = Integer.parseInt(contentLength);
 						readPlain(is);
 					} catch (NumberFormatException e) {
 						throw new HttpException(HTTP_BAD_REQUEST, "Header field Content-Length contained invalid value '"
@@ -405,7 +418,7 @@ public class HttpRequest extends HttpMessage implements HttpConstants {
 
 		ch = is.read();
 
-		while (written < length) {
+		while (written < contentLength) {
 			if (ch == -1) {
 				throw new HttpException(HTTP_BAD_REQUEST, "Unexpected end of stream.");
 			} else {
@@ -527,8 +540,7 @@ public class HttpRequest extends HttpMessage implements HttpConstants {
     this.queryString.put(key, value);
   }
   
-	/**
-	 * @return Returns the uri.
+	/**	 * @return Returns the uri.
 	 */
 	public URI getUri() {
 		return uri;
@@ -601,19 +613,83 @@ public class HttpRequest extends HttpMessage implements HttpConstants {
 		this.headers = headers;
 	}
 
-	/**
-	 * @return Returns the length.
-	 */
-	public int getLength() {
-		return length;
+	public HttpBrowserCapabilities getBrowser() {
+		return browser;
+	}
+	
+	public void setBrowser(HttpBrowserCapabilities value) {
+		this.browser = value;
+	}
+	
+	public String getItem(String key) {
+		String value = queryString.get(key);
+		
+		if (value == null) {
+			value = form.get(key);
+		}
+		
+		if (value == null) {
+			HttpCookie cookie = cookies.get(key);
+			if (cookie != null) {
+				value = cookie.getValue();
+			}
+		}
+		
+		if (value == null) {
+			value = serverVariables.get(key);
+		}
+
+		return value;
+	}
+	
+	public Map<String, String> getParams() {
+		Map<String, String> params = new HashMap<>();
+		params.putAll(queryString);
+		params.putAll(form);
+		
+		for (HttpCookie cookie : cookies.values()) {
+			params.put(cookie.getName(), cookie.getValue());
+		}
+		
+		params.putAll(serverVariables);
+		
+		return params;
+	}
+	
+	public int getContentLength() {
+		return contentLength;
+	}
+	
+	public String getContentType() {
+		return contentType;
+	}
+	
+	public void setContentType(String value) {
+		this.contentType = value;
+	}
+	
+	public Map<String, HttpPostedFile> getFiles() {
+		return null;
 	}
 
-	/**
-	 * @param length
-	 *          The length to set.
-	 */
-	public void setLength(int length) {
-		this.length = length;
+	public URI getUrlReferrer() {
+		return urlReferrer;
 	}
-
+	
+	public String getUserAgent() {
+		return userAgent;
+	}
+	
+	public String getUserHostAddress() {
+		return userHostAddress;
+	}
+	
+	public String getUserHostName() {
+		return userHostName;
+	}
+	
+	public String[] getUserLanguages() {
+		return userLanguages;
+	}
+	
 }

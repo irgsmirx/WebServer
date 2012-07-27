@@ -13,7 +13,7 @@ public class HttpResponse extends HttpMessage {
 	protected String version;
 	protected int status;
 	protected String reason;
-	protected int content_length;
+	protected int contentLength;
 	protected String body;
 
 	protected Map<String, String> responseHeader;
@@ -22,7 +22,7 @@ public class HttpResponse extends HttpMessage {
 		version = null;
 		status = -1;
 		reason = null;
-		content_length = 0;
+		contentLength = 0;
 		body = null;
 
 		header = null;
@@ -54,7 +54,7 @@ public class HttpResponse extends HttpMessage {
 
 		body = sb.toString();
 
-		content_length = sb.length();
+		contentLength = sb.length();
 
 		generateDefaultHeader();
 	}
@@ -80,7 +80,7 @@ public class HttpResponse extends HttpMessage {
 
 					body = sb.toString();
 
-					content_length = sb.length();
+					contentLength = sb.length();
 
 					generateDefaultHeader();
 				} else {
@@ -104,7 +104,7 @@ public class HttpResponse extends HttpMessage {
 
 				body = sb.toString();
 
-				content_length = sb.length();
+				contentLength = sb.length();
 
 				generateDefaultHeader();
 			}
@@ -126,7 +126,7 @@ public class HttpResponse extends HttpMessage {
 
 			body = sb.toString();
 
-			content_length = sb.length();
+			contentLength = sb.length();
 
 			generateDefaultHeader();
 		}
@@ -155,7 +155,7 @@ public class HttpResponse extends HttpMessage {
 		generalHeader.put("Date", formatter.format(date));
 		generalHeader.put("Connection", "close");
 		responseHeader.put("Server", WebServer.serverid);
-		entityHeader.put("Content-Length", String.valueOf(content_length));
+		entityHeader.put("Content-Length", String.valueOf(contentLength));
 		entityHeader.put("Content-Type", "text/html");
 	}
 

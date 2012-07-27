@@ -3,6 +3,8 @@ package http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class HttpInputStream extends InputStream {
 
@@ -37,7 +39,11 @@ public class HttpInputStream extends InputStream {
 
   @Override
 	public int read() throws IOException {
-		waitForAvailable();
+		try {
+			waitForAvailable();
+		} catch (TimeoutException ex) {
+			Logger.getLogger(HttpInputStream.class.getName()).log(Level.SEVERE, null, ex);
+		}
 		return input.read();
 	}
 
@@ -48,7 +54,11 @@ public class HttpInputStream extends InputStream {
 
   @Override
 	public int read(byte[] b, int off, int len) throws IOException {
-		waitForAvailable();
+		try {
+			waitForAvailable();
+		} catch (TimeoutException ex) {
+			Logger.getLogger(HttpInputStream.class.getName()).log(Level.SEVERE, null, ex);
+		}
 		int n = available();
 		return input.read(b, off, Math.min(len, n));
 	}

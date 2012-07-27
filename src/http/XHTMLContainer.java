@@ -3,8 +3,6 @@ package http;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import src.xhtml.XHTMLDocument;
-
 public class XHTMLContainer implements WebContainer {
 
 	private XHTMLDocument document;
