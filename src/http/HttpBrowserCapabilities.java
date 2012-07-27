@@ -27,26 +27,57 @@ public class HttpBrowserCapabilities {
 					//Gets the browser string (if any) that was sent by the browser in the User-Agent request header. (Inherited from HttpCapabilitiesBase.)
 	public property 	Browsers 	
 					//Gets an ArrayList of the browsers in the Capabilities dictionary. (Inherited from HttpCapabilitiesBase.)
-	public property 	CanCombineFormsInDeck 	
-					//Gets a value indicating whether the browser supports decks that contain multiple forms, such as separate cards. (Inherited from HttpCapabilitiesBase.)
-	public property 	CanInitiateVoiceCall 	
-					//Gets a value indicating whether the browser device is capable of initiating a voice call. (Inherited from HttpCapabilitiesBase.)
-	public property 	CanRenderAfterInputOrSelectElement 	
-					//Gets a value indicating whether the browser supports page content following WML <select> or <input> elements. (Inherited from HttpCapabilitiesBase.)
-	public property 	CanRenderEmptySelects 	
-					//Gets a value indicating whether the browser supports empty HTML <select> elements. (Inherited from HttpCapabilitiesBase.)
-	public property 	CanRenderInputAndSelectElementsTogether 	
-					//Gets a value indicating whether the browser supports WML INPUT and SELECT elements together on the same card. (Inherited from HttpCapabilitiesBase.)
-	public property 	CanRenderMixedSelects 	
-					//Gets a value indicating whether the browser supports WML <option> elements that specify both onpick and value attributes. (Inherited from HttpCapabilitiesBase.)
-	public property 	CanRenderOneventAndPrevElementsTogether 	
-					//Gets a value indicating whether the browser supports WML <onevent> and <prev> elements that coexist within the same WML card. (Inherited from HttpCapabilitiesBase.)
-	public property 	CanRenderPostBackCards 	
-					//Gets a value indicating whether the browser supports WML cards for postback. (Inherited from HttpCapabilitiesBase.)
-	public property 	CanRenderSetvarZeroWithMultiSelectionList 	
-					//Gets a value indicating whether the browser supports WML <setvar> elements with a value attribute of 0. (Inherited from HttpCapabilitiesBase.)
-	public property 	CanSendMail 	
-					//Gets a value indicating whether the browser supports sending e-mail by using the HTML <mailto> element for displaying electronic addresses. (Inherited from HttpCapabilitiesBase.)
+	
+  public boolean canCombineFormsInDeck() {
+    //Gets a value indicating whether the browser supports decks that contain multiple forms, such as separate cards. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+  
+	public boolean canInitiateVoiceCall() {
+    //Gets a value indicating whether the browser device is capable of initiating a voice call. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+  
+	public boolean canRenderAfterInputOrSelectElement() {
+    //Gets a value indicating whether the browser supports page content following WML <select> or <input> elements. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+  
+	public boolean canRenderEmptySelects() {
+    //Gets a value indicating whether the browser supports empty HTML <select> elements. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+  
+	public boolean canRenderInputAndSelectElementsTogether() {
+    //Gets a value indicating whether the browser supports WML INPUT and SELECT elements together on the same card. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+  
+	public boolean canRenderMixedSelects() {
+    //Gets a value indicating whether the browser supports WML <option> elements that specify both onpick and value attributes. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+  
+	public boolean canRenderOneventAndPrevElementsTogether() {
+    //Gets a value indicating whether the browser supports WML <onevent> and <prev> elements that coexist within the same WML card. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+  
+	public boolean canRenderPostBackCards() {
+    //Gets a value indicating whether the browser supports WML cards for postback. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+  
+	public boolean canRenderSetvarZeroWithMultiSelectionList() {
+    //Gets a value indicating whether the browser supports WML <setvar> elements with a value attribute of 0. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+	
+  public boolean canSendMail() {
+    //Gets a value indicating whether the browser supports sending e-mail by using the HTML <mailto> element for displaying electronic addresses. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+  
 	public property 	Capabilities 	
 					//Infrastructure. Used internally to get the defined capabilities of the browser. (Inherited from HttpCapabilitiesBase.)
 	public property 	CDF 	
@@ -83,11 +114,17 @@ public class HttpBrowserCapabilities {
 	}
 	
 	public property 	Id 	
-					//Gets the internal identifier of the browser as specified in the browser definition file. (Inherited from HttpCapabilitiesBase.)
-	public property 	InputType 	
-					//Returns the type of input supported by browser. (Inherited from HttpCapabilitiesBase.)
-	public property 	IsColor 	
-					//Gets a value indicating whether the browser has a color display. (Inherited from HttpCapabilitiesBase.)
+    //Gets the internal identifier of the browser as specified in the browser definition file. (Inherited from HttpCapabilitiesBase.)
+          
+	public property 	getInputType() {
+    //Returns the type of input supported by browser. (Inherited from HttpCapabilitiesBase.)
+  }
+	
+  public boolean isColor() {
+		//Gets a value indicating whether the browser has a color display. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+  
 	public property 	IsMobileDevice 	
 					//Gets a value indicating whether the browser is a recognized mobile device. (Inherited from HttpCapabilitiesBase.)
 	public property 	Item 	
@@ -144,35 +181,78 @@ public class HttpBrowserCapabilities {
 					//Gets a value indicating whether the browser renders WML <select> elements as menu cards, rather than as a combo box. (Inherited from HttpCapabilitiesBase.)
 	public property 	RequiredMetaTagNameValue 	
 					//Infrastructure. Used internally to produce a meta-tag required by some browsers. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiresAttributeColonSubstitution 	
-					//Gets a value indicating whether the browser requires colons in element attribute values to be substituted with a different character. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiresContentTypeMetaTag 	
-					//Gets a value indicating whether the browser requires an HTML <meta> element for which the content-type attribute is specified. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiresControlStateInSession 	
-					//Gets a value indicating whether the browser requires control state to be maintained in sessions. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiresDBCSCharacter 	
-					//Gets a value indicating whether the browser requires a double-byte character set. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiresHtmlAdaptiveErrorReporting 	
-					//Gets a value indicating whether the browser requires nonstandard error messages. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiresLeadingPageBreak 	
-					//Gets a value indicating whether the browser requires the first element in the body of a Web page to be an HTML <br> element. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiresNoBreakInFormatting 	
-					//Gets a value indicating whether the browser does not support HTML <br> elements to format line breaks. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiresOutputOptimization 	
-					//Gets a value indicating whether the browser requires pages to contain a size-optimized form of markup language tags. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiresPhoneNumbersAsPlainText 	
-					//Gets a value indicating whether the browser supports phone dialing based on plain text, or whether it requires special markup. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiresSpecialViewStateEncoding 	
-					//Gets a value indicating whether the browser requires VIEWSTATE values to be specially encoded. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiresUniqueFilePathSuffix 	
-					//Gets a value indicating whether the browser requires unique form-action URLs. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiresUniqueHtmlCheckboxNames 	
-					//Gets a value indicating whether the browser requires unique name attribute values of multiple HTML <input type="checkbox"> elements. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiresUniqueHtmlInputNames 	
-					//Gets a value indicating whether the browser requires unique name attribute values of multiple HTML <input> elements. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiresUrlEncodedPostfieldValues 	
-					//Gets a value indicating whether postback data sent by the browser will be UrlEncoded. (Inherited from HttpCapabilitiesBase.)
-	public property 	ScreenBitDepth 	
+	
+  public boolean requiresAttributeColonSubstitution() {
+    //Gets a value indicating whether the browser requires colons in element attribute values to be substituted with a different character. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+    
+	public boolean requiresContentTypeMetaTag() {
+    //Gets a value indicating whether the browser requires an HTML <meta> element for which the content-type attribute is specified. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+    
+	public boolean requiresControlStateInSession() {
+    //Gets a value indicating whether the browser requires control state to be maintained in sessions. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+    
+	public boolean requiresDBCSCharacter() {
+    //Gets a value indicating whether the browser requires a double-byte character set. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+
+  public boolean requiresHtmlAdaptiveErrorReporting() {
+    //Gets a value indicating whether the browser requires nonstandard error messages. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+
+	public boolean requiresLeadingPageBreak() {
+    //Gets a value indicating whether the browser requires the first element in the body of a Web page to be an HTML <br> element. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+
+	public boolean requiresNoBreakInFormatting() {
+    //Gets a value indicating whether the browser does not support HTML <br> elements to format line breaks. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+    
+	public boolean requiresOutputOptimization() {
+    //Gets a value indicating whether the browser requires pages to contain a size-optimized form of markup language tags. (Inherited from HttpCapabilitiesBase.)
+        return false;
+  }
+
+	public boolean requiresPhoneNumbersAsPlainText() {
+    //Gets a value indicating whether the browser supports phone dialing based on plain text, or whether it requires special markup. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+    
+	public boolean requiresSpecialViewStateEncoding() {
+    //Gets a value indicating whether the browser requires VIEWSTATE values to be specially encoded. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+    
+	public boolean requiresUniqueFilePathSuffix() {
+    //Gets a value indicating whether the browser requires unique form-action URLs. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+    
+	public boolean requiresUniqueHtmlCheckboxNames() {
+    //Gets a value indicating whether the browser requires unique name attribute values of multiple HTML <input type="checkbox"> elements. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+
+  public boolean requiresUniqueHtmlInputNames() {
+    //Gets a value indicating whether the browser requires unique name attribute values of multiple HTML <input> elements. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+	
+  public boolean requiresUrlEncodedPostfieldValues() {
+		//Gets a value indicating whether postback data sent by the browser will be UrlEncoded. (Inherited from HttpCapabilitiesBase.)
+    return false;
+  }
+	
+  public property 	ScreenBitDepth 	
 					//Returns the depth of the display, in bits per pixel. (Inherited from HttpCapabilitiesBase.)
 	public property 	ScreenCharactersHeight 	
 					//Returns the approximate height of the display, in character lines. (Inherited from HttpCapabilitiesBase.)

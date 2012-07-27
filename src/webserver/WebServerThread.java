@@ -1,16 +1,7 @@
 package webserver;
 
-import http.HttpConstants;
-import http.HttpException;
-import http.HttpMethods;
-import http.HttpRequest;
-import http.HttpResponse;
-import http.WebContainer;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
+import http.*;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.URI;
@@ -133,6 +124,10 @@ public class WebServerThread extends WebServer implements Runnable, HttpConstant
 			socket.close();
 		}
 	}
+  
+  private void processRequest() {
+    
+  }
 
 	private void handleRequest(HttpRequest request) {
 		int method = request.getMethod();
