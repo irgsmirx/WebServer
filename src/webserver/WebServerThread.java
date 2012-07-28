@@ -91,24 +91,11 @@ public class WebServerThread extends WebServer implements Runnable, HttpConstant
 		socket.setSoTimeout(1000000/* WebServer.timeout */);
 		socket.setTcpNoDelay(true);
 
-		/* zero out the buffer from last time */
-		for (int i = 0; i < BUF_SIZE; i++) {
-			buf[i] = 0;
-		}
+    clearBuffer();
 
 		try {
-			HttpRequest request = new HttpRequest();
-			request.parse(is);
-
-			handleRequest(request);
-
-			HttpResponse hr = new HttpResponse(new File(request.getUri().getPath()));
-			hr.print(ps);
-			hr.print(System.out);
-			ps.flush();
-		}
-
-		catch (HttpException e) {
+			HttpRequest httpRequest = processRequest(is, ps);
+		}	catch (HttpException e) {
 			HttpResponse hr = new HttpResponse(e);
 			hr.print(ps);
 			ps.flush();
@@ -125,12 +112,27 @@ public class WebServerThread extends WebServer implements Runnable, HttpConstant
 		}
 	}
   
-  private void processRequest() {
+  private void clearBuffer() {
+    /* zero out the buffer from last time */
+		for (int i = 0; i < BUF_SIZE; i++) {
+			buf[i] = 0;
+		}
+  }
+  
+  private HttpRequest processRequest(InputStream is, PrintStream ps) throws IOException, HttpException {
+		HttpRequest httpRequest = new HttpRequest();
+		httpRequest.parse(is);
+
+    HttpResponse httpResponse = new HttpResponse(new File(httpRequest.getUri().getPath()));
+		httpResponse.print(ps);
+		httpResponse.print(System.out);
+		ps.flush();
     
+    return httpRequest;
   }
 
 	private void handleRequest(HttpRequest request) {
-		int method = request.getMethod();
+    int method = request.getMethod();
 		int major = request.getMajor();
 		int minor = request.getMinor();
 		URI uri = request.getUri();
