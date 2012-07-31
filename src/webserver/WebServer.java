@@ -5,6 +5,7 @@ package webserver;
  * Implementation notes are in WebServer.html, and also
  * as comments in the source code.
  */
+import http.HttpApplicationFactory;
 import http.HttpConstants;
 import java.io.*;
 import java.net.ServerSocket;
@@ -56,6 +57,9 @@ public class WebServer implements HttpConstants {
 	 */
 	protected static int threadlimit = 0;
 
+  
+  protected static HttpApplicationFactory httpApplicationFactory;
+  
 	/*
 	 * print to stdout
 	 */

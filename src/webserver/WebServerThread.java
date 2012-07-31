@@ -81,7 +81,7 @@ public class WebServerThread extends WebServer implements Runnable, HttpConstant
 
 	private void handleClient() throws IOException, SocketTimeoutException {
 		InputStream is = new BufferedInputStream(socket.getInputStream());
-		PrintStream ps = new PrintStream(socket.getOutputStream());
+		OutputStream os = new BufferedOutputStream(socket.getOutputStream());
 
 		/*
 		 * we will only block in read for this many milliseconds before we fail with
@@ -94,21 +94,26 @@ public class WebServerThread extends WebServer implements Runnable, HttpConstant
     clearBuffer();
 
 		try {
-			HttpRequest httpRequest = processRequest(is, ps);
+			HttpContext httpContext = establishContext(is, os);
+      
+      handleContext(httpContext);
 		}	catch (HttpException e) {
 			HttpResponse hr = new HttpResponse(e);
-			hr.print(ps);
-			ps.flush();
+			//hr.print(ps);
+			//ps.flush();
 		} catch (SocketTimeoutException e) {
 			HttpResponse hr = new HttpResponse(e);
-			hr.print(ps);
-			ps.flush();
+			//hr.print(ps);
+			//ps.flush();
 		}
 
 		finally {
-			is.close();
-			ps.close();
-			socket.close();
+      is.close();
+			
+      os.flush();
+      os.close();
+			
+      socket.close();
 		}
 	}
   
@@ -119,16 +124,19 @@ public class WebServerThread extends WebServer implements Runnable, HttpConstant
 		}
   }
   
-  private HttpRequest processRequest(InputStream is, PrintStream ps) throws IOException, HttpException {
+  private HttpContext establishContext(InputStream is, OutputStream os) throws IOException, HttpException {
 		HttpRequest httpRequest = new HttpRequest();
 		httpRequest.parse(is);
 
     HttpResponse httpResponse = new HttpResponse(new File(httpRequest.getUri().getPath()));
-		httpResponse.print(ps);
-		httpResponse.print(System.out);
-		ps.flush();
     
-    return httpRequest;
+    HttpContext httpContext = new HttpContext(httpRequest, httpResponse);
+    
+    return httpContext;
+  }
+  
+  private void handleContext(HttpContext context) {
+    
   }
 
 	private void handleRequest(HttpRequest request) {

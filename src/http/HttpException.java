@@ -1,6 +1,6 @@
 package http;
 
-public class HttpException extends Exception {
+public class HttpException extends RuntimeException {
 
 	/**
 	 * 
