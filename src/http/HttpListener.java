@@ -111,33 +111,29 @@ public class HttpListener implements IHttpListener {
     createServerSocket();
     listening  = true;
     
-		try {
-      while (listening) {
-        Socket socket = listeningSocket.accept();
-                
-        WebServerThread wst;
-        synchronized (threads) {
-          if (threads.isEmpty()) {
-            WebServerThread ws = new WebServerThread(socket);
-            ws.setSocket(socket);
-            Thread t = new Thread(ws, "webserverthread");
-            t.start();
-          } else {
-            w = threads.get(0);
-            threads.remove(0);
-            w.setSocket(socket);
-          }
+    while (listening) {
+      Socket socket = null;
+      
+      try {
+        socket = listeningSocket.accept();
+      } catch (IOException ex) {
+        if (listening) {
+          throw new http.AlreadyListeningException(ex);
+        } else {
+          Logger.getLogger(HttpListener.class.getName()).log(Level.SEVERE, null, ex);
+          return;
         }
       }
-
-      stopListening();
-		} catch (IOException e) {
-			//log("Could not listen on port " + port + "!");
-			System.exit(1);
-		} finally {
-      listening = false;
-      listeningSocket = null;
+      
+      WebServerThread wst = new WebServerThread(socket);
+      threadPool2.execute(wst);
     }
+
+    threadPool2.shutdown();
+      
+    stopListening();
+    listening = false;
+    listeningSocket = null;
   }
 
   private void createServerSocket() {
