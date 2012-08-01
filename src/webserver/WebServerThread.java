@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class WebServerThread extends WebServer implements Runnable, HttpConstants, HttpMethods {
+public class WebServerThread implements Runnable, HttpConstants, HttpMethods {
 
 	final static int BUF_SIZE = 4096;
 
@@ -24,21 +24,22 @@ public class WebServerThread extends WebServer implements Runnable, HttpConstant
 	 */
 	protected byte[] buf;
 
-	/*
-	 * Socket to client we're handling
-	 */
 	private Socket socket;
 
-	public WebServerThread() {
-		buf = new byte[BUF_SIZE];
-		socket = null;
-	}
-
 	public WebServerThread(Socket socket) {
-		buf = new byte[BUF_SIZE];
+    initializeBuffer();
 		this.socket = socket;
 	}
 
+	public WebServerThread() {
+    this(null);
+	}
+
+
+  private void initializeBuffer() {
+		buf = new byte[BUF_SIZE];
+  }
+  
 	synchronized void setSocket(Socket s) {
 		this.socket = s;
 		notify();

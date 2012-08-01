@@ -7,9 +7,8 @@ package webserver;
  */
 import http.HttpApplicationFactory;
 import http.HttpConstants;
+import http.IHttpListener;
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,42 +19,29 @@ public class WebServer implements HttpConstants {
 	/*
 	 * the server's name and version
 	 */
-	public static String serverid = "Jackey/0.0.1";
+	public String serverid = "Jackey/0.0.1";
 
 	/*
 	 * stream to log to
 	 */
-	protected static PrintStream log = null;
+	protected PrintStream log = null;
 
 	/*
 	 * our server's configuration information is stored in these properties
 	 */
-	protected static Properties props = new Properties();
+	protected Properties props = new Properties();
 
-	/*
-	 * Where worker threads stand idle
-	 */
-	protected static final List<WebServerThread> threads = Collections.synchronizedList(new ArrayList<WebServerThread>());
-
-	/*
-	 * the web server's port
-	 */
-	protected static int port = 0;
-
-	/*
-	 * the web server's virtual root
-	 */
-	protected static File root = null;
-
+  protected final List<IHttpListener> httpListeners = Collections.synchronizedList(new ArrayList<IHttpListener>());
+	
 	/*
 	 * timeout on client connections
 	 */
-	protected static int timeout = 0;
+	protected int timeout = 0;
 
 	/*
 	 * max # worker threads
 	 */
-	protected static int threadlimit = 0;
+	protected int threadlimit = 0;
 
   
   protected static HttpApplicationFactory httpApplicationFactory;
@@ -63,14 +49,14 @@ public class WebServer implements HttpConstants {
 	/*
 	 * print to stdout
 	 */
-	protected static void p(String s) {
+	protected void p(String s) {
 		System.out.println(s);
 	}
 
 	/*
 	 * print to the log file
 	 */
-	protected static void log(String s) {
+	protected void log(String s) {
 		synchronized (log) {
 			log.println(s);
 			log.flush();
@@ -80,7 +66,7 @@ public class WebServer implements HttpConstants {
 	/*
 	 * load server properties from user's home
 	 */
-	protected static void loadProps() throws IOException {
+	protected void loadProps() throws IOException {
 		String propFile = System.getProperty("user.home") + File.separator + ".jackey" + File.separator + "jackey.conf";
 
 		File f = new File(propFile);
@@ -143,58 +129,11 @@ public class WebServer implements HttpConstants {
 		}
 	}
 
-	protected static void printProps() {
+	protected void printProps() {
 		p("port=" + port);
 		p("root=" + root);
 		p("timeout=" + timeout);
 		p("threadlimit=" + threadlimit);
 	}
 
-	public static void main(String[] args) throws Exception {
-		ServerSocket serverSocket = null;
-		boolean listening = true;
-
-		loadProps();
-		printProps();
-
-		/*
-		 * start worker threads
-		 */
-		for (int i = 0; i < threadlimit; ++i) {
-			WebServerThread w = new WebServerThread();
-			Thread t = new Thread(w, "thread #" + i);
-			t.start();
-			threads.add(w);
-
-			// (new Thread(w, "worker #" + i)).start();
-			// threads.addElement(w);
-		}
-
-		try {
-			serverSocket = new ServerSocket(port);
-		} catch (IOException e) {
-			log("Could not listen on port " + port + "!");
-			System.exit(1);
-		}
-
-		while (listening) {
-			Socket socket = serverSocket.accept();
-
-			WebServerThread w;
-			synchronized (threads) {
-				if (threads.isEmpty()) {
-					WebServerThread ws = new WebServerThread(socket);
-					ws.setSocket(socket);
-					Thread t = new Thread(ws, "webserverthread");
-					t.start();
-				} else {
-					w = threads.get(0);
-					threads.remove(0);
-					w.setSocket(socket);
-				}
-			}
-		}
-
-		serverSocket.close();
-	}
 }
