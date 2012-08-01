@@ -132,8 +132,6 @@ public class HttpListener implements IHttpListener {
     threadPool2.shutdown();
       
     stopListening();
-    listening = false;
-    listeningSocket = null;
   }
 
   private void createServerSocket() {
@@ -147,12 +145,16 @@ public class HttpListener implements IHttpListener {
   
   @Override
   public void stopListening() {
+    listening = false;
+    
     try {
       listeningSocket.close();
     } catch (IOException ex) {
       Logger.getLogger(HttpListener.class.getName()).log(Level.SEVERE, null, ex);
       throw new http.IOException(ex);
     }
+
+    listeningSocket = null;
   }
 
   @Override
