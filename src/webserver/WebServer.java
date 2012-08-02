@@ -8,6 +8,7 @@ package webserver;
 import http.HttpApplicationFactory;
 import http.HttpConstants;
 import http.IHttpListener;
+import http.IModule;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +17,8 @@ import java.util.Properties;
 
 public class WebServer implements HttpConstants {
 
+  private boolean running;
+  
 	/*
 	 * the server's name and version
 	 */
@@ -32,6 +35,7 @@ public class WebServer implements HttpConstants {
 	protected Properties props = new Properties();
 
   protected final List<IHttpListener> httpListeners = Collections.synchronizedList(new ArrayList<IHttpListener>());
+  protected final List<IModule> modules = Collections.synchronizedList(new ArrayList<IModule>());
 	
 	/*
 	 * timeout on client connections
@@ -70,7 +74,9 @@ public class WebServer implements HttpConstants {
 		String propFile = System.getProperty("user.home") + File.separator + ".jackey" + File.separator + "jackey.conf";
 
 		File f = new File(propFile);
-
+    int port = 0;
+    File root = new File("");
+            
 		if (f.exists()) {
       try (InputStream is = new BufferedInputStream(new FileInputStream(f))) {
         props.load(is);
@@ -130,10 +136,34 @@ public class WebServer implements HttpConstants {
 	}
 
 	protected void printProps() {
-		p("port=" + port);
-		p("root=" + root);
+		//p("port=" + port);
+		//p("root=" + root);
 		p("timeout=" + timeout);
 		p("threadlimit=" + threadlimit);
 	}
 
+  public boolean isRunning() {
+    return running;
+  }
+  
+  public void start() {
+    for (IHttpListener listener : httpListeners) {
+      //listener.ErrorPageRequested += Listener_OnErrorPage;
+      //listener.RequestReceived += OnRequest;
+      //listener.ContentLengthLimit = ContentLengthLimit;
+      listener.startListening();
+    }
+    running = true;
+  }
+  
+  public void stop() {
+    for (IHttpListener listener : httpListeners) {
+      //listener.ErrorPageRequested += Listener_OnErrorPage;
+      //listener.RequestReceived += OnRequest;
+      //listener.ContentLengthLimit = ContentLengthLimit;
+      listener.stopListening();
+    }
+    running = false;
+  }
+  
 }

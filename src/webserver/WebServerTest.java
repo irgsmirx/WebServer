@@ -4,6 +4,9 @@
  */
 package webserver;
 
+import http.HttpListener;
+import http.IHttpListener;
+
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
@@ -16,5 +19,10 @@ public class WebServerTest {
   public static void main(String[] args) {
     WebServer webServer = new WebServer();
     
+    IHttpListener httpListener = new HttpListener(11111);
+    
+    webServer.httpListeners.add(httpListener);
+    
+    webServer.start();
   }
 }

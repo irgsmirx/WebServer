@@ -14,18 +14,22 @@ public class HttpBrowserCapabilities {
 		return false;
 	}
 	
-	public property 	Adapters 	
+	//public property Adapters 	
 					//Infrastructure. Returns the collection of available control adapters. (Inherited from HttpCapabilitiesBase.)
 
-	public property 	AOL 	
+	//public property AOL 	
 					//Gets a value indicating whether the client is an America Online (AOL) browser. (Inherited from HttpCapabilitiesBase.)
-	public property 	BackgroundSounds 	
+	
+  //public property BackgroundSounds 	
 					//Gets a value indicating whether the browser supports playing background sounds using the <bgsounds> HTML element. (Inherited from HttpCapabilitiesBase.)
-	public property 	Beta 	
+	
+  //public property Beta 	
 					//Gets a value indicating whether the browser is a beta version. (Inherited from HttpCapabilitiesBase.)
-	public property 	Browser 	
+	
+  //public property Browser 	
 					//Gets the browser string (if any) that was sent by the browser in the User-Agent request header. (Inherited from HttpCapabilitiesBase.)
-	public property 	Browsers 	
+	
+  //public property Browsers 	
 					//Gets an ArrayList of the browsers in the Capabilities dictionary. (Inherited from HttpCapabilitiesBase.)
 	
   public boolean canCombineFormsInDeck() {
@@ -78,109 +82,109 @@ public class HttpBrowserCapabilities {
     return false;
   }
   
-	public property 	Capabilities 	
-					//Infrastructure. Used internally to get the defined capabilities of the browser. (Inherited from HttpCapabilitiesBase.)
-	public property 	CDF 	
-					//Gets a value indicating whether the browser supports Channel Definition Format (CDF) for webcasting. (Inherited from HttpCapabilitiesBase.)
-	public property 	ClrVersion 	
-					//Gets the version of the .NET Framework that is installed on the client. (Inherited from HttpCapabilitiesBase.)
-	public property 	Cookies 	
-					//Gets a value indicating whether the browser supports cookies. (Inherited from HttpCapabilitiesBase.)
-	public property 	Crawler 	
-					//Gets a value indicating whether the browser is a search engine Web crawler. (Inherited from HttpCapabilitiesBase.)
-	public property 	DefaultSubmitButtonLimit 	
-					//Returns the maximum number of Submit buttons that are allowed for a form. (Inherited from HttpCapabilitiesBase.)
-	public property 	EcmaScriptVersion 	
-					//Gets the version number of ECMAScript that the browser supports. (Inherited from HttpCapabilitiesBase.)
-	public property 	Frames 	
-					//Gets a value indicating whether the browser supports HTML frames. (Inherited from HttpCapabilitiesBase.)
-	public property 	GatewayMajorVersion 	
-					//Gets the major version number of the wireless gateway used to access the server, if known. (Inherited from HttpCapabilitiesBase.)
-	public property 	GatewayMinorVersion 	
-					//Gets the minor version number of the wireless gateway used to access the server, if known. (Inherited from HttpCapabilitiesBase.)
-	public property 	GatewayVersion 	
-					//Gets the version of the wireless gateway used to access the server, if known. (Inherited from HttpCapabilitiesBase.)
-	public boolean getHasBackButton() {
-		//Gets a value indicating whether the browser has a dedicated Back button. (Inherited from HttpCapabilitiesBase.)
-		return false;
-	}
-	
-	public property 	HidesRightAlignedMultiselectScrollbars() {
-		//Gets a value indicating whether the scrollbar of an HTML <select multiple> element with an align attribute value of right is obscured upon rendering. (Inherited from HttpCapabilitiesBase.)
-	}
-	
-	public property 	HtmlTextWriter() {
-					//Gets or sets the fully qualified class name of the HtmlTextWriter to use. (Inherited from HttpCapabilitiesBase.)
-	}
-	
-	public property 	Id 	
-    //Gets the internal identifier of the browser as specified in the browser definition file. (Inherited from HttpCapabilitiesBase.)
-          
-	public property 	getInputType() {
-    //Returns the type of input supported by browser. (Inherited from HttpCapabilitiesBase.)
-  }
-	
-  public boolean isColor() {
-		//Gets a value indicating whether the browser has a color display. (Inherited from HttpCapabilitiesBase.)
-    return false;
-  }
-  
-	public property 	IsMobileDevice 	
-					//Gets a value indicating whether the browser is a recognized mobile device. (Inherited from HttpCapabilitiesBase.)
-	public property 	Item 	
-					//Gets the value of the specified browser capability. In C#, this property is the indexer for the class. (Inherited from HttpCapabilitiesBase.)
-	public property 	JavaApplets 	
-					//Gets a value indicating whether the browser supports Java. (Inherited from HttpCapabilitiesBase.)
-	public property 	JavaScript 	
-					//Obsolete. Gets a value indicating whether the browser supports JavaScript. (Inherited from HttpCapabilitiesBase.)
-	public property 	JScriptVersion 	
-					//Gets the Jscript version that the browser supports. (Inherited from HttpCapabilitiesBase.)
-	public property 	MajorVersion 	
-					//Gets the major (integer) version number of the browser. (Inherited from HttpCapabilitiesBase.)
-	public property 	MaximumHrefLength 	
-					//Gets the maximum length in characters for the href attribute of an HTML <a> (anchor) element. (Inherited from HttpCapabilitiesBase.)
-	public property 	MaximumRenderedPageSize 	
-					//Gets the maximum length of the page, in bytes, which the browser can display. (Inherited from HttpCapabilitiesBase.)
-	public property 	MaximumSoftkeyLabelLength 	
-					//Returns the maximum length of the text that a soft-key label can display. (Inherited from HttpCapabilitiesBase.)
-	public property 	MinorVersion 	
-					//Gets the minor (that is, decimal) version number of the browser. (Inherited from HttpCapabilitiesBase.)
-	public property 	MinorVersionString 	
-					//Gets the minor (decimal) version number of the browser as a string. (Inherited from HttpCapabilitiesBase.)
-	public property 	MobileDeviceManufacturer 	
-					//Returns the name of the manufacturer of a mobile device, if known. (Inherited from HttpCapabilitiesBase.)
-	public property 	MobileDeviceModel 	
-					//Gets the model name of a mobile device, if known. (Inherited from HttpCapabilitiesBase.)
-	public property 	MSDomVersion 	
-					//Gets the version of Microsoft HTML (MSHTML) Document Object Model (DOM) that the browser supports. (Inherited from HttpCapabilitiesBase.)
-	public property 	NumberOfSoftkeys 	
-					//Returns the number of soft keys on a mobile device. (Inherited from HttpCapabilitiesBase.)
-	public property 	Platform 	
-					//Gets the name of the platform that the client uses, if it is known. (Inherited from HttpCapabilitiesBase.)
-	public property 	PreferredImageMime 	
-					//Returns the MIME type of the type of image content typically preferred by the browser. (Inherited from HttpCapabilitiesBase.)
-	public property 	PreferredRenderingMime 	
-					//Returns the MIME type of the type of content typically preferred by the browser. (Inherited from HttpCapabilitiesBase.)
-	public property 	PreferredRenderingType 	
-					//Gets the general name for the type of content that the browser prefers. (Inherited from HttpCapabilitiesBase.)
-	public property 	PreferredRequestEncoding 	
-					//Gets the request encoding preferred by the browser. (Inherited from HttpCapabilitiesBase.)
-	public property 	PreferredResponseEncoding 	
-					//Gets the response encoding preferred by the browser. (Inherited from HttpCapabilitiesBase.)
-	public property 	RendersBreakBeforeWmlSelectAndInput 	
-					//Gets a value indicating whether the browser renders a line break before <select> or <input> elements. (Inherited from HttpCapabilitiesBase.)
-	public property 	RendersBreaksAfterHtmlLists 	
-					//Gets a value indicating whether the browser renders a line break after list-item elements. (Inherited from HttpCapabilitiesBase.)
-	public property 	RendersBreaksAfterWmlAnchor 	
-					//Gets a value indicating whether the browser renders a line break after a stand-alone HTML <a> (anchor) element. (Inherited from HttpCapabilitiesBase.)
-	public property 	RendersBreaksAfterWmlInput 	
-					//Gets a value indicating whether the browser renders a line break after an HTML <input> element. (Inherited from HttpCapabilitiesBase.)
-	public property 	RendersWmlDoAcceptsInline 	
-					//Gets a value indicating whether the mobile-device browser renders a WML do-based form accept construct as an inline button rather than as a soft key. (Inherited from HttpCapabilitiesBase.)
-	public property 	RendersWmlSelectsAsMenuCards 	
-					//Gets a value indicating whether the browser renders WML <select> elements as menu cards, rather than as a combo box. (Inherited from HttpCapabilitiesBase.)
-	public property 	RequiredMetaTagNameValue 	
-					//Infrastructure. Used internally to produce a meta-tag required by some browsers. (Inherited from HttpCapabilitiesBase.)
+//	public property 	Capabilities 	
+//					//Infrastructure. Used internally to get the defined capabilities of the browser. (Inherited from HttpCapabilitiesBase.)
+//	public property 	CDF 	
+//					//Gets a value indicating whether the browser supports Channel Definition Format (CDF) for webcasting. (Inherited from HttpCapabilitiesBase.)
+//	public property 	ClrVersion 	
+//					//Gets the version of the .NET Framework that is installed on the client. (Inherited from HttpCapabilitiesBase.)
+//	public property 	Cookies 	
+//					//Gets a value indicating whether the browser supports cookies. (Inherited from HttpCapabilitiesBase.)
+//	public property 	Crawler 	
+//					//Gets a value indicating whether the browser is a search engine Web crawler. (Inherited from HttpCapabilitiesBase.)
+//	public property 	DefaultSubmitButtonLimit 	
+//					//Returns the maximum number of Submit buttons that are allowed for a form. (Inherited from HttpCapabilitiesBase.)
+//	public property 	EcmaScriptVersion 	
+//					//Gets the version number of ECMAScript that the browser supports. (Inherited from HttpCapabilitiesBase.)
+//	public property 	Frames 	
+//					//Gets a value indicating whether the browser supports HTML frames. (Inherited from HttpCapabilitiesBase.)
+//	public property 	GatewayMajorVersion 	
+//					//Gets the major version number of the wireless gateway used to access the server, if known. (Inherited from HttpCapabilitiesBase.)
+//	public property 	GatewayMinorVersion 	
+//					//Gets the minor version number of the wireless gateway used to access the server, if known. (Inherited from HttpCapabilitiesBase.)
+//	public property 	GatewayVersion 	
+//					//Gets the version of the wireless gateway used to access the server, if known. (Inherited from HttpCapabilitiesBase.)
+//	public boolean getHasBackButton() {
+//		//Gets a value indicating whether the browser has a dedicated Back button. (Inherited from HttpCapabilitiesBase.)
+//		return false;
+//	}
+//	
+//	public property 	HidesRightAlignedMultiselectScrollbars() {
+//		//Gets a value indicating whether the scrollbar of an HTML <select multiple> element with an align attribute value of right is obscured upon rendering. (Inherited from HttpCapabilitiesBase.)
+//	}
+//	
+//	public property 	HtmlTextWriter() {
+//					//Gets or sets the fully qualified class name of the HtmlTextWriter to use. (Inherited from HttpCapabilitiesBase.)
+//	}
+//	
+//	public property 	Id 	
+//    //Gets the internal identifier of the browser as specified in the browser definition file. (Inherited from HttpCapabilitiesBase.)
+//          
+//	public property 	getInputType() {
+//    //Returns the type of input supported by browser. (Inherited from HttpCapabilitiesBase.)
+//  }
+//	
+//  public boolean isColor() {
+//		//Gets a value indicating whether the browser has a color display. (Inherited from HttpCapabilitiesBase.)
+//    return false;
+//  }
+//  
+//	public property 	IsMobileDevice 	
+//					//Gets a value indicating whether the browser is a recognized mobile device. (Inherited from HttpCapabilitiesBase.)
+//	public property 	Item 	
+//					//Gets the value of the specified browser capability. In C#, this property is the indexer for the class. (Inherited from HttpCapabilitiesBase.)
+//	public property 	JavaApplets 	
+//					//Gets a value indicating whether the browser supports Java. (Inherited from HttpCapabilitiesBase.)
+//	public property 	JavaScript 	
+//					//Obsolete. Gets a value indicating whether the browser supports JavaScript. (Inherited from HttpCapabilitiesBase.)
+//	public property 	JScriptVersion 	
+//					//Gets the Jscript version that the browser supports. (Inherited from HttpCapabilitiesBase.)
+//	public property 	MajorVersion 	
+//					//Gets the major (integer) version number of the browser. (Inherited from HttpCapabilitiesBase.)
+//	public property 	MaximumHrefLength 	
+//					//Gets the maximum length in characters for the href attribute of an HTML <a> (anchor) element. (Inherited from HttpCapabilitiesBase.)
+//	public property 	MaximumRenderedPageSize 	
+//					//Gets the maximum length of the page, in bytes, which the browser can display. (Inherited from HttpCapabilitiesBase.)
+//	public property 	MaximumSoftkeyLabelLength 	
+//					//Returns the maximum length of the text that a soft-key label can display. (Inherited from HttpCapabilitiesBase.)
+//	public property 	MinorVersion 	
+//					//Gets the minor (that is, decimal) version number of the browser. (Inherited from HttpCapabilitiesBase.)
+//	public property 	MinorVersionString 	
+//					//Gets the minor (decimal) version number of the browser as a string. (Inherited from HttpCapabilitiesBase.)
+//	public property 	MobileDeviceManufacturer 	
+//					//Returns the name of the manufacturer of a mobile device, if known. (Inherited from HttpCapabilitiesBase.)
+//	public property 	MobileDeviceModel 	
+//					//Gets the model name of a mobile device, if known. (Inherited from HttpCapabilitiesBase.)
+//	public property 	MSDomVersion 	
+//					//Gets the version of Microsoft HTML (MSHTML) Document Object Model (DOM) that the browser supports. (Inherited from HttpCapabilitiesBase.)
+//	public property 	NumberOfSoftkeys 	
+//					//Returns the number of soft keys on a mobile device. (Inherited from HttpCapabilitiesBase.)
+//	public property 	Platform 	
+//					//Gets the name of the platform that the client uses, if it is known. (Inherited from HttpCapabilitiesBase.)
+//	public property 	PreferredImageMime 	
+//					//Returns the MIME type of the type of image content typically preferred by the browser. (Inherited from HttpCapabilitiesBase.)
+//	public property 	PreferredRenderingMime 	
+//					//Returns the MIME type of the type of content typically preferred by the browser. (Inherited from HttpCapabilitiesBase.)
+//	public property 	PreferredRenderingType 	
+//					//Gets the general name for the type of content that the browser prefers. (Inherited from HttpCapabilitiesBase.)
+//	public property 	PreferredRequestEncoding 	
+//					//Gets the request encoding preferred by the browser. (Inherited from HttpCapabilitiesBase.)
+//	public property 	PreferredResponseEncoding 	
+//					//Gets the response encoding preferred by the browser. (Inherited from HttpCapabilitiesBase.)
+//	public property 	RendersBreakBeforeWmlSelectAndInput 	
+//					//Gets a value indicating whether the browser renders a line break before <select> or <input> elements. (Inherited from HttpCapabilitiesBase.)
+//	public property 	RendersBreaksAfterHtmlLists 	
+//					//Gets a value indicating whether the browser renders a line break after list-item elements. (Inherited from HttpCapabilitiesBase.)
+//	public property 	RendersBreaksAfterWmlAnchor 	
+//					//Gets a value indicating whether the browser renders a line break after a stand-alone HTML <a> (anchor) element. (Inherited from HttpCapabilitiesBase.)
+//	public property 	RendersBreaksAfterWmlInput 	
+//					//Gets a value indicating whether the browser renders a line break after an HTML <input> element. (Inherited from HttpCapabilitiesBase.)
+//	public property 	RendersWmlDoAcceptsInline 	
+//					//Gets a value indicating whether the mobile-device browser renders a WML do-based form accept construct as an inline button rather than as a soft key. (Inherited from HttpCapabilitiesBase.)
+//	public property 	RendersWmlSelectsAsMenuCards 	
+//					//Gets a value indicating whether the browser renders WML <select> elements as menu cards, rather than as a combo box. (Inherited from HttpCapabilitiesBase.)
+//	public property 	RequiredMetaTagNameValue 	
+//					//Infrastructure. Used internally to produce a meta-tag required by some browsers. (Inherited from HttpCapabilitiesBase.)
 	
   public boolean requiresAttributeColonSubstitution() {
     //Gets a value indicating whether the browser requires colons in element attribute values to be substituted with a different character. (Inherited from HttpCapabilitiesBase.)
@@ -252,16 +256,30 @@ public class HttpBrowserCapabilities {
     return false;
   }
 	
-  public property 	ScreenBitDepth 	
-					//Returns the depth of the display, in bits per pixel. (Inherited from HttpCapabilitiesBase.)
-	public property 	ScreenCharactersHeight 	
-					//Returns the approximate height of the display, in character lines. (Inherited from HttpCapabilitiesBase.)
-	public property 	ScreenCharactersWidth 	
-					//Returns the approximate width of the display, in characters. (Inherited from HttpCapabilitiesBase.)
-	public property 	ScreenPixelsHeight 	
-					//Returns the approximate height of the display, in pixels. (Inherited from HttpCapabilitiesBase.)
-	public property 	ScreenPixelsWidth 	
-					//Returns the approximate width of the display, in pixels. (Inherited from HttpCapabilitiesBase.)
+  public int getScreenBitDepth() {
+  	//Returns the depth of the display, in bits per pixel. (Inherited from HttpCapabilitiesBase.)
+    return -1;
+  }
+  
+	public int getScreenCharactersHeight() {
+    //Returns the approximate height of the display, in character lines. (Inherited from HttpCapabilitiesBase.)
+    return -1;
+  }
+  
+	public int getScreenCharactersWidth() {
+		//Returns the approximate width of the display, in characters. (Inherited from HttpCapabilitiesBase.)
+    return -1;
+  }
+  
+	public int getScreenPixelsHeight() {
+    //Returns the approximate height of the display, in pixels. (Inherited from HttpCapabilitiesBase.)
+    return -1;
+  }
+  
+	public int getScreenPixelsWidth() {
+    //Returns the approximate width of the display, in pixels. (Inherited from HttpCapabilitiesBase.)
+    return -1;
+  }
 	
 	public boolean 	supportsAccesskeyAttribute() {
 		//Gets a value indicating whether the browser supports the ACCESSKEY attribute of HTML <a> (anchor) and <input> elements. (Inherited from HttpCapabilitiesBase.)
@@ -383,19 +401,19 @@ public class HttpBrowserCapabilities {
 		return false;
 	}
 	
-	public property 	Tables 	
+	//public property 	Tables 	
 					//Gets a value indicating whether the browser supports HTML <table> elements. (Inherited from HttpCapabilitiesBase.)
-	public property 	TagWriter 	
+	//public property 	TagWriter 	
 					//Infrastructure. Used internally to get the type of the object that is used to write tags for the browser. (Inherited from HttpCapabilitiesBase.)
-	public property 	Type 	
+	//public property 	Type 	
 					//Gets the name and major (integer) version number of the browser. (Inherited from HttpCapabilitiesBase.)
-	public property 	UseOptimizedCacheKey 	
+	//public property 	UseOptimizedCacheKey 	
 					//Used internally to get a value indicating whether to use an optimized cache key. (Inherited from HttpCapabilitiesBase.)
-	public property 	VBScript 	
+	//public property 	VBScript 	
 					//Gets a value indicating whether the browser supports Visual Basic Scripting edition (VBScript). (Inherited from HttpCapabilitiesBase.)
-	public property 	Version 	
+	//public property 	Version 	
 					//Gets the full version number (integer and decimal) of the browser as a string. (Inherited from HttpCapabilitiesBase.)
-	public property 	W3CDomVersion 	
+	//public property 	W3CDomVersion 	
 					//Gets the version of the World Wide Web Consortium (W3C) XML Document Object Model (DOM) that the browser supports. (Inherited from HttpCapabilitiesBase.)
 	
 	public boolean isWin16() {

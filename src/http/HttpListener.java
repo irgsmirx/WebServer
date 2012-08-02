@@ -112,10 +112,10 @@ public class HttpListener implements IHttpListener {
     listening  = true;
     
     while (listening) {
-      Socket socket = null;
-      
       try {
-        socket = listeningSocket.accept();
+        Socket socket = listeningSocket.accept();
+        WebServerThread wst = new WebServerThread(socket);
+        threadPool2.execute(wst);
       } catch (IOException ex) {
         if (listening) {
           throw new http.AlreadyListeningException(ex);
@@ -124,9 +124,6 @@ public class HttpListener implements IHttpListener {
           return;
         }
       }
-      
-      WebServerThread wst = new WebServerThread(socket);
-      threadPool2.execute(wst);
     }
 
     threadPool2.shutdown();

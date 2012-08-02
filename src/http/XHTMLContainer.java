@@ -5,7 +5,7 @@ import java.io.PrintStream;
 
 public class XHTMLContainer implements WebContainer {
 
-	private XHTMLDocument document;
+	//private XHTMLDocument document;
 	private String contentType = "text/html";
 	private String filename;
 
@@ -28,29 +28,30 @@ public class XHTMLContainer implements WebContainer {
 	}
 
 	public void print(PrintStream p) throws IOException {
-		if (document != null) {
-			document.printXML(p);
-		}
+		//if (document != null) {
+		//	document.printXML(p);
+		//}
 	}
 
 	public boolean isConsistent() {
-		return (document != null);
+		//return (document != null);
+    return false;
 	}
 
 	/**
 	 * @return Returns the document.
 	 */
-	public XHTMLDocument getDocument() {
-		return document;
-	}
+//	public XHTMLDocument getDocument() {
+//		return document;
+//	}
 
 	/**
 	 * @param document
 	 *          The document to set.
 	 */
-	public void setDocument(XHTMLDocument document) {
-		this.document = document;
-	}
+//	public void setDocument(XHTMLDocument document) {
+//		this.document = document;
+//	}
 
 	/**
 	 * @return Returns the contentType.
@@ -69,7 +70,7 @@ public class XHTMLContainer implements WebContainer {
 
 	public long getContentLength() {
 		StringBuffer sb = new StringBuffer();
-		document.appendXML(sb);
+		//document.appendXML(sb);
 
 		return sb.length();
 	}

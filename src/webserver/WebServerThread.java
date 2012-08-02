@@ -1,12 +1,12 @@
 package webserver;
 
 import http.*;
+import java.io.IOException;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,7 +25,8 @@ public class WebServerThread implements Runnable, HttpConstants, HttpMethods {
 	protected byte[] buf;
 
 	private Socket socket;
-
+  private IHttpContext context;
+  
 	public WebServerThread(Socket socket) {
     initializeBuffer();
 		this.socket = socket;
@@ -63,20 +64,7 @@ public class WebServerThread implements Runnable, HttpConstants, HttpMethods {
 				Logger.getLogger(WebServerThread.class.getName()).log(Level.SEVERE, null, ex);
 			}
 
-			/*
-			 * go back in wait queue if there'socket fewer than numHandler
-			 * connections.
-			 */
 			socket = null;
-			List<WebServerThread> pool = WebServer.threads;
-			synchronized (pool) {
-				if (pool.size() >= WebServer.threadlimit) {
-					/* too many threads, exit this one */
-					return;
-				} else {
-					pool.add(this);
-				}
-			}
 		}
 	}
 
@@ -95,9 +83,9 @@ public class WebServerThread implements Runnable, HttpConstants, HttpMethods {
     clearBuffer();
 
 		try {
-			HttpContext httpContext = establishContext(is, os);
+			context = establishContext(is, os);
       
-      handleContext(httpContext);
+      handleContext(context);
 		}	catch (HttpException e) {
 			HttpResponse hr = new HttpResponse(e);
 			//hr.print(ps);
@@ -125,7 +113,7 @@ public class WebServerThread implements Runnable, HttpConstants, HttpMethods {
 		}
   }
   
-  private HttpContext establishContext(InputStream is, OutputStream os) throws IOException, HttpException {
+  private IHttpContext establishContext(InputStream is, OutputStream os) throws IOException, HttpException {
 		HttpRequest httpRequest = new HttpRequest();
 		httpRequest.parse(is);
 
@@ -136,7 +124,7 @@ public class WebServerThread implements Runnable, HttpConstants, HttpMethods {
     return httpContext;
   }
   
-  private void handleContext(HttpContext context) {
+  private void handleContext(IHttpContext context) {
     
   }
 
@@ -218,7 +206,7 @@ public class WebServerThread implements Runnable, HttpConstants, HttpMethods {
 			ps.write(EOL);
 			ret = true;
 		}
-		log("From " + socket.getInetAddress().getHostAddress() + ": GET " + targ.getAbsolutePath() + "-->" + rCode);
+		//log("From " + socket.getInetAddress().getHostAddress() + ": GET " + targ.getAbsolutePath() + "-->" + rCode);
 		ps.print("Server: Simple java");
 		ps.write(EOL);
 		ps.print("Date: " + (new Date()));

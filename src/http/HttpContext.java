@@ -8,7 +8,7 @@ package http;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class HttpContext {
+public class HttpContext implements IHttpContext {
   
   private HttpRequest request;
   private HttpResponse response;
