@@ -32,8 +32,8 @@ public class HttpListener implements IHttpListener {
   
   private int acceptedSockets = 0;
   
-  private ExecutorService threadPool2;
-  private List<WebServerThread> threadPool;
+  private ExecutorService threadPool;
+  //private List<WebServerThread> threadPool;
   
   public HttpListener(int port) {
     try {
@@ -43,6 +43,8 @@ public class HttpListener implements IHttpListener {
       throw new http.UnknownHostException(ex);
     }
     this.port = port;
+    
+    initializeThreadPool();
   }
   
   public HttpListener(InetAddress listenAddress, int port) {
@@ -51,18 +53,18 @@ public class HttpListener implements IHttpListener {
   }
   
   private void initializeThreadPool() {
-    threadPool = new ArrayList<>();
-    createThreads();
+//    threadPool = new ArrayList<>();
+//    createThreads();
     
-    threadPool2 = Executors.newFixedThreadPool(10);
+    threadPool = Executors.newFixedThreadPool(10);
   }
   
-  private void createThreads() {
-    for (int i = 0; i < 10; i++) {
-      WebServerThread webServerThread = new WebServerThread();
-      threadPool.add(webServerThread);
-    }
-  }
+//  private void createThreads() {
+//    for (int i = 0; i < 10; i++) {
+//      WebServerThread webServerThread = new WebServerThread();
+//      threadPool.add(webServerThread);
+//    }
+//  }
   
   @Override
   public int getPort() {
@@ -115,7 +117,7 @@ public class HttpListener implements IHttpListener {
       try {
         Socket socket = listeningSocket.accept();
         WebServerThread wst = new WebServerThread(socket);
-        threadPool2.execute(wst);
+        threadPool.execute(wst);
       } catch (IOException ex) {
         if (listening) {
           throw new http.AlreadyListeningException(ex);
@@ -126,7 +128,7 @@ public class HttpListener implements IHttpListener {
       }
     }
 
-    threadPool2.shutdown();
+    threadPool.shutdown();
       
     stopListening();
   }
