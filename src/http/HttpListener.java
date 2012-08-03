@@ -4,6 +4,8 @@
  */
 package http;
 
+import web.IRequestHandler;
+import exceptions.AlreadyListeningException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -33,14 +35,16 @@ public class HttpListener implements IHttpListener {
   private int acceptedSockets = 0;
   
   private ExecutorService threadPool;
-  //private List<WebServerThread> threadPool;
+  
+  
+  private final List<IRequestHandler> requestHandlers = new ArrayList<>();
   
   public HttpListener(int port) {
     try {
       this.listenAddress = InetAddress.getLocalHost();
     } catch (UnknownHostException ex) {
       Logger.getLogger(HttpListener.class.getName()).log(Level.SEVERE, null, ex);
-      throw new http.UnknownHostException(ex);
+      throw new exceptions.UnknownHostException(ex);
     }
     this.port = port;
     
@@ -120,7 +124,7 @@ public class HttpListener implements IHttpListener {
         threadPool.execute(wst);
       } catch (IOException ex) {
         if (listening) {
-          throw new http.AlreadyListeningException(ex);
+          throw new exceptions.AlreadyListeningException(ex);
         } else {
           Logger.getLogger(HttpListener.class.getName()).log(Level.SEVERE, null, ex);
           return;
@@ -138,7 +142,7 @@ public class HttpListener implements IHttpListener {
       listeningSocket = new ServerSocket(port, backlog, listenAddress);
     } catch (IOException ex) {
       Logger.getLogger(HttpListener.class.getName()).log(Level.SEVERE, null, ex);
-      throw new http.IOException(ex);
+      throw new exceptions.IOException(ex);
     }
   }
   
@@ -150,7 +154,7 @@ public class HttpListener implements IHttpListener {
       listeningSocket.close();
     } catch (IOException ex) {
       Logger.getLogger(HttpListener.class.getName()).log(Level.SEVERE, null, ex);
-      throw new http.IOException(ex);
+      throw new exceptions.IOException(ex);
     }
 
     listeningSocket = null;
@@ -159,6 +163,21 @@ public class HttpListener implements IHttpListener {
   @Override
   public boolean isListening() {
     return listening;
+  }
+
+  @Override
+  public void addRequestHandler(IRequestHandler value) {
+    requestHandlers.add(value);
+  }
+
+  @Override
+  public void removeRequestHandler(IRequestHandler value) {
+    requestHandlers.remove(value);
+  }
+  
+  @Override
+  public void clearRequestHandlers() {
+    requestHandlers.clear();
   }
   
 }

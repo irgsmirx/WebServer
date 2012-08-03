@@ -5,12 +5,17 @@
 package http;
 
 import java.net.InetAddress;
+import web.IRequestHandler;
 
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IHttpListener {
+  
+  void addRequestHandler(IRequestHandler value);
+  void removeRequestHandler(IRequestHandler value);
+  void clearRequestHandlers();
   
   int getPort();
   void setPort(int value);

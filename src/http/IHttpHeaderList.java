@@ -8,8 +8,11 @@ package http;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IModule {
+public interface IHttpHeaderList {
   
-  
+  void addHeader(IHttpHeader value);
+  void removeHeader(IHttpHeader value);
+  void clear();
+  int numberOfHeaders();
   
 }

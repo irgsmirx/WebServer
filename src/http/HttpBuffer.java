@@ -64,6 +64,7 @@ public class HttpBuffer {
 		length = 0;
 	}
 
+  @Override
 	public String toString() {
 		return new String(getCopy());
 	}

@@ -1,5 +1,6 @@
 package http;
 
+import exceptions.IOException;
 import java.io.*;
 import java.util.GregorianCalendar;
 

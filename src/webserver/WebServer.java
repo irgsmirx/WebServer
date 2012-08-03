@@ -8,7 +8,7 @@ package webserver;
 import http.HttpApplicationFactory;
 import http.HttpConstants;
 import http.IHttpListener;
-import http.IModule;
+import web.IModule;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;

@@ -6,9 +6,8 @@ import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.Map.Entry;
 import java.util.*;
-import webserver.WebServer;
 
-public class HttpResponse extends HttpMessage {
+public class HttpResponse extends HttpMessage implements IHttpResponse {
 
 	protected String version;
 	protected int status;

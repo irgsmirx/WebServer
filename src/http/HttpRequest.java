@@ -9,7 +9,7 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HttpRequest extends HttpMessage implements HttpConstants {
+public class HttpRequest extends HttpMessage implements IHttpRequest {
 	protected int method;
 	protected URI uri;
 	protected int major;
