@@ -4,6 +4,7 @@
  */
 package http;
 
+import web.IHeaderList;
 import web.IMessage;
 
 /**
@@ -11,5 +12,7 @@ import web.IMessage;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IHttpMessage extends IMessage {
+  
+  IHeaderList getHeaders();
   
 }
