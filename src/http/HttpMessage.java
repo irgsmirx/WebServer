@@ -2,7 +2,7 @@ package http;
 
 import java.util.Map;
 
-public abstract class HttpMessage extends HttpCodes implements HttpConstants, HttpMethods {
+public abstract class HttpMessage extends HttpCodes implements HttpConstants, IHttpMessage {
 
 	public static int BUF_SIZE = 2048;
 
@@ -33,10 +33,9 @@ public abstract class HttpMessage extends HttpCodes implements HttpConstants, Ht
 	protected Map<String, String> generalHeader;
 	protected Map<String, String> entityHeader;
 
-	protected Map<String, String> header;
-
   protected Map<String, HttpCookie> cookies = null;
 
+  protected IHttpHeaders headers = new HttpHeaders();
   
 	protected static void clearBuffer(byte[] buf) {
 		for (int i = 0; i < BUF_SIZE; i++) {
@@ -53,4 +52,9 @@ public abstract class HttpMessage extends HttpCodes implements HttpConstants, Ht
 		return -1;
 	}
 
+  @Override
+  public IHttpHeaders getHeaders() {
+    return headers;
+  }
+  
 }

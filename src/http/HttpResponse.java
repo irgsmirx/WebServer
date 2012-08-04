@@ -1,5 +1,6 @@
 package http;
 
+import exceptions.HttpException;
 import java.io.File;
 import java.io.PrintStream;
 import java.net.SocketTimeoutException;
@@ -18,13 +19,13 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 	protected Map<String, String> responseHeader;
 
 	public HttpResponse() {
+    super();
+    
 		version = null;
 		status = -1;
 		reason = null;
 		contentLength = 0;
 		body = null;
-
-		header = null;
 
 		generalHeader = new HashMap<>();
 		responseHeader = new HashMap<>();

@@ -1,4 +1,6 @@
-package http;
+package exceptions;
+
+import http.HttpError;
 
 public class HttpException extends RuntimeException {
 
@@ -8,7 +10,8 @@ public class HttpException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
 	private int errorCode;
-
+  private HttpError error;
+  
 	public HttpException() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -41,6 +44,15 @@ public class HttpException extends RuntimeException {
 		// TODO Auto-generated constructor stub
 	}
 
+  public HttpException(HttpError error) {
+    this.error = error;
+  }
+  
+  public HttpException(HttpError error, String message) {
+    super(message);
+    this.error = error;
+  }
+  
 	/**
 	 * @return Returns the errorCode.
 	 */

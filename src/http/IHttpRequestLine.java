@@ -4,14 +4,16 @@
  */
 package http;
 
-import web.IMessage;
-
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IHttpMessage extends IMessage {
+public interface IHttpRequestLine {
   
-  IHttpHeaders getHeaders();
+  HttpMethod getMethod();
+  void setMethod(HttpMethod value);
+  
+  IHttpVersion getVersion();
+  void setVersion(IHttpVersion value);
   
 }

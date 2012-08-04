@@ -1,5 +1,6 @@
 package http;
 
+import exceptions.HttpException;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,11 +13,11 @@ public class ChunkedInputStream extends FilterInputStream {
 	protected boolean readingChunkHeader = true;
 	protected boolean endOfStream = false;
 
-	protected HttpHeaders headers = null;
+	protected IHttpHeaders headers = null;
 	protected int currentChunkSize = -1;
 	protected int alreadyReadFromChunk = 0;
 
-	public ChunkedInputStream(InputStream is, HttpHeaders headers) {
+	public ChunkedInputStream(InputStream is, IHttpHeaders headers) {
 		super(is);
 		readingChunkHeader = true;
 		endOfStream = false;

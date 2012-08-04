@@ -4,6 +4,8 @@
  */
 package http;
 
+import exceptions.HttpException;
+
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>

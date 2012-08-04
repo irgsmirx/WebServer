@@ -4,14 +4,10 @@
  */
 package http;
 
-import web.IMessage;
-
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IHttpMessage extends IMessage {
-  
-  IHttpHeaders getHeaders();
+public class HttpCookies implements IHttpCookies {
   
 }

@@ -4,14 +4,16 @@
  */
 package http;
 
-import web.IMessage;
-
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IHttpMessage extends IMessage {
+public interface IHttpVersion {
   
-  IHttpHeaders getHeaders();
+  int getMinor();
+  void setMinor(int value);
+  
+  int getMajor();
+  void setMajor(int value);
   
 }

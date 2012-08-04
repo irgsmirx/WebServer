@@ -4,14 +4,14 @@
  */
 package http;
 
-import web.IMessage;
-
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IHttpMessage extends IMessage {
-  
-  IHttpHeaders getHeaders();
-  
+public enum HttpError {
+  METHOD_NOT_ALLOWED,
+  NOT_IMPLEMENTED,
+  BAD_REQUEST,
+  VERSION_NOT_SUPPORTED,
+  INTERNAL_SERVER_ERROR
 }

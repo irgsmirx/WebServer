@@ -8,10 +8,12 @@ package web;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IHeaderList {
+public interface IHeaders {
  
-  void addHeader(IHeader value);
-  void removeHeader(IHeader value);
+  void addHeader(String name, IHeader value);
+  void removeHeader(String name);
+  IHeader getHeader(String name);
   void clear();
+  int numberOfHeaders();
   
 }

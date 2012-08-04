@@ -4,14 +4,12 @@
  */
 package http;
 
-import web.IMessage;
-
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IHttpMessage extends IMessage {
+public interface IHttpHeaderFactory {
   
-  IHttpHeaders getHeaders();
+  IHttpHeader buildHttpHeader(String name, String rawValue);
   
 }

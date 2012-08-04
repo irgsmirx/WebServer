@@ -1,5 +1,6 @@
 package webserver;
 
+import exceptions.HttpException;
 import http.*;
 import java.io.IOException;
 import java.io.*;

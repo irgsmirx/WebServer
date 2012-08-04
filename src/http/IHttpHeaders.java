@@ -4,14 +4,17 @@
  */
 package http;
 
+import web.IHeader;
+
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IHttpHeaderList {
+public interface IHttpHeaders {
   
-  void addHeader(IHttpHeader value);
-  void removeHeader(IHttpHeader value);
+  void addHeader(String name, IHttpHeader value);
+  void removeHeader(String name);
+  IHeader getHeader(String name);
   void clear();
   int numberOfHeaders();
   
