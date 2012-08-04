@@ -3,18 +3,13 @@ package http;
 import exceptions.HttpException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest extends HttpMessage implements IHttpRequest {
 	protected HttpMethod method;
 	protected URI uri;
-	protected int major;
-	protected int minor;
-	protected byte[] body;
 	
 	protected HttpBrowserCapabilities browser;
 	
@@ -22,7 +17,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 	protected int contentLength = -1;
 	protected String contentType;
 
-	protected int ch = -1;
+  protected byte[] body;
 
 	protected Map<String, String> queryString = null;
 	protected Map<String, String> form = null;
@@ -38,9 +33,6 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 	public HttpRequest() {
 		method = HttpMethod.GET;
 		uri = null;
-		major = 1;
-		minor = 1;
-		body = null;
 
 		queryString = null;
 
@@ -48,154 +40,17 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 	}
 
 	public HttpRequest(InputStream is) throws IOException, HttpException {
-		parse(is);
+		HttpParser parser = new HttpParser();
+    parser.parse(is);
 	}
 
 	public HttpRequest(HttpMethod method, URI uri, int major, int minor, Map<String, String> general_header,
 			Map<String, String> request_header, Map<String, String> entity_header) {
 		this.method = method;
 		this.uri = uri;
-		this.major = major;
-		this.minor = minor;
-
 	}
 
-	public void parseHeaders(InputStream is) throws IOException, HttpException {
-		ch = is.read();
 
-		while (true) {
-			if (isCR(ch)) {
-				ch = is.read();
-				if (isLF(ch)) {
-					return;
-				} else {
-					throw new HttpException(HTTP_BAD_REQUEST,
-							"Your HTTP client's request contained an unallowed CR control character.");
-				}
-			}
-			HttpBuffer keyBuffer = readHeaderKey(is);
-			String key = keyBuffer.toString();
-			HttpBuffer valueBuffer = readHeaderValue(is);
-			String value = valueBuffer.toString();
-
-			System.out.println(key + ", " + value);
-
-			if (headers == null) {
-				headers = new HttpHeaders();
-			}
-			headers.put(key, value);
-		}
-	}
-
-	public void parse(InputStream is) throws IOException, HttpException {
-		parseRequestLine(is);
-		// parseHeaders(is);
-		headers.parse(is);
-		parseBody(is);
-		System.out.println(body);
-	}
-
-	protected Map<String, String> parseQuery(String query) throws HttpException {
-		Map<String, String> result = null;
-
-		if (query != null) {
-			result = new HashMap<>();
-			if (this.queryString == null) {
-				this.queryString = new HashMap<>();
-			}
-
-			try {
-				String[] pairs = query.split("\\&");
-
-				for (int i = 0; i < pairs.length; i++) {
-					String[] fields = pairs[i].split("=");
-
-					if (fields.length == 2) {
-						String key = URLDecoder.decode(fields[0], "UTF-8");
-						String value = URLDecoder.decode(fields[1], "UTF-8");
-						result.put(key, value);
-						this.queryString.put(key, value);
-					} else {
-						throw new HttpException(HTTP_BAD_REQUEST, "Query part'" + pairs[i] + "' is not valid!");
-					}
-				}
-			} catch (UnsupportedEncodingException e) {
-				throw new HttpException(HTTP_INTERNAL_SERVER_ERROR, "An error occured decoding query '" + query + "'!");
-			}
-		} else {
-			throw new HttpException(HTTP_INTERNAL_SERVER_ERROR, "An error occured decoding query '" + query + "'!");
-		}
-
-		return result;
-	}
-
-	protected void parseBody(InputStream is) throws IOException, HttpException {
-		String contentLength = headers.get("Content-Length");
-		String contentType = headers.get("Content-Type");
-		String transferEncoding = headers.get("Transfer-Encoding");
-
-		if (transferEncoding == null) {
-			if (contentLength == null) {
-				// well, no body present, as it seems
-				return;
-			} else {
-				if (contentType.compareTo("application/x-www-form-urlencoded") == 0) {
-					try {
-						this.contentLength = Integer.parseInt(contentLength);
-						readPlain(is);
-					} catch (NumberFormatException e) {
-						throw new HttpException(HTTP_BAD_REQUEST, "Header field Content-Length contained invalid value '"
-								+ contentLength + "'.");
-					}
-				} else {
-					throw new HttpException(HTTP_UNSUPPORTED_MEDIA_TYPE, "Media type is not supported.");
-				}
-			}
-		} else {
-			if (transferEncoding.compareTo("chunked") == 0) {
-				readChunked(is);
-			} else {
-				throw new HttpException(HTTP_NOT_IMPLEMENTED, "The Transfer-Encoding '" + transferEncoding
-						+ "' is not supported.");
-			}
-		}
-	}
-
-	protected void readPlain(InputStream is) throws IOException, HttpException {
-		HttpBuffer buffer = new HttpBuffer();
-		int written = 1;
-
-		ch = is.read();
-
-		while (written < contentLength) {
-			if (ch == -1) {
-				throw new HttpException(HTTP_BAD_REQUEST, "Unexpected end of stream.");
-			} else {
-				buffer.append(ch);
-				written++;
-			}
-			ch = is.read();
-		}
-
-		body = buffer.getCopy();
-	}
-
-	protected void readChunked(InputStream is) throws IOException, HttpException {
-		HttpBuffer buffer = new HttpBuffer();
-		ChunkedInputStream cis = new ChunkedInputStream(is, headers);
-
-		int ch = cis.read();
-
-		while (true) {
-			if (ch == -1) {
-				break;
-			} else {
-				buffer.append(ch);
-			}
-		}
-
-		body = buffer.getCopy();
-	}
 
 	protected static int contains(String[] array, String value) {
 		for (int i = 0; i < array.length; i++) {
@@ -237,24 +92,9 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 	}
 
 	/**
-	 * @return Returns the header.
-	 */
-	public Map<String, String> getHeader() {
-		return header;
-	}
-
-	/**
-	 * @param header
-	 *          The header to set.
-	 */
-	public void setHeader(Map<String, String> header) {
-		this.header = header;
-	}
-
-	/**
 	 * @return Returns the method.
 	 */
-	public int getMethod() {
+	public HttpMethod getMethod() {
 		return method;
 	}
 
@@ -262,8 +102,8 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 	 * @param method
 	 *          The method to set.
 	 */
-	public void setMethod(int method) {
-		this.method = method;
+	public void setMethod(HttpMethod value) {
+		this.method = value;
 	}
 
 	/**
@@ -301,35 +141,6 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 	 */
 	public void setUri(URI uri) {
 		this.uri = uri;
-	}
-
-	/**
-	 * @return Returns the major.
-	 */
-	public int getMajor() {
-		return major;
-	}
-	/**
-	 * @param version
-	 *          The major to set.
-	 */
-	public void setMajor(int major) {
-		this.major = major;
-	}
-
-	/**
-	 * @return Returns the minor.
-	 */
-	public int getMinor() {
-		return minor;
-	}
-
-	/**
-	 * @param minor
-	 *          The minor to set.
-	 */
-	public void setMinor(int minor) {
-		this.minor = minor;
 	}
 
 	/**

@@ -21,6 +21,30 @@ import java.util.Map;
 public class HttpParser implements IHttpParser {
 
   @Override
+  public void parse(InputStream is) throws IOException, HttpException {
+		int ch = -1;
+    ch = is.read();
+
+		while (true) {
+			if (isCR(ch)) {
+				ch = is.read();
+				if (isLF(ch)) {
+					return;
+				} else {
+					throw new HttpException(HttpError.BAD_REQUEST,
+							"Your HTTP client's request contained an unallowed CR control character.");
+				}
+			}
+			HttpBuffer keyBuffer = readHeaderKey(is);
+			String key = keyBuffer.toString();
+			HttpBuffer valueBuffer = readHeaderValue(is);
+			String value = valueBuffer.toString();
+
+			put(key, value);
+		}
+	}
+  
+  @Override
   public IHttpHeader parseHeader(InputStream is) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
@@ -263,7 +287,79 @@ public class HttpParser implements IHttpParser {
 		return result;
 	}
 
-  	public static boolean isCHAR(int ch) {
+  @Override
+  public void parseBody(InputStream is) throws IOException, HttpException {
+		String contentLength = headers.get("Content-Length");
+		String contentType = headers.get("Content-Type");
+		String transferEncoding = headers.get("Transfer-Encoding");
+
+		if (transferEncoding == null) {
+			if (contentLength == null) {
+				// well, no body present, as it seems
+				return;
+			} else {
+				if (contentType.compareTo("application/x-www-form-urlencoded") == 0) {
+					try {
+						this.contentLength = Integer.parseInt(contentLength);
+						readPlain(is);
+					} catch (NumberFormatException e) {
+						throw new HttpException(HttpError.BAD_REQUEST, "Header field Content-Length contained invalid value '"
+								+ contentLength + "'.");
+					}
+				} else {
+					throw new HttpException(HttpError.UNSUPPORTED_MEDIA_TYPE, "Media type is not supported.");
+				}
+			}
+		} else {
+			if (transferEncoding.compareTo("chunked") == 0) {
+				readChunked(is);
+			} else {
+				throw new HttpException(HttpError.NOT_IMPLEMENTED, "The Transfer-Encoding '" + transferEncoding
+						+ "' is not supported.");
+			}
+		}
+	}
+  
+  protected void readPlain(InputStream is) throws IOException, HttpException {
+		HttpBuffer buffer = new HttpBuffer();
+		int written = 1;
+
+    byte[] body;
+    int ch = -1;
+    ch = is.read();
+
+		while (written < contentLength) {
+			if (ch == -1) {
+				throw new HttpException(HttpError.BAD_REQUEST, "Unexpected end of stream.");
+			} else {
+				buffer.append(ch);
+				written++;
+			}
+			ch = is.read();
+		}
+
+		body = buffer.getCopy();
+	}
+
+	protected void readChunked(InputStream is) throws IOException, HttpException {
+		HttpBuffer buffer = new HttpBuffer();
+		ChunkedInputStream cis = new ChunkedInputStream(is, headers);
+
+    byte[] body;
+		int ch = cis.read();
+
+		while (true) {
+			if (ch == -1) {
+				break;
+			} else {
+				buffer.append(ch);
+			}
+		}
+
+		body = buffer.getCopy();
+	}
+  
+  public static boolean isCHAR(int ch) {
 		return (ch >= 0 && ch <= 127);
 	}
 
