@@ -13,6 +13,8 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -20,33 +22,45 @@ import java.util.Map;
  */
 public class HttpParser implements IHttpParser {
 
+  private IHttpHeaderFactory httpHeaderFactory = new HttpHeaderFactory();
+  
   @Override
-  public void parse(InputStream is) throws IOException, HttpException {
-		int ch = -1;
+  public IHttpHeaders parseHeaders(InputStream is) throws IOException, HttpException {
+    IHttpHeaders httpHeaders = new HttpHeaders();
+    
+    int ch = -1;
     ch = is.read();
 
 		while (true) {
 			if (isCR(ch)) {
 				ch = is.read();
 				if (isLF(ch)) {
-					return;
+					break;
 				} else {
 					throw new HttpException(HttpError.BAD_REQUEST,
-							"Your HTTP client's request contained an unallowed CR control character.");
+            "Your HTTP client's request contained an unallowed CR control character.");
 				}
 			}
+      
 			HttpBuffer keyBuffer = readHeaderKey(is);
 			String key = keyBuffer.toString();
 			HttpBuffer valueBuffer = readHeaderValue(is);
 			String value = valueBuffer.toString();
 
-			put(key, value);
+      httpHeaders.addHeader(key, httpHeaderFactory.buildHttpHeader(key, value));
 		}
+    
+    return httpHeaders;
 	}
   
   @Override
   public IHttpHeader parseHeader(InputStream is) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    HttpBuffer keyBuffer = readHeaderKey(is);
+    String key = keyBuffer.toString();
+    HttpBuffer valueBuffer = readHeaderValue(is);
+  	String rawValue = valueBuffer.toString();
+    
+    return httpHeaderFactory.buildHttpHeader(key, rawValue);
   }
   
   @Override
@@ -61,50 +75,55 @@ public class HttpParser implements IHttpParser {
     URI uri;
     
 		if (result.length == 3) {
-			String m = result[0].trim();
-			String u = result[1].trim();
-			String v = result[2].trim();
+			String methodString = result[0].trim();
+			String uriString = result[1].trim();
+			String versionString = result[2].trim();
 
-			if (m.compareTo("OPTIONS") == 0) {
-				method = HttpMethod.OPTIONS;
-			} else if (m.compareTo("GET") == 0) {
-				method = HttpMethod.GET;
-			} else if (m.compareTo("HEAD") == 0) {
-				method = HttpMethod.HEAD;
-			} else if (m.compareTo("POST") == 0) {
-				method = HttpMethod.POST;
-			} else if (m.compareTo("PUT") == 0) {
-				method = HttpMethod.PUT;
-				throw new HttpException(HttpError.METHOD_NOT_ALLOWED, "Method '" + m + "' not allowed!");
-			} else if (m.compareTo("DELETE") == 0) {
-				method = HttpMethod.DELETE;
-				throw new HttpException(HttpError.METHOD_NOT_ALLOWED, "Method '" + m + "' not allowed!");
-			} else if (m.compareTo("TRACE") == 0) {
-				method = HttpMethod.TRACE;
-				throw new HttpException(HttpError.METHOD_NOT_ALLOWED, "Method '" + m + "' not allowed!");
-			} else if (m.compareTo("CONNECT") == 0) {
-				method = HttpMethod.CONNECT;
-				throw new HttpException(HttpError.METHOD_NOT_ALLOWED, "Method '" + m + "' not allowed!");
-			} else {
-				throw new HttpException(HttpError.NOT_IMPLEMENTED, "Method '" + m + "' not implemented!");
-			}
+      switch (methodString) {
+        case "OPTIONS":
+          method = HttpMethod.OPTIONS;
+          break;
+        case "GET":
+          method = HttpMethod.GET;
+          break;
+        case "HEAD":
+          method = HttpMethod.HEAD;
+            break;
+        case "POST":
+          method = HttpMethod.POST;
+            break;
+        case "PUT":
+          method = HttpMethod.PUT;
+          throw new HttpException(HttpError.METHOD_NOT_ALLOWED, "Method '" + methodString + "' not allowed!");
+        case "DELETE":
+          method = HttpMethod.DELETE;
+          throw new HttpException(HttpError.METHOD_NOT_ALLOWED, "Method '" + methodString + "' not allowed!");
+        case "TRACE":
+          method = HttpMethod.TRACE;
+          throw new HttpException(HttpError.METHOD_NOT_ALLOWED, "Method '" + methodString + "' not allowed!");
+        case "CONNECT":
+          method = HttpMethod.CONNECT;
+          throw new HttpException(HttpError.METHOD_NOT_ALLOWED, "Method '" + methodString + "' not allowed!");
+        default:
+          throw new HttpException(HttpError.NOT_IMPLEMENTED, "Method '" + methodString + "' not implemented!");
+      }
 
 			try {
-				uri = new URI(u);
+				uri = new URI(uriString);
 			} catch (URISyntaxException e) {
-				throw new HttpException(HttpError.BAD_REQUEST, "URI '" + u + "' not valid!");
+				throw new HttpException(HttpError.BAD_REQUEST, "URI '" + uriString + "' not valid!");
 			}
 
 			if (uri.getQuery() != null) {
 				parseQuery(uri.getQuery());
 			}
 
-			if (v.compareTo(HttpUtils.httpVersion(1, 0)) == 0) {
+			if (versionString.compareTo(HttpUtils.httpVersion(1, 0)) == 0) {
 				version = new HttpVersion(1, 0);
-			} else if (v.compareTo(HttpUtils.httpVersion(1, 1)) == 0) {
+			} else if (versionString.compareTo(HttpUtils.httpVersion(1, 1)) == 0) {
         version = new HttpVersion(1, 1);
 			} else {
-				throw new HttpException(HttpError.VERSION_NOT_SUPPORTED, "Version '" + v + "' not supported!");
+				throw new HttpException(HttpError.VERSION_NOT_SUPPORTED, "Version '" + versionString + "' not supported!");
 			}
 		} else {
 			throw new HttpException(HttpError.BAD_REQUEST, "Request line '" + requestLine + "' invalid!");
@@ -113,7 +132,7 @@ public class HttpParser implements IHttpParser {
     return new HttpRequestLine(method, version);
 	}
   
- 	public HttpBuffer readRequestLine(InputStream is) throws IOException, HttpException {
+ 	private HttpBuffer readRequestLine(InputStream is) throws IOException, HttpException {
 		HttpBuffer buffer = new HttpBuffer();
 
 		int last = -1;
@@ -153,7 +172,7 @@ public class HttpParser implements IHttpParser {
 		return buffer;
 	}
   
-	protected HttpBuffer readHeaderKey(InputStream is) throws IOException, HttpException {
+	protected HttpBuffer readHeaderKey(InputStream is) {
 		HttpBuffer buffer = new HttpBuffer();
 
     int ch = -1;
@@ -165,35 +184,50 @@ public class HttpParser implements IHttpParser {
 			} else if (isCTL(ch)) {
 				// CTL character not allowed
 				throw new HttpException(HttpError.BAD_REQUEST,
-						"Your HTTP client's request header contained an unallowed CTL character: '" + (char) (ch & 0xff) + "'.");
+            String.format("Your HTTP client's request header contained an unallowed CTL character: '%1s'.", (char) (ch & 0xff)));
 			} else if (isSeparator(ch)) {
 				// separator character not allowed
 				throw new HttpException(HttpError.BAD_REQUEST,
-						"Your HTTP client's request header contained an unallowed separator character: '" + (char) (ch & 0xff)
-								+ "'.");
+						String.format("Your HTTP client's request header contained an unallowed separator character: '%1s'.", (char) (ch & 0xff)));
 			} else {
 				buffer.append(ch);
 			}
-			ch = is.read();
+      
+      try {
+        ch = is.read();
+      } catch (IOException ex) {
+        Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+        throw new exceptions.IOException(ex);
+      }
 		}
 
 		return buffer;
 	}
 
-	protected HttpBuffer readHeaderValue(InputStream is) throws IOException, HttpException {
+	protected HttpBuffer readHeaderValue(InputStream is) {
 		HttpBuffer buffer = new HttpBuffer();
 
 		int last = -1;
     int ch = -1;
-
-    ch = is.read();
+    
+    try {
+      ch = is.read();
+    } catch (IOException ex) {
+      Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+      throw new exceptions.IOException(ex);
+    }
 
 		boolean insideQuote = false;
 
 		// skip LWS
 		while (isSP(ch) || isHT(ch)) {
 			last = ch;
-			ch = is.read();
+      try {
+        ch = is.read();
+      } catch (IOException ex) {
+        Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+        throw new exceptions.IOException(ex);
+      }
 		}
 
 		while (true) {
@@ -212,13 +246,23 @@ public class HttpParser implements IHttpParser {
 						buffer.append('\r');
 						buffer.append('\n');
 					} else {
-						ch = is.read();
+            try {
+              ch = is.read();
+            } catch (IOException ex) {
+              Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+              throw new exceptions.IOException(ex);
+            }
 
 						if (isSP(ch) || isHT(ch)) {
 							// we are in a continuation line, skip LWS
 							while (isSP(ch) || isHT(ch)) {
 								last = ch;
-								ch = is.read();
+                try {
+                  ch = is.read();
+                } catch (IOException ex) {
+                  Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+                  throw new exceptions.IOException(ex);
+                }
 							}
 							if (ch != '\r') {
 								// append a single SP for LWS
@@ -251,7 +295,12 @@ public class HttpParser implements IHttpParser {
 				last = ch;
 				buffer.append(ch);
 			}
-			ch = is.read();
+      try {
+        ch = is.read();
+      } catch (IOException ex) {
+        Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+        throw new exceptions.IOException(ex);
+      }
 		}
 
 		return buffer;
@@ -274,37 +323,40 @@ public class HttpParser implements IHttpParser {
 						String value = URLDecoder.decode(fields[1], "UTF-8");
 						result.put(key, value);
 					} else {
-						throw new HttpException(HttpError.BAD_REQUEST, "Query part'" + pairs[i] + "' is not valid!");
+						throw new HttpException(HttpError.BAD_REQUEST, 
+              String.format("Query part '%1s' is not valid!", pairs[i]));
 					}
 				}
 			} catch (UnsupportedEncodingException e) {
-				throw new HttpException(HttpError.INTERNAL_SERVER_ERROR, "An error occured decoding query '" + query + "'!");
+				throw new HttpException(HttpError.INTERNAL_SERVER_ERROR, 
+          String.format("An error occured decoding query '%1s'!", query));
 			}
 		} else {
-			throw new HttpException(HttpError.INTERNAL_SERVER_ERROR, "An error occured decoding query '" + query + "'!");
+			throw new HttpException(HttpError.INTERNAL_SERVER_ERROR, 
+        String.format("An error occured decoding query '%1s'!", query));
 		}
 
 		return result;
 	}
 
   @Override
-  public void parseBody(InputStream is) throws IOException, HttpException {
-		String contentLength = headers.get("Content-Length");
-		String contentType = headers.get("Content-Type");
-		String transferEncoding = headers.get("Transfer-Encoding");
+  public void parseBody(InputStream is, IHttpHeaders headers) throws IOException, HttpException {
+		LongHttpHeader contentLengthHeader = ((LongHttpHeader)headers.getHeader("Content-Length"));
+		String contentType = ((StringHttpHeader)headers.getHeader("Content-Type")).getValue();
+		String transferEncoding = ((StringHttpHeader)headers.getHeader("Transfer-Encoding")).getValue();
 
 		if (transferEncoding == null) {
-			if (contentLength == null) {
+			if (contentLengthHeader == null) {
 				// well, no body present, as it seems
 				return;
 			} else {
 				if (contentType.compareTo("application/x-www-form-urlencoded") == 0) {
 					try {
-						this.contentLength = Integer.parseInt(contentLength);
-						readPlain(is);
+            long contentLength = contentLengthHeader.getValue();						
+            readPlain(is, contentLength);
 					} catch (NumberFormatException e) {
-						throw new HttpException(HttpError.BAD_REQUEST, "Header field Content-Length contained invalid value '"
-								+ contentLength + "'.");
+						throw new HttpException(HttpError.BAD_REQUEST, 
+              String.format("Header field Content-Length contained invalid value '%1s'.", contentLengthHeader.rawValue));
 					}
 				} else {
 					throw new HttpException(HttpError.UNSUPPORTED_MEDIA_TYPE, "Media type is not supported.");
@@ -312,15 +364,15 @@ public class HttpParser implements IHttpParser {
 			}
 		} else {
 			if (transferEncoding.compareTo("chunked") == 0) {
-				readChunked(is);
+				readChunked(is, headers);
 			} else {
-				throw new HttpException(HttpError.NOT_IMPLEMENTED, "The Transfer-Encoding '" + transferEncoding
-						+ "' is not supported.");
+				throw new HttpException(HttpError.NOT_IMPLEMENTED, 
+          String.format("The Transfer-Encoding '%1s' is not supported.", transferEncoding));
 			}
 		}
 	}
   
-  protected void readPlain(InputStream is) throws IOException, HttpException {
+  protected void readPlain(InputStream is, long contentLength) throws IOException, HttpException {
 		HttpBuffer buffer = new HttpBuffer();
 		int written = 1;
 
@@ -341,7 +393,7 @@ public class HttpParser implements IHttpParser {
 		body = buffer.getCopy();
 	}
 
-	protected void readChunked(InputStream is) throws IOException, HttpException {
+	protected void readChunked(InputStream is, IHttpHeaders headers) throws IOException, HttpException {
 		HttpBuffer buffer = new HttpBuffer();
 		ChunkedInputStream cis = new ChunkedInputStream(is, headers);
 

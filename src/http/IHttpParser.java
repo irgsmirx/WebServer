@@ -14,12 +14,12 @@ import java.io.InputStream;
  */
 public interface IHttpParser {
   
-  void parse(InputStream is) throws IOException, HttpException;
+  IHttpHeaders parseHeaders(InputStream is) throws IOException, HttpException;
   
   IHttpRequestLine parseRequestLine(InputStream is) throws IOException, HttpException;
 
   IHttpHeader parseHeader(InputStream is);
     
-  void parseBody(InputStream is) throws IOException, HttpException;
+  void parseBody(InputStream is, IHttpHeaders headers) throws IOException, HttpException;
   
 }

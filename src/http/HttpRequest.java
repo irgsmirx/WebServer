@@ -41,7 +41,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 
 	public HttpRequest(InputStream is) throws IOException, HttpException {
 		HttpParser parser = new HttpParser();
-    parser.parse(is);
+    parser.parseHeaders(is);
 	}
 
 	public HttpRequest(HttpMethod method, URI uri, int major, int minor, Map<String, String> general_header,

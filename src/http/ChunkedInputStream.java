@@ -19,9 +19,9 @@ public class ChunkedInputStream extends FilterInputStream {
 
 	public ChunkedInputStream(InputStream is, IHttpHeaders headers) {
 		super(is);
+		this.headers = headers;
 		readingChunkHeader = true;
 		endOfStream = false;
-		this.headers = headers;
 		currentChunkSize = -1;
 		alreadyReadFromChunk = 0;
 	}
@@ -92,7 +92,8 @@ public class ChunkedInputStream extends FilterInputStream {
 			if (currentChunkSize == 0) {
 				// last chunk, read headers
 				try {
-					headers.parse(in);
+          HttpParser httpParser = new HttpParser();
+          headers = httpParser.parseHeaders(in);
 				} catch (HttpException e) {
 					throw new IOException(e.getMessage());
 				}

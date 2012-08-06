@@ -13,7 +13,7 @@ import web.Header;
 public class HttpHeader extends Header implements IHttpHeader {
 
   private String name;
-  private String rawValue;
+  protected String rawValue;
   
   public HttpHeader(String name, String rawValue) {
     this.name = name;
