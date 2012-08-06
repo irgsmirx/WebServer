@@ -10,4 +10,7 @@ package http;
  */
 public interface IHttpRequest extends IHttpMessage {
   
+  IHttpVersion getVersion();
+  void setVersion(IHttpVersion value);
+  
 }

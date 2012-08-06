@@ -25,6 +25,8 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 
 	protected URI urlReferrer;
 	
+  protected IHttpVersion version;
+  
 	protected String userAgent;
 	protected String userHostAddress;
 	protected String userHostName;
@@ -143,6 +145,14 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 		this.uri = uri;
 	}
 
+  public IHttpVersion getVersion() {
+    return version;
+  }
+          
+  public void setVersion(IHttpVersion value) {
+    this.version = value;
+  }
+  
 	/**
 	 * @return Returns the body.
 	 */

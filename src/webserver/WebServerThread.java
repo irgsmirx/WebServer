@@ -2,7 +2,6 @@ package webserver;
 
 import exceptions.HttpException;
 import http.*;
-import java.io.IOException;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -11,7 +10,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class WebServerThread implements Runnable, HttpConstants, HttpMethods {
+public class WebServerThread implements Runnable, HttpConstants {
 
 	final static int BUF_SIZE = 4096;
 
@@ -116,8 +115,15 @@ public class WebServerThread implements Runnable, HttpConstants, HttpMethods {
   
   private IHttpContext establishContext(InputStream is, OutputStream os) throws IOException, HttpException {
 		HttpRequest httpRequest = new HttpRequest();
-		httpRequest.parse(is);
+		
+    HttpParser httpParser = new HttpParser();
+    IHttpRequestLine requestLine = httpParser.parseRequestLine(is);
+    IHttpHeaders httpHeaders = httpParser.parseHeaders(is);
+    httpParser.parseBody(is, httpHeaders);
 
+    httpRequest.setVersion(requestLine.getVersion());
+    httpRequest.setUri(requestLine.getURI());
+    
     HttpResponse httpResponse = new HttpResponse(new File(httpRequest.getUri().getPath()));
     
     HttpContext httpContext = new HttpContext(httpRequest, httpResponse);
@@ -130,10 +136,10 @@ public class WebServerThread implements Runnable, HttpConstants, HttpMethods {
   }
 
 	private void handleRequest(HttpRequest request) {
-    int method = request.getMethod();
-		int major = request.getMajor();
-		int minor = request.getMinor();
-		URI uri = request.getUri();
+    HttpMethod method = request.getMethod();
+		IHttpVersion version = request.getVersion();
+
+    URI uri = request.getUri();
 		byte[] body = request.getBody();
 
 		switch (method) {

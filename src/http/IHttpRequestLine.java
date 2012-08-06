@@ -4,6 +4,8 @@
  */
 package http;
 
+import java.net.URI;
+
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
@@ -15,5 +17,8 @@ public interface IHttpRequestLine {
   
   IHttpVersion getVersion();
   void setVersion(IHttpVersion value);
+  
+  URI getURI();
+  void setURI(URI value);
   
 }

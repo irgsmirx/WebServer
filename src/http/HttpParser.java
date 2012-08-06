@@ -129,7 +129,7 @@ public class HttpParser implements IHttpParser {
 			throw new HttpException(HttpError.BAD_REQUEST, "Request line '" + requestLine + "' invalid!");
 		}
     
-    return new HttpRequestLine(method, version);
+    return new HttpRequestLine(method, version, uri);
 	}
   
  	private HttpBuffer readRequestLine(InputStream is) throws IOException, HttpException {
