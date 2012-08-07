@@ -10,9 +10,9 @@ package http;
  */
 public interface IHttpContext {
   
-  HttpRequest getRequest();
+  IHttpRequest getRequest();
   
-  HttpResponse getResponse();
+  IHttpResponse getResponse();
   
   HttpSessionState getSession();
   

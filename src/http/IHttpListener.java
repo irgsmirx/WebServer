@@ -5,7 +5,6 @@
 package http;
 
 import java.net.InetAddress;
-import web.IRequestHandler;
 
 /**
  *
@@ -13,9 +12,9 @@ import web.IRequestHandler;
  */
 public interface IHttpListener {
   
-  void addRequestHandler(IRequestHandler value);
-  void removeRequestHandler(IRequestHandler value);
-  void clearRequestHandlers();
+  void addContextHandler(IHttpContextHandler value);
+  void removeContextHandler(IHttpContextHandler value);
+  void clearContextHandlers();
   
   int getPort();
   void setPort(int value);

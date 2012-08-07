@@ -4,10 +4,15 @@
  */
 package http;
 
+import web.IResponse;
+
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IHttpResponse extends IHttpMessage {
+public interface IHttpResponse extends IHttpMessage, IResponse {
+  
+  IHttpStatusCode getStatusCode();
+  void setStatusCode(IHttpStatusCode value);
   
 }

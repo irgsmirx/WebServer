@@ -4,8 +4,6 @@
  */
 package http;
 
-import exceptions.HttpException;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -14,12 +12,14 @@ import java.io.InputStream;
  */
 public interface IHttpParser {
   
-  IHttpHeaders parseHeaders(InputStream is) throws IOException, HttpException;
+  IHttpRequest parseRequest(InputStream is);
   
-  IHttpRequestLine parseRequestLine(InputStream is) throws IOException, HttpException;
+  IHttpHeaders parseHeaders(InputStream is);
+  
+  IHttpRequestLine parseRequestLine(InputStream is);
 
   IHttpHeader parseHeader(InputStream is);
     
-  void parseBody(InputStream is, IHttpHeaders headers) throws IOException, HttpException;
+  void parseBody(InputStream is, IHttpHeaders headers);
   
 }

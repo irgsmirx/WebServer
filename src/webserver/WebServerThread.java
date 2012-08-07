@@ -9,8 +9,9 @@ import java.net.URI;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import web.ConnectionType;
 
-public class WebServerThread implements Runnable, HttpConstants {
+public class WebServerThread implements Runnable {
 
 	final static int BUF_SIZE = 4096;
 
@@ -26,6 +27,8 @@ public class WebServerThread implements Runnable, HttpConstants {
 
 	private Socket socket;
   private IHttpContext context;
+  
+  private IHttpContextHandlers contextHandlers = new HttpContextHandlers();
   
 	public WebServerThread(Socket socket) {
     initializeBuffer();
@@ -94,9 +97,7 @@ public class WebServerThread implements Runnable, HttpConstants {
 			HttpResponse hr = new HttpResponse(e);
 			//hr.print(ps);
 			//ps.flush();
-		}
-
-		finally {
+		} finally {
       is.close();
 			
       os.flush();
@@ -114,25 +115,25 @@ public class WebServerThread implements Runnable, HttpConstants {
   }
   
   private IHttpContext establishContext(InputStream is, OutputStream os) throws IOException, HttpException {
-		HttpRequest httpRequest = new HttpRequest();
-		
     HttpParser httpParser = new HttpParser();
-    IHttpRequestLine requestLine = httpParser.parseRequestLine(is);
-    IHttpHeaders httpHeaders = httpParser.parseHeaders(is);
-    httpParser.parseBody(is, httpHeaders);
-
-    httpRequest.setVersion(requestLine.getVersion());
-    httpRequest.setUri(requestLine.getURI());
+		IHttpRequest httpRequest = httpParser.parseRequest(is);
     
-    HttpResponse httpResponse = new HttpResponse(new File(httpRequest.getUri().getPath()));
+    IHttpResponse httpResponse = new HttpResponse(new File(httpRequest.getUri().getPath()));
+    if (httpRequest.getVersion().isHTTP11()) {
+      httpResponse.setConnectionType(ConnectionType.KEEP_ALIVE);
+    } else {
+      httpResponse.setConnectionType(ConnectionType.DISCONNECT);
+    }
     
-    HttpContext httpContext = new HttpContext(httpRequest, httpResponse);
+    IHttpContext httpContext = new HttpContext(httpRequest, httpResponse);
     
     return httpContext;
   }
   
   private void handleContext(IHttpContext context) {
-    
+    for (IHttpContextHandler handler : contextHandlers) {
+      handler.handleContext(context);
+    }
   }
 
 	private void handleRequest(HttpRequest request) {
@@ -165,18 +166,18 @@ public class WebServerThread implements Runnable, HttpConstants {
 		int returnCode = 0;
 
 		if (w == null) {
-			returnCode = HTTP_NOT_FOUND;
-			p.print("HTTP/1.0 " + HTTP_NOT_FOUND + " not found");
+			returnCode = HttpStatusCode.STATUS_404_NOT_FOUND.getCode();
+			p.print("HTTP/1.0 " + returnCode + " not found");
 			p.write(EOL);
 			result = false;
 		} else if (!w.isConsistent()) {
-			returnCode = HTTP_SERVICE_UNAVAILABLE;
-			p.print("HTTP/1.0 " + HTTP_SERVICE_UNAVAILABLE + " not available");
+			returnCode = HttpStatusCode.STATUS_503_SERVICE_UNAVAILABLE.getCode();
+			p.print("HTTP/1.0 " + returnCode + " not available");
 			p.write(EOL);
 			result = false;
 		} else {
-			returnCode = HTTP_OK;
-			p.print("HTTP/1.0 " + HTTP_OK + " OK");
+			returnCode = HttpStatusCode.STATUS_200_OK.getCode();
+			p.print("HTTP/1.0 " + returnCode + " OK");
 			p.write(EOL);
 			result = true;
 		}
@@ -201,15 +202,15 @@ public class WebServerThread implements Runnable, HttpConstants {
 
 	private boolean printHeaders(File targ, PrintStream ps) throws IOException {
 		boolean ret = false;
-		int rCode = 0;
+		int returnCode = 0;
 		if (!targ.exists()) {
-			rCode = HTTP_NOT_FOUND;
-			ps.print("HTTP/1.0 " + HTTP_NOT_FOUND + " not found");
+			returnCode = HttpStatusCode.STATUS_404_NOT_FOUND.getCode();
+			ps.print("HTTP/1.0 " + returnCode + " not found");
 			ps.write(EOL);
 			ret = false;
 		} else {
-			rCode = HTTP_OK;
-			ps.print("HTTP/1.0 " + HTTP_OK + " OK");
+			returnCode = HttpStatusCode.STATUS_200_OK.getCode();
+			ps.print("HTTP/1.0 " + returnCode + " OK");
 			ps.write(EOL);
 			ret = true;
 		}
@@ -305,5 +306,9 @@ public class WebServerThread implements Runnable, HttpConstants {
 		setSuffix(".txt", "text/plain");
 		setSuffix(".java", "text/plain");
 	}
+  
+  public void addContextHandler(IHttpContextHandler contextHandler) {
+    contextHandlers.add(contextHandler);
+  }
 
 }

@@ -8,15 +8,8 @@ package http;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IHttpVersion {
+public interface IHttpContextHandler {
   
-  int getMinor();
-  void setMinor(int value);
-  
-  int getMajor();
-  void setMajor(int value);
-  
-  boolean isHTTP10();
-  boolean isHTTP11();
+  void handleContext(IHttpContext context);
   
 }

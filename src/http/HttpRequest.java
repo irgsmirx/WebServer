@@ -133,6 +133,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
   
 	/**	 * @return Returns the uri.
 	 */
+  @Override
 	public URI getUri() {
 		return uri;
 	}
@@ -141,14 +142,17 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 	 * @param uri
 	 *          The uri to set.
 	 */
+  @Override
 	public void setUri(URI uri) {
 		this.uri = uri;
 	}
 
+  @Override
   public IHttpVersion getVersion() {
     return version;
   }
           
+  @Override
   public void setVersion(IHttpVersion value) {
     this.version = value;
   }

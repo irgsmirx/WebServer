@@ -4,11 +4,19 @@
  */
 package http;
 
+import java.net.URI;
+import web.IRequest;
+
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IHttpRequest extends IHttpMessage {
+public interface IHttpRequest extends IHttpMessage, IRequest {
+ 
+  HttpMethod getMethod();
+  
+  URI getUri();
+  void setUri(URI value);
   
   IHttpVersion getVersion();
   void setVersion(IHttpVersion value);

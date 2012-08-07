@@ -10,5 +10,16 @@ package web;
  */
 public class Response extends Message implements IResponse {
 
+  protected ConnectionType connectionType;
+  
+  @Override
+  public ConnectionType getConnectionType() {
+    return connectionType;
+  }
+
+  @Override
+  public void setConnectionType(ConnectionType value) {
+    this.connectionType = value;
+  }
   
 }

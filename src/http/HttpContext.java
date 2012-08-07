@@ -10,23 +10,26 @@ package http;
  */
 public class HttpContext implements IHttpContext {
   
-  private HttpRequest request;
-  private HttpResponse response;
+  private IHttpRequest request;
+  private IHttpResponse response;
   private HttpSessionState session;
   
-  public HttpContext(HttpRequest request, HttpResponse response) {
+  public HttpContext(IHttpRequest request, IHttpResponse response) {
     this.request = request;
     this.response = response;
   }
   
-  public HttpRequest getRequest() {
+  @Override
+  public IHttpRequest getRequest() {
     return request;
   }
   
-  public HttpResponse getResponse() {
+  @Override
+  public IHttpResponse getResponse() {
     return response;
   }
   
+  @Override
   public HttpSessionState getSession() {
     return session;
   }

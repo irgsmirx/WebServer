@@ -38,4 +38,19 @@ public class HttpVersion implements IHttpVersion {
     this.minor = value;
   }
   
+  @Override
+  public boolean isHTTP10() {
+    return major == 1 && minor == 0;
+  }
+  
+  @Override
+  public boolean isHTTP11() {
+    return major == 1 && minor == 1;
+  }
+  
+  @Override
+  public String toString() {
+    return String.format("HTTP/%1s.%1s", major, minor);
+  }
+  
 }

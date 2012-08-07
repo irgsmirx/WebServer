@@ -8,10 +8,7 @@ package web;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IResponse {
-    
-  ConnectionType getConnectionType();
-  void setConnectionType(ConnectionType value);
-  
+public enum ConnectionType {
+  DISCONNECT,
+  KEEP_ALIVE
 }
-  

@@ -25,15 +25,45 @@ public class HttpParser implements IHttpParser {
   private IHttpHeaderFactory httpHeaderFactory = new HttpHeaderFactory();
   
   @Override
-  public IHttpHeaders parseHeaders(InputStream is) throws IOException, HttpException {
+  public IHttpRequest parseRequest(InputStream is) {
+    IHttpRequest httpRequest = new HttpRequest();
+		
+    IHttpRequestLine requestLine = parseRequestLine(is);
+    
+    try {
+      IHttpHeaders httpHeaders = parseHeaders(is);
+      parseBody(is, httpHeaders);
+    } catch (Exception ex) {
+      
+    }
+
+    httpRequest.setVersion(requestLine.getVersion());
+    httpRequest.setUri(requestLine.getURI());
+    
+    return httpRequest;
+  }
+  
+  @Override
+  public IHttpHeaders parseHeaders(InputStream is) {
     IHttpHeaders httpHeaders = new HttpHeaders();
     
     int ch = -1;
-    ch = is.read();
+    try {
+      ch = is.read();
+    } catch (IOException ex) {
+      Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+      throw new exceptions.IOException(ex);
+    }
 
 		while (true) {
 			if (isCR(ch)) {
-				ch = is.read();
+        try {
+          ch = is.read();
+        } catch (IOException ex) {
+          Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+          throw new exceptions.IOException(ex);
+        }
+        
 				if (isLF(ch)) {
 					break;
 				} else {
@@ -64,7 +94,7 @@ public class HttpParser implements IHttpParser {
   }
   
   @Override
-  public IHttpRequestLine parseRequestLine(InputStream is) throws IOException, HttpException {
+  public IHttpRequestLine parseRequestLine(InputStream is) {
 		HttpBuffer requestLineBuffer = readRequestLine(is);
 		String requestLine = requestLineBuffer.toString();
 
@@ -132,16 +162,26 @@ public class HttpParser implements IHttpParser {
     return new HttpRequestLine(method, version, uri);
 	}
   
- 	private HttpBuffer readRequestLine(InputStream is) throws IOException, HttpException {
+ 	private HttpBuffer readRequestLine(InputStream is) {
 		HttpBuffer buffer = new HttpBuffer();
 
 		int last = -1;
 		int ch = -1;
-    ch = is.read();
+    try {
+      ch = is.read();
+    } catch (IOException ex) {
+      Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+      throw new exceptions.IOException(ex);
+    }
 
 		while (isCR(ch) || isLF(ch)) {
 			last = ch;
-			ch = is.read();
+      try {
+        ch = is.read();
+      } catch (IOException ex) {
+        Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+        throw new exceptions.IOException(ex);
+      }
 		}
 
 		while (true) {
@@ -166,7 +206,12 @@ public class HttpParser implements IHttpParser {
 					buffer.append(ch);
 				}
 			}
-			ch = is.read();
+      try {
+        ch = is.read();
+      } catch (IOException ex) {
+        Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+        throw new exceptions.IOException(ex);
+      }
 		}
 
 		return buffer;
@@ -306,7 +351,7 @@ public class HttpParser implements IHttpParser {
 		return buffer;
 	}
   
-  protected Map<String, String> parseQuery(String query) throws HttpException {
+  protected Map<String, String> parseQuery(String query) {
 		Map<String, String> result = null;
 
 		if (query != null) {
@@ -340,10 +385,13 @@ public class HttpParser implements IHttpParser {
 	}
 
   @Override
-  public void parseBody(InputStream is, IHttpHeaders headers) throws IOException, HttpException {
+  public void parseBody(InputStream is, IHttpHeaders headers) {
 		LongHttpHeader contentLengthHeader = ((LongHttpHeader)headers.getHeader("Content-Length"));
-		String contentType = ((StringHttpHeader)headers.getHeader("Content-Type")).getValue();
-		String transferEncoding = ((StringHttpHeader)headers.getHeader("Transfer-Encoding")).getValue();
+		StringHttpHeader contentTypeHeader = ((StringHttpHeader)headers.getHeader("Content-Type"));
+    StringHttpHeader transferEncodingHeader = ((StringHttpHeader)headers.getHeader("Transfer-Encoding"));
+    
+    String contentType = contentTypeHeader.getValue();
+		String transferEncoding = transferEncodingHeader.getValue();
 
 		if (transferEncoding == null) {
 			if (contentLengthHeader == null) {
@@ -372,13 +420,18 @@ public class HttpParser implements IHttpParser {
 		}
 	}
   
-  protected void readPlain(InputStream is, long contentLength) throws IOException, HttpException {
+  protected void readPlain(InputStream is, long contentLength) {
 		HttpBuffer buffer = new HttpBuffer();
 		int written = 1;
 
     byte[] body;
     int ch = -1;
-    ch = is.read();
+    try {
+      ch = is.read();
+    } catch (IOException ex) {
+      Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+      throw new exceptions.IOException(ex);
+    }
 
 		while (written < contentLength) {
 			if (ch == -1) {
@@ -387,18 +440,29 @@ public class HttpParser implements IHttpParser {
 				buffer.append(ch);
 				written++;
 			}
-			ch = is.read();
+      try {
+        ch = is.read();
+      } catch (IOException ex) {
+        Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+        throw new exceptions.IOException(ex);
+      }
 		}
 
 		body = buffer.getCopy();
 	}
 
-	protected void readChunked(InputStream is, IHttpHeaders headers) throws IOException, HttpException {
+	protected void readChunked(InputStream is, IHttpHeaders headers) {
 		HttpBuffer buffer = new HttpBuffer();
 		ChunkedInputStream cis = new ChunkedInputStream(is, headers);
 
     byte[] body;
-		int ch = cis.read();
+		int ch;
+    try {
+      ch = cis.read();
+    } catch (IOException ex) {
+      Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+      throw new exceptions.IOException(ex);
+    }
 
 		while (true) {
 			if (ch == -1) {

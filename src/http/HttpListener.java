@@ -37,7 +37,7 @@ public class HttpListener implements IHttpListener {
   private ExecutorService threadPool;
   
   
-  private final List<IRequestHandler> requestHandlers = new ArrayList<>();
+  private final List<IHttpContextHandler> contextHandlers = new ArrayList<>();
   
   public HttpListener(int port) {
     try {
@@ -121,6 +121,11 @@ public class HttpListener implements IHttpListener {
       try {
         Socket socket = listeningSocket.accept();
         WebServerThread wst = new WebServerThread(socket);
+        
+        for (IHttpContextHandler contextHandler : contextHandlers) {
+          wst.addContextHandler(contextHandler);
+        }
+        
         threadPool.execute(wst);
       } catch (IOException ex) {
         if (listening) {
@@ -166,18 +171,18 @@ public class HttpListener implements IHttpListener {
   }
 
   @Override
-  public void addRequestHandler(IRequestHandler value) {
-    requestHandlers.add(value);
+  public void addContextHandler(IHttpContextHandler value) {
+    contextHandlers.add(value);
   }
 
   @Override
-  public void removeRequestHandler(IRequestHandler value) {
-    requestHandlers.remove(value);
+  public void removeContextHandler(IHttpContextHandler value) {
+    contextHandlers.remove(value);
   }
   
   @Override
-  public void clearRequestHandlers() {
-    requestHandlers.clear();
+  public void clearContextHandlers() {
+    contextHandlers.clear();
   }
   
 }

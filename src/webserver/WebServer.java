@@ -5,9 +5,7 @@ package webserver;
  * Implementation notes are in WebServer.html, and also
  * as comments in the source code.
  */
-import http.HttpApplicationFactory;
-import http.HttpConstants;
-import http.IHttpListener;
+import http.*;
 import web.IModule;
 import java.io.*;
 import java.util.ArrayList;
@@ -15,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-public class WebServer implements HttpConstants {
+public class WebServer implements HttpConstants, IHttpContextHandler {
 
   private boolean running;
   
@@ -36,6 +34,7 @@ public class WebServer implements HttpConstants {
 
   protected final List<IHttpListener> httpListeners = Collections.synchronizedList(new ArrayList<IHttpListener>());
   protected final List<IModule> modules = Collections.synchronizedList(new ArrayList<IModule>());
+  protected final List<IHttpContextHandler> contextHandlers = Collections.synchronizedList(new ArrayList<IHttpContextHandler>());
 	
 	/*
 	 * timeout on client connections
@@ -151,6 +150,7 @@ public class WebServer implements HttpConstants {
       //listener.ErrorPageRequested += Listener_OnErrorPage;
       //listener.RequestReceived += OnRequest;
       //listener.ContentLengthLimit = ContentLengthLimit;
+      listener.addContextHandler(this);
       listener.startListening();
     }
     running = true;
@@ -161,9 +161,21 @@ public class WebServer implements HttpConstants {
       //listener.ErrorPageRequested += Listener_OnErrorPage;
       //listener.RequestReceived += OnRequest;
       //listener.ContentLengthLimit = ContentLengthLimit;
+      listener.removeContextHandler(this);
       listener.stopListening();
     }
     running = false;
+  }
+  
+  public void addContextHandler(IHttpContextHandler contextHandler) {
+    contextHandlers.add(contextHandler);
+  }
+
+  @Override
+  public void handleContext(IHttpContext context) {
+    for (IHttpContextHandler contextHandler : contextHandlers) {
+      contextHandler.handleContext(context);
+    }
   }
   
 }

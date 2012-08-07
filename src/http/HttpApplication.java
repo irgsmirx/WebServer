@@ -16,8 +16,8 @@ public class HttpApplication {
   private HttpSessionState session;
   
   
-  public HttpRequest getRequest() {
-    HttpRequest httpRequest = null;
+  public IHttpRequest getRequest() {
+    IHttpRequest httpRequest = null;
     
     if (context != null) {
       httpRequest = context.getRequest();
@@ -30,8 +30,8 @@ public class HttpApplication {
     return httpRequest;
   }
 
-  public HttpResponse getResponse() {
-    HttpResponse httpResponse = null;
+  public IHttpResponse getResponse() {
+    IHttpResponse httpResponse = null;
     
     if (context != null) {
       httpResponse = context.getResponse();

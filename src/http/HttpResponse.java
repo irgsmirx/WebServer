@@ -7,12 +7,13 @@ import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.Map.Entry;
 import java.util.*;
+import web.ConnectionType;
 
 public class HttpResponse extends HttpMessage implements IHttpResponse {
 
-	protected String version;
-	protected int status;
-	protected String reason;
+	protected IHttpStatusCode statusCode;
+  protected ConnectionType connectionType;
+
 	protected int contentLength;
 	protected String body;
 
@@ -21,9 +22,9 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 	public HttpResponse() {
     super();
     
-		version = null;
-		status = -1;
-		reason = null;
+		//version = null;
+		//status = -1;
+		//reason = null;
 		contentLength = 0;
 		body = null;
 
@@ -37,14 +38,18 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 	}
 
 	public HttpResponse(HttpException e) {
-		version = HTTP11;
-		status = e.getErrorCode();
-		reason = get(status);
+		//version = HTTP11;
+		//status = e.getErrorCode();
+		//reason = get(status);
 
 		generalHeader = new HashMap<>();
 		responseHeader = new HashMap<>();
 		entityHeader = new HashMap<>();
 
+    String version = "";
+    String status = "";
+    String reason = "";
+    
 		String title = "ERROR " + status + " (" + reason + ")";
 
 		//XHTMLDocument document = errorDocument(e, title);
@@ -65,9 +70,9 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 				if (f.isFile()) {
 
 				} else if (f.isDirectory()) {
-					version = HTTP11;
-					status = HTTP_OK;
-					reason = get(status);
+					//version = HTTP11;
+					//status = HTTP_OK;
+					//reason = get(status);
 
 					generalHeader = new HashMap<>();
 					responseHeader = new HashMap<>();
@@ -87,14 +92,18 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 
 				}
 			} else {
-				version = HTTP11;
-				status = HTTP_FORBIDDEN;
-				reason = get(status);
+				//version = HTTP11;
+				//status = HTTP_FORBIDDEN;
+				//reason = get(status);
 
 				generalHeader = new HashMap<>();
 				responseHeader = new HashMap<>();
 				entityHeader = new HashMap<>();
 
+        String version = "";
+        String status = "";
+        String reason = "";
+        
 				String title = "ERROR " + status + " (" + reason + ")";
 
 				//XHTMLDocument document = accessDenied(f, title);
@@ -109,13 +118,17 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 				generateDefaultHeader();
 			}
 		} else {
-			version = HTTP11;
-			status = HTTP_NOT_FOUND;
-			reason = get(status);
+			//version = HTTP11;
+			//status = HTTP_NOT_FOUND;
+			//reason = get(status);
 
 			generalHeader = new HashMap<>();
 			responseHeader = new HashMap<>();
 			entityHeader = new HashMap<>();
+
+      String version = "";
+      String status = "";
+      String reason = "";
 
 			String title = "ERROR " + status + " (" + reason + ")";
 
@@ -133,7 +146,11 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 	}
 
 	public void print(PrintStream ps) {
-		String statusline = version + " " + status + " " + reason;
+    String version = "";
+    String status = "";
+    String reason = "";
+    
+    String statusline = version + " " + status + " " + reason;
 		ps.print(statusline + EOL);
 
 		printHashtable(ps, generalHeader);
@@ -340,5 +357,25 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 		}
 		return -1;
 	}
+
+  @Override
+  public IHttpStatusCode getStatusCode() {
+    return statusCode;
+  }
+
+  @Override
+  public void setStatusCode(IHttpStatusCode value) {
+    this.statusCode = value;
+  }
+
+  @Override
+  public ConnectionType getConnectionType() {
+    return connectionType;
+  }
+
+  @Override
+  public void setConnectionType(ConnectionType value) {
+    this.connectionType = value;
+  }
 
 }

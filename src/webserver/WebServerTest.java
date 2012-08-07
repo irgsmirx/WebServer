@@ -5,6 +5,8 @@
 package webserver;
 
 import http.HttpListener;
+import http.IHttpContext;
+import http.IHttpContextHandler;
 import http.IHttpListener;
 
 /**
@@ -20,9 +22,21 @@ public class WebServerTest {
     WebServer webServer = new WebServer();
     
     IHttpListener httpListener = new HttpListener(11111);
-
+    webServer.addContextHandler(new Bla());
+    
     webServer.httpListeners.add(httpListener);
     
     webServer.start();
+  }
+  
+  public static class Bla implements IHttpContextHandler {
+
+    @Override
+    public void handleContext(IHttpContext context) {
+      System.out.println(context.getRequest().getMethod());
+      System.out.println(context.getRequest().getUri());
+      System.out.println(context.getRequest().getVersion());
+    }
+        
   }
 }
