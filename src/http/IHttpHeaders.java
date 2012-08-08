@@ -12,7 +12,7 @@ import web.IHeader;
  */
 public interface IHttpHeaders {
   
-  void addHeader(String name, IHttpHeader value);
+  void addHeader(IHttpHeader value);
   void removeHeader(String name);
   IHeader getHeader(String name);
   void clear();

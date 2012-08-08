@@ -15,8 +15,8 @@ public class HttpHeaders implements IHttpHeaders {
   private TreeMap<String, IHttpHeader> headers = new TreeMap<>(); 
   
   @Override
-  public void addHeader(String name, IHttpHeader value) {
-    headers.put(name, value);
+  public void addHeader(IHttpHeader value) {
+    headers.put(value.getName(), value);
   }
 
   @Override

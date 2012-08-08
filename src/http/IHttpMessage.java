@@ -12,6 +12,9 @@ import web.IMessage;
  */
 public interface IHttpMessage extends IMessage {
   
+  IHttpVersion getVersion();
+  void setVersion(IHttpVersion value);
+  
   IHttpHeaders getHeaders();
   
 }

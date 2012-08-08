@@ -20,5 +20,7 @@ public interface IHttpRequest extends IHttpMessage, IRequest {
   
   IHttpVersion getVersion();
   void setVersion(IHttpVersion value);
+
+  
   
 }

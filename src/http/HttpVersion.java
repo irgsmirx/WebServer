@@ -10,6 +10,9 @@ package http;
  */
 public class HttpVersion implements IHttpVersion {
 
+  public static final IHttpVersion HTTP_10 = new HttpVersion(1, 0);
+  public static final IHttpVersion HTTP_11 = new HttpVersion(1, 1);
+  
   private int major;
   private int minor;
   

@@ -115,19 +115,43 @@ public class WebServerThread implements Runnable {
   }
   
   private IHttpContext establishContext(InputStream is, OutputStream os) throws IOException, HttpException {
-    HttpParser httpParser = new HttpParser();
-		IHttpRequest httpRequest = httpParser.parseRequest(is);
-    
-    IHttpResponse httpResponse = new HttpResponse(new File(httpRequest.getUri().getPath()));
-    if (httpRequest.getVersion().isHTTP11()) {
-      httpResponse.setConnectionType(ConnectionType.KEEP_ALIVE);
-    } else {
-      httpResponse.setConnectionType(ConnectionType.DISCONNECT);
-    }
-    
-    IHttpContext httpContext = new HttpContext(httpRequest, httpResponse);
+    IHttpContext httpContext = tryParseHttpRequest(is, os);
     
     return httpContext;
+  }
+  
+  private IHttpContext tryParseHttpRequest(InputStream is, OutputStream os) {
+    IHttpContext httpContext = null;
+    
+    try {
+      IHttpParser httpParser = new HttpParser();
+
+      IHttpRequest httpRequest;
+      IHttpResponse httpResponse;
+    
+      httpRequest = httpParser.parseRequest(is);
+    
+      httpResponse = new HttpResponse(new File(httpRequest.getUri().getPath()));
+      if (httpRequest.getVersion().isHTTP11()) {
+        httpResponse.setConnectionType(ConnectionType.KEEP_ALIVE);
+        httpResponse.getHeaders().addHeader(new StringHttpHeader("Keep-Alive", "timeout=5, max=100"));
+      } else {
+        httpResponse.setConnectionType(ConnectionType.DISCONNECT);
+      }
+      
+      httpContext = new HttpContext(httpRequest, httpResponse);
+    } catch (Exception ex) {
+      try {
+        IHttpResponse httpResponse = new HttpResponse()
+        
+        os.flush();
+        os.close();
+      } catch (Exception ex2) {
+        
+      }
+    } finally {
+      return httpContext;
+    }
   }
   
   private void handleContext(IHttpContext context) {

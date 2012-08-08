@@ -5,8 +5,8 @@ import java.io.File;
 import java.io.PrintStream;
 import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
-import java.util.Map.Entry;
 import java.util.*;
+import java.util.Map.Entry;
 import web.ConnectionType;
 
 public class HttpResponse extends HttpMessage implements IHttpResponse {
@@ -18,13 +18,10 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 	protected String body;
 
 	protected Map<String, String> responseHeader;
-
+  
 	public HttpResponse() {
     super();
     
-		//version = null;
-		//status = -1;
-		//reason = null;
 		contentLength = 0;
 		body = null;
 
@@ -32,6 +29,17 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 		responseHeader = new HashMap<>();
 		entityHeader = new HashMap<>();
 	}
+
+  public HttpResponse(IHttpStatusCode statusCode) {
+    this();
+    this.statusCode = statusCode;
+  }
+  
+  public HttpResponse(IHttpVersion version, IHttpStatusCode statusCode) {
+    this();
+    this.version = version;
+    this.statusCode = statusCode;
+  }
 
 	public HttpResponse(SocketTimeoutException e) {
 		this(new HttpException(HTTP_REQUEST_TIMEOUT));

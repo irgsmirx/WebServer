@@ -35,6 +35,7 @@ public abstract class HttpMessage extends HttpCodes implements HttpConstants, IH
 
   protected Map<String, HttpCookie> cookies = null;
 
+  protected IHttpVersion version = HttpVersion.HTTP_11;
   protected IHttpHeaders headers = new HttpHeaders();
   
 	protected static void clearBuffer(byte[] buf) {
@@ -52,6 +53,16 @@ public abstract class HttpMessage extends HttpCodes implements HttpConstants, IH
 		return -1;
 	}
 
+  @Override
+  public IHttpVersion getVersion() {
+    return version;
+  }
+  
+  @Override
+  public void setVersion(IHttpVersion value) {
+    this.version = value;
+  }
+  
   @Override
   public IHttpHeaders getHeaders() {
     return headers;
