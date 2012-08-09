@@ -4,6 +4,7 @@
  */
 package http;
 
+import java.util.Iterator;
 import java.util.TreeMap;
 
 /**
@@ -37,6 +38,11 @@ public class HttpHeaders implements IHttpHeaders {
   @Override
   public int numberOfHeaders() {
     return headers.size();
+  }
+
+  @Override
+  public Iterator<IHttpHeader> iterator() {
+    return headers.values().iterator();
   }
   
 }

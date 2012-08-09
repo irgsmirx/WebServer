@@ -2,11 +2,8 @@ package http;
 
 import exceptions.HttpException;
 import java.io.File;
-import java.io.PrintStream;
 import java.net.SocketTimeoutException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Map.Entry;
 import web.ConnectionType;
 
 public class HttpResponse extends HttpMessage implements IHttpResponse {
@@ -14,8 +11,7 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 	protected IHttpStatusCode statusCode;
   protected ConnectionType connectionType;
 
-	protected int contentLength;
-	protected String body;
+  protected String body;
 
 	protected Map<String, String> responseHeader;
   
@@ -29,6 +25,11 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 		responseHeader = new HashMap<>();
 		entityHeader = new HashMap<>();
 	}
+  
+  public HttpResponse(IHttpVersion version) {
+    this();
+    this.version = version;
+  }
 
   public HttpResponse(IHttpStatusCode statusCode) {
     this();
@@ -153,35 +154,8 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 		}
 	}
 
-	public void print(PrintStream ps) {
-    String version = "";
-    String status = "";
-    String reason = "";
-    
-    String statusline = version + " " + status + " " + reason;
-		ps.print(statusline + EOL);
-
-		printHashtable(ps, generalHeader);
-		printHashtable(ps, responseHeader);
-		printHashtable(ps, entityHeader);
-
-		ps.print(EOL);
-
-		if (body != null) {
-			ps.print(body);
-		}
-	}
-
 	protected void generateDefaultHeader() {
-		SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss zzz", Locale.US);
-		formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-		Date date = new Date();
 
-		generalHeader.put("Date", formatter.format(date));
-		generalHeader.put("Connection", "close");
-		//responseHeader.put("Server", WebServer.serverid);
-		entityHeader.put("Content-Length", String.valueOf(contentLength));
-		entityHeader.put("Content-Type", "text/html");
 	}
 
 //	protected XHTMLDocument errorDocument(Exception e, String title) {
@@ -348,14 +322,6 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 //		return document;
 //	}
 
-	protected void printHashtable(PrintStream ps, Map<String, String> ht) {
-		Set<Entry<String, String>> entrySet = ht.entrySet();
-		Iterator<Entry<String, String>> i = entrySet.iterator();
-		while (i.hasNext()) {
-			Entry<String, String> next = i.next();
-			ps.print(next.getKey() + ": " + next.getValue() + EOL);
-		}
-	}
 
 	protected static int contains(String[] array, String value) {
 		for (int i = 0; i < array.length; i++) {

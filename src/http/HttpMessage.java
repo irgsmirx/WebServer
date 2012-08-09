@@ -6,11 +6,6 @@ public abstract class HttpMessage extends HttpCodes implements HttpConstants, IH
 
 	public static int BUF_SIZE = 2048;
 
-	public static final String SP = " ";
-	public static final String CR = "\r";
-	public static final String LF = "\n";
-	public static final String EOL = CR + LF;
-
 	public static final String HTTP10 = "HTTP/1.0";
 	public static final String HTTP11 = "HTTP/1.1";
 
@@ -37,6 +32,8 @@ public abstract class HttpMessage extends HttpCodes implements HttpConstants, IH
 
   protected IHttpVersion version = HttpVersion.HTTP_11;
   protected IHttpHeaders headers = new HttpHeaders();
+
+  protected long contentLength;
   
 	protected static void clearBuffer(byte[] buf) {
 		for (int i = 0; i < BUF_SIZE; i++) {
@@ -66,6 +63,16 @@ public abstract class HttpMessage extends HttpCodes implements HttpConstants, IH
   @Override
   public IHttpHeaders getHeaders() {
     return headers;
+  }
+  
+  @Override
+  public long getContentLength() {
+    return contentLength;
+  }
+
+  @Override
+  public void setContentLength(long value) {
+    this.contentLength = value;
   }
   
 }

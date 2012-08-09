@@ -6,7 +6,10 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import web.ConnectionType;
@@ -90,20 +93,24 @@ public class WebServerThread implements Runnable {
       
       handleContext(context);
 		}	catch (HttpException e) {
-			HttpResponse hr = new HttpResponse(e);
-			//hr.print(ps);
-			//ps.flush();
+			IHttpResponse httpResponse = createHttpResponseForStatusCode(HttpStatusCode.STATUS_400_BAD_REQUEST);
+      
+      IHttpResponseWriter responseWriter = new HttpResponseWriter(os);
+      responseWriter.writeResponse(httpResponse);
 		} catch (SocketTimeoutException e) {
-			HttpResponse hr = new HttpResponse(e);
-			//hr.print(ps);
-			//ps.flush();
-		} finally {
-      is.close();
-			
-      os.flush();
-      os.close();
-			
-      socket.close();
+			IHttpResponse httpResponse = createHttpResponseForStatusCode(HttpStatusCode.STATUS_408_REQUEST_TIMEOUT);
+
+      IHttpResponseWriter responseWriter = new HttpResponseWriter(os);
+      responseWriter.writeResponse(httpResponse);
+    } finally {
+      if (!socket.isClosed()) {
+        os.flush();
+
+        is.close();
+        os.close();
+
+        socket.close();
+      }
 		}
 	}
   
@@ -115,43 +122,54 @@ public class WebServerThread implements Runnable {
   }
   
   private IHttpContext establishContext(InputStream is, OutputStream os) throws IOException, HttpException {
-    IHttpContext httpContext = tryParseHttpRequest(is, os);
+    IHttpRequest httpRequest = parseHttpRequest(is, os);
     
-    return httpContext;
+    IHttpResponse httpResonse = createHttpResponseFromHttpRequest(httpRequest);
+    
+    return new HttpContext(httpRequest, httpResonse);
   }
   
-  private IHttpContext tryParseHttpRequest(InputStream is, OutputStream os) {
-    IHttpContext httpContext = null;
+  private IHttpRequest parseHttpRequest(InputStream is, OutputStream os) {
+    IHttpParser httpParser = new HttpParser();
     
-    try {
-      IHttpParser httpParser = new HttpParser();
-
-      IHttpRequest httpRequest;
-      IHttpResponse httpResponse;
+    return httpParser.parseRequest(is);
+  }
+  
+  private IHttpResponse createHttpResponseForStatusCode(IHttpStatusCode statusCode) {
+    IHttpResponse httpResponse = new HttpResponse(HttpVersion.HTTP_11, statusCode);
     
-      httpRequest = httpParser.parseRequest(is);
+    addDefaultHeadersToResponse(httpResponse);
     
-      httpResponse = new HttpResponse(new File(httpRequest.getUri().getPath()));
-      if (httpRequest.getVersion().isHTTP11()) {
-        httpResponse.setConnectionType(ConnectionType.KEEP_ALIVE);
-        httpResponse.getHeaders().addHeader(new StringHttpHeader("Keep-Alive", "timeout=5, max=100"));
-      } else {
-        httpResponse.setConnectionType(ConnectionType.DISCONNECT);
-      }
-      
-      httpContext = new HttpContext(httpRequest, httpResponse);
-    } catch (Exception ex) {
-      try {
-        IHttpResponse httpResponse = new HttpResponse()
-        
-        os.flush();
-        os.close();
-      } catch (Exception ex2) {
-        
-      }
-    } finally {
-      return httpContext;
+    return httpResponse;
+  }
+  
+  private IHttpResponse createHttpResponseFromHttpRequest(IHttpRequest httpRequest) {
+    IHttpResponse httpResponse;
+    
+    if (httpRequest.getVersion().isHTTP11()) {
+      httpResponse = new HttpResponse(HttpVersion.HTTP_11);
+      httpResponse.setConnectionType(ConnectionType.KEEP_ALIVE);
+      httpResponse.getHeaders().addHeader(new StringHttpHeader("Keep-Alive", "timeout=5, max=100"));
+    } else {
+      httpResponse = new HttpResponse(HttpVersion.HTTP_10);
+      httpResponse.setConnectionType(ConnectionType.CLOSE);
     }
+
+    addDefaultHeadersToResponse(httpResponse);
+    
+    return httpResponse;
+  }
+
+  private void addDefaultHeadersToResponse(IHttpResponse httpResponse) {
+		SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss zzz", Locale.US);
+		formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+		Date date = new Date();
+
+    httpResponse.getHeaders().addHeader(new StringHttpHeader("Date", formatter.format(date)));
+    httpResponse.getHeaders().addHeader(new StringHttpHeader("Connection", "close"));
+    httpResponse.getHeaders().addHeader(new StringHttpHeader("Content-Length", String.valueOf(httpResponse.getContentLength())));
+    httpResponse.getHeaders().addHeader(new StringHttpHeader("Content-Type", "text/html"));
+		//responseHeader.put("Server", WebServer.serverid);
   }
   
   private void handleContext(IHttpContext context) {

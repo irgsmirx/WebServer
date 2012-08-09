@@ -16,5 +16,8 @@ public interface IHttpMessage extends IMessage {
   void setVersion(IHttpVersion value);
   
   IHttpHeaders getHeaders();
+    
+  long getContentLength();
+  void setContentLength(long value);
   
 }

@@ -14,7 +14,6 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 	protected HttpBrowserCapabilities browser;
 	
 	protected String contentEncoding;
-	protected int contentLength = -1;
 	protected String contentType;
 
   protected byte[] body;
@@ -229,10 +228,6 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 		params.putAll(serverVariables);
 		
 		return params;
-	}
-	
-	public int getContentLength() {
-		return contentLength;
 	}
 	
 	public String getContentType() {

@@ -28,7 +28,8 @@ public class HttpParser implements IHttpParser {
   public IHttpRequest parseRequest(InputStream is) {
     IHttpRequest httpRequest = new HttpRequest();
 		
-    IHttpRequestLine requestLine = parseRequestLine(is);
+    IHttpRequestLine requestLine;
+    requestLine = parseRequestLine(is);
     
     try {
       IHttpHeaders httpHeaders = parseHeaders(is);

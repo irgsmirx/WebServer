@@ -10,7 +10,7 @@ import web.IHeader;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IHttpHeaders {
+public interface IHttpHeaders extends Iterable<IHttpHeader> {
   
   void addHeader(IHttpHeader value);
   void removeHeader(String name);
