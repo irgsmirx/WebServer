@@ -168,7 +168,7 @@ public class WebServerThread implements Runnable {
     httpResponse.getHeaders().addHeader(new StringHttpHeader("Date", formatter.format(date)));
     httpResponse.getHeaders().addHeader(new StringHttpHeader("Connection", "close"));
     httpResponse.getHeaders().addHeader(new StringHttpHeader("Content-Length", String.valueOf(httpResponse.getContentLength())));
-    httpResponse.getHeaders().addHeader(new StringHttpHeader("Content-Type", "text/html"));
+    httpResponse.setContentType("text/html");
 		//responseHeader.put("Server", WebServer.serverid);
   }
   
@@ -177,31 +177,6 @@ public class WebServerThread implements Runnable {
       handler.handleContext(context);
     }
   }
-
-	private void handleRequest(HttpRequest request) {
-    HttpMethod method = request.getMethod();
-		IHttpVersion version = request.getVersion();
-
-    URI uri = request.getUri();
-		byte[] body = request.getBody();
-
-		switch (method) {
-			case OPTIONS :
-				break;
-			case GET :
-				break;
-			case HEAD :
-				break;
-			case POST :
-				break;
-			case PUT :
-				break;
-			case DELETE :
-				break;
-			case TRACE :
-				break;
-		}
-	}
 
 	private boolean printHeaders(WebContainer w, PrintStream p) throws IOException {
 		boolean result = false;

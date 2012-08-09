@@ -20,4 +20,7 @@ public interface IHttpMessage extends IMessage {
   long getContentLength();
   void setContentLength(long value);
   
+  String getContentType();
+  void setContentType(String value);
+  
 }

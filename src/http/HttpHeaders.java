@@ -13,21 +13,26 @@ import java.util.TreeMap;
  */
 public class HttpHeaders implements IHttpHeaders {
 
-  private TreeMap<String, IHttpHeader> headers = new TreeMap<>(); 
+  private TreeMap<String, IHttpHeader> headers = new TreeMap<>();
   
   @Override
   public void addHeader(IHttpHeader value) {
-    headers.put(value.getName(), value);
+    headers.put(value.getName().toLowerCase(), value);
   }
 
   @Override
   public void removeHeader(String name) {
-    headers.remove(name);
+    headers.remove(name.toLowerCase());
   }
 
   @Override
   public IHttpHeader getHeader(String name) {
-    return headers.get(name);
+    return headers.get(name.toLowerCase());
+  }
+  
+  @Override
+  public boolean contains(String name) {
+    return headers.containsKey(name.toLowerCase());
   }
   
   @Override

@@ -33,6 +33,7 @@ public abstract class HttpMessage extends HttpCodes implements HttpConstants, IH
   protected IHttpVersion version = HttpVersion.HTTP_11;
   protected IHttpHeaders headers = new HttpHeaders();
 
+  protected String contentType;
   protected long contentLength;
   
 	protected static void clearBuffer(byte[] buf) {
@@ -73,6 +74,21 @@ public abstract class HttpMessage extends HttpCodes implements HttpConstants, IH
   @Override
   public void setContentLength(long value) {
     this.contentLength = value;
+  }
+  
+  @Override
+  public String getContentType() {
+    return contentType;
+  }
+
+  @Override
+  public void setContentType(String value) {
+    this.contentType = value;
+    if (headers.contains("Content-Type")) {
+      headers.getHeader("Content-Type").setRawValue(value);
+    } else {
+      headers.addHeader(new StringHttpHeader("Content-Type", value));
+    }
   }
   
 }

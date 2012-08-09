@@ -4,8 +4,6 @@
  */
 package http;
 
-import web.IHeader;
-
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
@@ -14,7 +12,8 @@ public interface IHttpHeaders extends Iterable<IHttpHeader> {
   
   void addHeader(IHttpHeader value);
   void removeHeader(String name);
-  IHeader getHeader(String name);
+  IHttpHeader getHeader(String name);
+  boolean contains(String name);
   void clear();
   int numberOfHeaders();
   
