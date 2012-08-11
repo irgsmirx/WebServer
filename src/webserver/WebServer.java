@@ -6,7 +6,8 @@ package webserver;
  * as comments in the source code.
  */
 import http.*;
-import web.IModule;
+import http.modules.IHttpModule;
+import web.modules.IModule;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +34,7 @@ public class WebServer implements HttpConstants, IHttpContextHandler {
 	protected Properties props = new Properties();
 
   protected final List<IHttpListener> httpListeners = Collections.synchronizedList(new ArrayList<IHttpListener>());
-  protected final List<IModule> modules = Collections.synchronizedList(new ArrayList<IModule>());
+  protected final List<IHttpModule> modules = Collections.synchronizedList(new ArrayList<IHttpModule>());
   protected final List<IHttpContextHandler> contextHandlers = Collections.synchronizedList(new ArrayList<IHttpContextHandler>());
 	
 	/*

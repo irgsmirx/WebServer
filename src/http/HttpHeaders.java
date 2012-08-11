@@ -17,7 +17,12 @@ public class HttpHeaders implements IHttpHeaders {
   
   @Override
   public void addHeader(IHttpHeader value) {
-    headers.put(value.getName().toLowerCase(), value);
+    String loweredName = value.getName().toLowerCase();
+    if (headers.containsKey(loweredName)) {
+      headers.get(loweredName).setRawValue(value.getRawValue());
+    } else {
+      headers.put(loweredName, value);
+    }
   }
 
   @Override

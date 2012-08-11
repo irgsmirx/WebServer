@@ -352,4 +352,10 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
     this.connectionType = value;
   }
 
+  @Override
+  public void redirect(String destination) {
+    statusCode = HttpStatusCode.STATUS_302_FOUND;
+    headers.addHeader(new StringHttpHeader("Location", destination));
+  }
+  
 }

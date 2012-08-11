@@ -4,6 +4,7 @@
  */
 package http;
 
+import java.net.URI;
 import web.IResponse;
 
 /**
@@ -14,5 +15,7 @@ public interface IHttpResponse extends IHttpMessage, IResponse {
   
   IHttpStatusCode getStatusCode();
   void setStatusCode(IHttpStatusCode value);
+ 
+  void redirect(String destination);
   
 }
