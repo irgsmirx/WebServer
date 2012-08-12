@@ -8,7 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest extends HttpMessage implements IHttpRequest {
-	protected HttpMethod method;
+	
+  private InputStream inputStream;
+  
+  protected HttpMethod method;
 	protected URI uri;
 	
 	protected HttpBrowserCapabilities browser;
@@ -262,4 +265,14 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 		return userLanguages;
 	}
 	
+  @Override
+  public InputStream getInputStream() {
+    return inputStream;
+  }
+  
+  @Override
+  public void setInputStream(InputStream value) {
+    this.inputStream = value;
+  }
+  
 }

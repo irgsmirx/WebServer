@@ -12,9 +12,12 @@ import java.net.InetAddress;
  */
 public interface IHttpListener {
   
-  void addContextHandler(IHttpContextHandler value);
-  void removeContextHandler(IHttpContextHandler value);
-  void clearContextHandlers();
+  void setContextHandler(IHttpContextHandler value);
+  void unsetContextHandler();
+  
+//  void addModule(IHttpModule value);
+//  void removeModule(IHttpModule value);
+//  void clearModules();
   
   int getPort();
   void setPort(int value);

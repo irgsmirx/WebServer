@@ -13,5 +13,8 @@ public interface IHttpResourceProvider {
   void addResource(IHttpResource value);
   void removeResource(IHttpResource value);
   boolean containsResource(IHttpResource value);
+  boolean containsResource(String relativePath);
+  IHttpResource getResource(String relativePath);
+  void clearResources();
   
 }

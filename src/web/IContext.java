@@ -4,16 +4,14 @@
  */
 package web;
 
-import java.io.InputStream;
-
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IRequest {
+public interface IContext {
   
-  InputStream getInputStream();
-  void setInputStream(InputStream value);
-
+  IRequest getRequest();
+  
+  IResponse getResponse();
   
 }

@@ -6,15 +6,15 @@ package webserver;
  * as comments in the source code.
  */
 import http.*;
+import http.handlers.IHttpRequestHandler;
 import http.modules.IHttpModule;
-import web.modules.IModule;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-public class WebServer implements HttpConstants, IHttpContextHandler {
+public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
 
   private boolean running;
   
@@ -34,8 +34,8 @@ public class WebServer implements HttpConstants, IHttpContextHandler {
 	protected Properties props = new Properties();
 
   protected final List<IHttpListener> httpListeners = Collections.synchronizedList(new ArrayList<IHttpListener>());
+  protected final List<IHttpRequestHandler> requestHandlers = Collections.synchronizedList(new ArrayList<IHttpRequestHandler>());
   protected final List<IHttpModule> modules = Collections.synchronizedList(new ArrayList<IHttpModule>());
-  protected final List<IHttpContextHandler> contextHandlers = Collections.synchronizedList(new ArrayList<IHttpContextHandler>());
 	
 	/*
 	 * timeout on client connections
@@ -151,7 +151,7 @@ public class WebServer implements HttpConstants, IHttpContextHandler {
       //listener.ErrorPageRequested += Listener_OnErrorPage;
       //listener.RequestReceived += OnRequest;
       //listener.ContentLengthLimit = ContentLengthLimit;
-      listener.addContextHandler(this);
+      listener.setContextHandler(this);
       listener.startListening();
     }
     running = true;
@@ -162,20 +162,31 @@ public class WebServer implements HttpConstants, IHttpContextHandler {
       //listener.ErrorPageRequested += Listener_OnErrorPage;
       //listener.RequestReceived += OnRequest;
       //listener.ContentLengthLimit = ContentLengthLimit;
-      listener.removeContextHandler(this);
+      listener.unsetContextHandler();
       listener.stopListening();
     }
     running = false;
   }
   
-  public void addContextHandler(IHttpContextHandler contextHandler) {
-    contextHandlers.add(contextHandler);
+  public void addRequestHandler(IHttpRequestHandler requestHandler) {
+    requestHandlers.add(requestHandler);
+  }
+
+  @Override
+  public void handleRequest(IHttpRequest request) {
+    for (IHttpRequestHandler requestHandler : requestHandlers) {
+      requestHandler.handleRequest(request);
+    }
+  }
+  
+  public void addModule(IHttpModule module) {
+    modules.add(module);
   }
 
   @Override
   public void handleContext(IHttpContext context) {
-    for (IHttpContextHandler contextHandler : contextHandlers) {
-      contextHandler.handleContext(context);
+    for (IHttpModule module : modules) {
+      module.processHttpContext(context);
     }
   }
   

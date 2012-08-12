@@ -2,12 +2,15 @@ package http;
 
 import exceptions.HttpException;
 import java.io.File;
+import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.util.*;
 import web.ConnectionType;
 
 public class HttpResponse extends HttpMessage implements IHttpResponse {
 
+  private OutputStream outputStream;
+  
 	protected IHttpStatusCode statusCode;
   protected ConnectionType connectionType;
 
@@ -356,6 +359,16 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
   public void redirect(String destination) {
     statusCode = HttpStatusCode.STATUS_302_FOUND;
     headers.addHeader(new StringHttpHeader("Location", destination));
+  }
+  
+  @Override
+  public OutputStream getOutputStream() {
+    return outputStream;
+  }
+  
+  @Override
+  public void setOutputStream(OutputStream value) {
+    this.outputStream = value;
   }
   
 }

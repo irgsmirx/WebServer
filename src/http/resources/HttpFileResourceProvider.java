@@ -4,6 +4,8 @@
  */
 package http.resources;
 
+import exceptions.HttpException;
+import exceptions.ResourceNotFoundException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -36,6 +38,30 @@ public class HttpFileResourceProvider implements IHttpResourceProvider {
     } catch (NullPointerException npex) {
       return false;
     }
+  }
+
+  @Override
+  public boolean containsResource(String relativePath) {
+    try {
+      return resources.containsKey(relativePath.toLowerCase());
+    } catch (NullPointerException npex) {
+      return false;
+    }
+  }
+
+  @Override
+  public IHttpResource getResource(String relativePath) {
+    try {
+      return resources.get(relativePath.toLowerCase());
+    } catch (NullPointerException npex) {
+      throw new ResourceNotFoundException(npex);
+    }    
+  }
+
+  
+  @Override
+  public void clearResources() {
+    resources.clear();
   }
   
 }

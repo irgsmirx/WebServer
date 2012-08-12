@@ -4,16 +4,15 @@
  */
 package http.modules;
 
-import http.IHttpContext;
-import web.modules.IModule;
-
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IHttpModule extends IModule {
+public interface IHttpModules extends Iterable<IHttpModule> {
   
-  void processHttpContext(IHttpContext httpContext);
-  boolean isHandled();
+  void add(IHttpModule module);
+  void remove(IHttpModule module);
+  IHttpModule getAt(int index);
+  int numberOfModules();
   
 }

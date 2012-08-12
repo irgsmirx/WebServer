@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package http;
+package http.handlers;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,22 +12,22 @@ import java.util.List;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class HttpContextHandlers implements IHttpContextHandlers {
+public class HttpRequestHandlers implements IHttpRequestHandlers {
 
-  private List<IHttpContextHandler> handlers = new ArrayList<>();
+  private List<IHttpRequestHandler> handlers = new ArrayList<>();
   
   @Override
-  public void add(IHttpContextHandler handler) {
+  public void add(IHttpRequestHandler handler) {
     handlers.add(handler);
   }
 
   @Override
-  public void remove(IHttpContextHandler handler) {
+  public void remove(IHttpRequestHandler handler) {
     handlers.remove(handler);
   }
 
   @Override
-  public IHttpContextHandler getAt(int index) {
+  public IHttpRequestHandler getAt(int index) {
     return handlers.get(index);
   }
 
@@ -37,7 +37,7 @@ public class HttpContextHandlers implements IHttpContextHandlers {
   }
 
   @Override
-  public Iterator<IHttpContextHandler> iterator() {
+  public Iterator<IHttpRequestHandler> iterator() {
     return handlers.iterator();
   }
   

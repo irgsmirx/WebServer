@@ -12,6 +12,7 @@ import http.resources.IHttpResourceProvider;
  */
 public abstract class AbstractHttpModule implements IHttpModule {
   
+  protected boolean handled;
   protected IHttpResourceProvider resourceProvider;
   
 }

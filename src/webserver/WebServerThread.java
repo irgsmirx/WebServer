@@ -1,11 +1,14 @@
 package webserver;
 
 import exceptions.HttpException;
+import exceptions.ResourceNotFoundException;
 import http.*;
+import http.handlers.HttpRequestHandlers;
+import http.handlers.IHttpRequestHandler;
+import http.handlers.IHttpRequestHandlers;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -31,7 +34,9 @@ public class WebServerThread implements Runnable {
 	private Socket socket;
   private IHttpContext context;
   
-  private IHttpContextHandlers contextHandlers = new HttpContextHandlers();
+  private IHttpRequestHandlers requestHandlers = new HttpRequestHandlers();
+  //private IHttpModules modules = new HttpModules();
+  private IHttpContextHandler contextHandler = null;
   
 	public WebServerThread(Socket socket) {
     initializeBuffer();
@@ -92,12 +97,17 @@ public class WebServerThread implements Runnable {
 			context = establishContext(is, os);
       
       handleContext(context);
-		}	catch (HttpException e) {
-			IHttpResponse httpResponse = createHttpResponseForStatusCode(HttpStatusCode.STATUS_400_BAD_REQUEST);
+    } catch (ResourceNotFoundException rnfex) {
+			IHttpResponse httpResponse = createHttpResponseForStatusCode(HttpStatusCode.STATUS_404_NOT_FOUND);
       
       IHttpResponseWriter responseWriter = new HttpResponseWriter(os);
       responseWriter.writeResponse(httpResponse);
-		} catch (SocketTimeoutException e) {
+		}	catch (HttpException he) {
+			IHttpResponse httpResponse = createHttpResponseForStatusCode(he.getStatusCode());
+      
+      IHttpResponseWriter responseWriter = new HttpResponseWriter(os);
+      responseWriter.writeResponse(httpResponse);
+		} catch (SocketTimeoutException ste) {
 			IHttpResponse httpResponse = createHttpResponseForStatusCode(HttpStatusCode.STATUS_408_REQUEST_TIMEOUT);
 
       IHttpResponseWriter responseWriter = new HttpResponseWriter(os);
@@ -122,14 +132,14 @@ public class WebServerThread implements Runnable {
   }
   
   private IHttpContext establishContext(InputStream is, OutputStream os) throws IOException, HttpException {
-    IHttpRequest httpRequest = parseHttpRequest(is, os);
+    IHttpRequest httpRequest = parseHttpRequest(is);
     
     IHttpResponse httpResonse = createHttpResponseFromHttpRequest(httpRequest);
     
     return new HttpContext(httpRequest, httpResonse);
   }
   
-  private IHttpRequest parseHttpRequest(InputStream is, OutputStream os) {
+  private IHttpRequest parseHttpRequest(InputStream is) {
     IHttpParser httpParser = new HttpParser();
     
     return httpParser.parseRequest(is);
@@ -167,14 +177,17 @@ public class WebServerThread implements Runnable {
 
     httpResponse.getHeaders().addHeader(new StringHttpHeader("Date", formatter.format(date)));
     httpResponse.getHeaders().addHeader(new StringHttpHeader("Connection", "close"));
-    httpResponse.getHeaders().addHeader(new StringHttpHeader("Content-Length", String.valueOf(httpResponse.getContentLength())));
-    httpResponse.setContentType("text/html");
-		//responseHeader.put("Server", WebServer.serverid);
+  }
+  
+  private void handleRequest(IHttpRequest request) {
+    for (IHttpRequestHandler handler : requestHandlers) {
+      handler.handleRequest(request);
+    }
   }
   
   private void handleContext(IHttpContext context) {
-    for (IHttpContextHandler handler : contextHandlers) {
-      handler.handleContext(context);
+    if (contextHandler != null) {
+      contextHandler.handleContext(context);
     }
   }
 
@@ -246,7 +259,7 @@ public class WebServerThread implements Runnable {
 				int ind = name.lastIndexOf('.');
 				String ct = null;
 				if (ind > 0) {
-					ct = (String) map.get(name.substring(ind));
+					//ct = (String) map.get(name.substring(ind));
 				}
 				if (ct == null) {
 					ct = "unknown/unknown";
@@ -287,45 +300,13 @@ public class WebServerThread implements Runnable {
 			w.print(p);
 		}
 	}
-
-	/* mapping of file extensions to content-types */
-	static java.util.Hashtable map = new java.util.Hashtable();
-
-	static {
-		fillMap();
-	}
-	static void setSuffix(String k, String v) {
-		map.put(k, v);
-	}
-
-	static void fillMap() {
-		setSuffix("", "content/unknown");
-		setSuffix(".uu", "application/octet-stream");
-		setSuffix(".exe", "application/octet-stream");
-		setSuffix(".ps", "application/postscript");
-		setSuffix(".zip", "application/zip");
-		setSuffix(".sh", "application/x-shar");
-		setSuffix(".tar", "application/x-tar");
-		setSuffix(".snd", "audio/basic");
-		setSuffix(".au", "audio/basic");
-		setSuffix(".wav", "audio/x-wav");
-		setSuffix(".gif", "image/gif");
-		setSuffix(".jpg", "image/jpeg");
-		setSuffix(".jpeg", "image/jpeg");
-		setSuffix(".htm", "text/html");
-		setSuffix(".html", "text/html");
-		setSuffix(".text", "text/plain");
-		setSuffix(".c", "text/plain");
-		setSuffix(".cc", "text/plain");
-		setSuffix(".c++", "text/plain");
-		setSuffix(".h", "text/plain");
-		setSuffix(".pl", "text/plain");
-		setSuffix(".txt", "text/plain");
-		setSuffix(".java", "text/plain");
-	}
   
-  public void addContextHandler(IHttpContextHandler contextHandler) {
-    contextHandlers.add(contextHandler);
+  public void addRequestHandler(IHttpRequestHandler requestHandler) {
+    requestHandlers.add(requestHandler);
   }
-
+ 
+  public void setContextHandler(IHttpContextHandler contextHandler) {
+    this.contextHandler = contextHandler;
+  }
+  
 }

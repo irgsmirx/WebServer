@@ -4,6 +4,7 @@
  */
 package http;
 
+import java.io.InputStream;
 import java.net.URI;
 import web.IRequest;
 
@@ -20,7 +21,5 @@ public interface IHttpRequest extends IHttpMessage, IRequest {
   
   IHttpVersion getVersion();
   void setVersion(IHttpVersion value);
-
-  
   
 }

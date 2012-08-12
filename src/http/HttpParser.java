@@ -68,8 +68,7 @@ public class HttpParser implements IHttpParser {
 				if (isLF(ch)) {
 					break;
 				} else {
-					throw new HttpException(HttpError.BAD_REQUEST,
-            "Your HTTP client's request contained an unallowed CR control character.");
+					throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request contained an unallowed CR control character.");
 				}
 			}
       
@@ -125,24 +124,24 @@ public class HttpParser implements IHttpParser {
             break;
         case "PUT":
           method = HttpMethod.PUT;
-          throw new HttpException(HttpError.METHOD_NOT_ALLOWED, "Method '" + methodString + "' not allowed!");
+          throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Method '" + methodString + "' not allowed!");
         case "DELETE":
           method = HttpMethod.DELETE;
-          throw new HttpException(HttpError.METHOD_NOT_ALLOWED, "Method '" + methodString + "' not allowed!");
+          throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Method '" + methodString + "' not allowed!");
         case "TRACE":
           method = HttpMethod.TRACE;
-          throw new HttpException(HttpError.METHOD_NOT_ALLOWED, "Method '" + methodString + "' not allowed!");
+          throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Method '" + methodString + "' not allowed!");
         case "CONNECT":
           method = HttpMethod.CONNECT;
-          throw new HttpException(HttpError.METHOD_NOT_ALLOWED, "Method '" + methodString + "' not allowed!");
+          throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Method '" + methodString + "' not allowed!");
         default:
-          throw new HttpException(HttpError.NOT_IMPLEMENTED, "Method '" + methodString + "' not implemented!");
+          throw new HttpException(HttpStatusCode.STATUS_501_NOT_IMPLEMENTED, "Method '" + methodString + "' not implemented!");
       }
 
 			try {
 				uri = new URI(uriString);
 			} catch (URISyntaxException e) {
-				throw new HttpException(HttpError.BAD_REQUEST, "URI '" + uriString + "' not valid!");
+				throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "URI '" + uriString + "' not valid!");
 			}
 
 			if (uri.getQuery() != null) {
@@ -154,10 +153,10 @@ public class HttpParser implements IHttpParser {
 			} else if (versionString.compareTo(HttpUtils.httpVersion(1, 1)) == 0) {
         version = new HttpVersion(1, 1);
 			} else {
-				throw new HttpException(HttpError.VERSION_NOT_SUPPORTED, "Version '" + versionString + "' not supported!");
+				throw new HttpException(HttpStatusCode.STATUS_505_HTTP_VERSION_NOT_SUPPORTED, "Version '" + versionString + "' not supported!");
 			}
 		} else {
-			throw new HttpException(HttpError.BAD_REQUEST, "Request line '" + requestLine + "' invalid!");
+			throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Request line '" + requestLine + "' invalid!");
 		}
     
     return new HttpRequestLine(method, version, uri);
@@ -188,19 +187,19 @@ public class HttpParser implements IHttpParser {
 		while (true) {
 			if (ch == -1) {
 				// unepected end of input
-				throw new HttpException(HttpConstants.HTTP_BAD_REQUEST, "Your HTTP client's request ended unexpectedly.");
+				throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request ended unexpectedly.");
 			} else if (ch == '\r') {
 				last = ch;
 			} else if (ch == '\n') {
 				if (last == '\r') {
 					break;
 				} else {
-					throw new HttpException(HttpConstants.HTTP_BAD_REQUEST,
+					throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
 							"Your HTTP client's request contained an unallowed LF control character.");
 				}
 			} else {
 				if (last == '\r') {
-					throw new HttpException(HttpConstants.HTTP_BAD_REQUEST,
+					throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
 							"Your HTTP client's request contained an unallowed LF control character.");
 				} else {
 					last = ch;
@@ -226,14 +225,14 @@ public class HttpParser implements IHttpParser {
 		while (ch != ':') {
 			if (ch == -1) {
 				// unexpected end of input
-				throw new HttpException(HttpError.BAD_REQUEST, "Your HTTP client's request ended unexpectedly.");
+				throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request ended unexpectedly.");
 			} else if (isCTL(ch)) {
 				// CTL character not allowed
-				throw new HttpException(HttpError.BAD_REQUEST,
+				throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
             String.format("Your HTTP client's request header contained an unallowed CTL character: '%1s'.", (char) (ch & 0xff)));
 			} else if (isSeparator(ch)) {
 				// separator character not allowed
-				throw new HttpException(HttpError.BAD_REQUEST,
+				throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
 						String.format("Your HTTP client's request header contained an unallowed separator character: '%1s'.", (char) (ch & 0xff)));
 			} else {
 				buffer.append(ch);
@@ -323,7 +322,7 @@ public class HttpParser implements IHttpParser {
 				} else {
 					if (insideQuote) {
 						// LF character not allowed in quoted text
-						throw new HttpException(HttpError.BAD_REQUEST,
+						throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
 								"Your HTTP client's request header contained an LF character in quoted text, which is not allowed.");
 					}
 				}
@@ -369,16 +368,16 @@ public class HttpParser implements IHttpParser {
 						String value = URLDecoder.decode(fields[1], "UTF-8");
 						result.put(key, value);
 					} else {
-						throw new HttpException(HttpError.BAD_REQUEST, 
+						throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, 
               String.format("Query part '%1s' is not valid!", pairs[i]));
 					}
 				}
 			} catch (UnsupportedEncodingException e) {
-				throw new HttpException(HttpError.INTERNAL_SERVER_ERROR, 
+				throw new HttpException(HttpStatusCode.STATUS_500_INTERNAL_SERVER_ERROR, 
           String.format("An error occured decoding query '%1s'!", query));
 			}
 		} else {
-			throw new HttpException(HttpError.INTERNAL_SERVER_ERROR, 
+			throw new HttpException(HttpStatusCode.STATUS_500_INTERNAL_SERVER_ERROR, 
         String.format("An error occured decoding query '%1s'!", query));
 		}
 
@@ -404,18 +403,18 @@ public class HttpParser implements IHttpParser {
             long contentLength = contentLengthHeader.getValue();						
             readPlain(is, contentLength);
 					} catch (NumberFormatException e) {
-						throw new HttpException(HttpError.BAD_REQUEST, 
+						throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, 
               String.format("Header field Content-Length contained invalid value '%1s'.", contentLengthHeader.rawValue));
 					}
 				} else {
-					throw new HttpException(HttpError.UNSUPPORTED_MEDIA_TYPE, "Media type is not supported.");
+					throw new HttpException(HttpStatusCode.STATUS_415_UNSUPPORTED_MEDIA_TYPE, "Media type is not supported.");
 				}
 			}
 		} else {
 			if (transferEncoding.compareTo("chunked") == 0) {
 				readChunked(is, headers);
 			} else {
-				throw new HttpException(HttpError.NOT_IMPLEMENTED, 
+				throw new HttpException(HttpStatusCode.STATUS_501_NOT_IMPLEMENTED, 
           String.format("The Transfer-Encoding '%1s' is not supported.", transferEncoding));
 			}
 		}
@@ -436,7 +435,7 @@ public class HttpParser implements IHttpParser {
 
 		while (written < contentLength) {
 			if (ch == -1) {
-				throw new HttpException(HttpError.BAD_REQUEST, "Unexpected end of stream.");
+				throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Unexpected end of stream.");
 			} else {
 				buffer.append(ch);
 				written++;

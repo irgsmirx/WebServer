@@ -11,7 +11,8 @@ package http.resources;
 public class HttpFileResource implements IHttpResource {
 
   protected String relativePath;
-
+  protected String serverPath;
+  
   @Override
   public void setRelativePath(String value) {
     this.relativePath = value;
@@ -22,6 +23,12 @@ public class HttpFileResource implements IHttpResource {
     return relativePath;
   }
   
+  public void setServerPath(String value) {
+    this.serverPath = value;
+  }
   
+  public String getServerPath() {
+    return serverPath;
+  }
   
 }

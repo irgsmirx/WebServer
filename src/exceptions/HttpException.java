@@ -1,6 +1,7 @@
 package exceptions;
 
 import http.HttpError;
+import http.IHttpStatusCode;
 
 public class HttpException extends RuntimeException {
 
@@ -10,47 +11,41 @@ public class HttpException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
 	private int errorCode;
-  private HttpError error;
+  private IHttpStatusCode statusCode;
   
 	public HttpException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public HttpException(int errorCode) {
 		super();
 		this.errorCode = errorCode;
-		// TODO Auto-generated constructor stub
 	}
 
 	public HttpException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	public HttpException(int errorCode, String message) {
 		super(message);
 		this.errorCode = errorCode;
-		// TODO Auto-generated constructor stub
 	}
 
 	public HttpException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	public HttpException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
-  public HttpException(HttpError error) {
-    this.error = error;
+  public HttpException(IHttpStatusCode statusCode) {
+    this.statusCode = statusCode;
   }
   
-  public HttpException(HttpError error, String message) {
+  public HttpException(IHttpStatusCode statusCode, String message) {
     super(message);
-    this.error = error;
+    this.statusCode = statusCode;
   }
   
 	/**
@@ -68,4 +63,8 @@ public class HttpException extends RuntimeException {
 		this.errorCode = errorCode;
 	}
 
+  public IHttpStatusCode getStatusCode() {
+    return statusCode;
+  }
+  
 }

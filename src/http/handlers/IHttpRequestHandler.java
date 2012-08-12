@@ -2,18 +2,16 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package web;
+package http.handlers;
 
-import java.io.InputStream;
+import http.*;
 
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IRequest {
+public interface IHttpRequestHandler {
   
-  InputStream getInputStream();
-  void setInputStream(InputStream value);
-
+  void handleRequest(IHttpRequest request);
   
 }

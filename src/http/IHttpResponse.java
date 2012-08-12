@@ -4,7 +4,7 @@
  */
 package http;
 
-import java.net.URI;
+import java.io.OutputStream;
 import web.IResponse;
 
 /**

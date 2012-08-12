@@ -4,8 +4,8 @@
  */
 package http;
 
-import web.IRequestHandler;
 import exceptions.AlreadyListeningException;
+import http.modules.IHttpModule;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -37,7 +37,8 @@ public class HttpListener implements IHttpListener {
   private ExecutorService threadPool;
   
   
-  private final List<IHttpContextHandler> contextHandlers = new ArrayList<>();
+  //private final List<IHttpModule> modules = new ArrayList<>();
+  private IHttpContextHandler contextHandler = null;
   
   public HttpListener(int port) {
     try {
@@ -57,19 +58,9 @@ public class HttpListener implements IHttpListener {
   }
   
   private void initializeThreadPool() {
-//    threadPool = new ArrayList<>();
-//    createThreads();
-    
     threadPool = Executors.newFixedThreadPool(10);
   }
-  
-//  private void createThreads() {
-//    for (int i = 0; i < 10; i++) {
-//      WebServerThread webServerThread = new WebServerThread();
-//      threadPool.add(webServerThread);
-//    }
-//  }
-  
+ 
   @Override
   public int getPort() {
     return port;
@@ -121,10 +112,11 @@ public class HttpListener implements IHttpListener {
       try {
         Socket socket = listeningSocket.accept();
         WebServerThread wst = new WebServerThread(socket);
-        
-        for (IHttpContextHandler contextHandler : contextHandlers) {
-          wst.addContextHandler(contextHandler);
-        }
+    
+        wst.setContextHandler(contextHandler);
+        //for (IHttpModule module : modules) {
+        //  wst.addModule(module);
+        //}
         
         threadPool.execute(wst);
       } catch (IOException ex) {
@@ -171,18 +163,28 @@ public class HttpListener implements IHttpListener {
   }
 
   @Override
-  public void addContextHandler(IHttpContextHandler value) {
-    contextHandlers.add(value);
-  }
-
-  @Override
-  public void removeContextHandler(IHttpContextHandler value) {
-    contextHandlers.remove(value);
+  public void setContextHandler(IHttpContextHandler value) {
+    this.contextHandler = value;
   }
   
   @Override
-  public void clearContextHandlers() {
-    contextHandlers.clear();
+  public void unsetContextHandler() {
+    this.contextHandler = null;
   }
+  
+//  @Override
+//  public void addModule(IHttpModule value) {
+//    modules.add(value);
+//  }
+//
+//  @Override
+//  public void removeModule(IHttpModule value) {
+//    modules.remove(value);
+//  }
+//  
+//  @Override
+//  public void clearModules() {
+//    modules.clear();
+//  }
   
 }
