@@ -365,7 +365,7 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
   public OutputStream getOutputStream() {
     return outputStream;
   }
-  
+
   @Override
   public void setOutputStream(OutputStream value) {
     this.outputStream = value;

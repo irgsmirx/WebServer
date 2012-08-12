@@ -1,10 +1,11 @@
 package http;
 
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.TreeMap;
 
 public abstract class HttpCodes {
 
-	protected static Hashtable<Integer, String> statusMap = new Hashtable<Integer, String>();
+	protected static Map<Integer, String> statusMap = new TreeMap<>();
 
 	static {
 		fillStatusMap();
