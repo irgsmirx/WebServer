@@ -70,6 +70,8 @@ public class HttpFileModule extends AbstractHttpModule {
         addHttpHeadersForFileToResponse(httpResponse, file);
         IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
         
+        httpResponseWriter.writeResponse(httpResponse);
+        
         int r = -1;
         FileReader fr;
         try {
@@ -93,6 +95,7 @@ public class HttpFileModule extends AbstractHttpModule {
   }
   
   private void addHttpHeadersForFileToResponse(IHttpResponse httpResponse, File file) {
+    httpResponse.setStatusCode(HttpStatusCode.STATUS_200_OK);
     addContentTypeHeaderForFile(httpResponse, file);
     addContentLengthHeaderForFile(httpResponse, file);
   }
@@ -118,15 +121,16 @@ public class HttpFileModule extends AbstractHttpModule {
   private String getFileExtensionFromFilename(String filename) {
     int length = filename.length();
     
-    int num = length;
-    while (--num >= 0) {
+    int num = length - 1;
+    while (num >= 0) {
       int c = filename.codePointAt(num);
       if (c == '.') {
-        return filename.substring(num, length - num);
+        return filename.substring(num + 1, length);
       }
-      if (c == SystemProperties.FILE_SEPARATOR.codePointAt(0)) {
+      if (c == SystemProperties.getFileSeparator().codePointAt(0)) {
         break;
       }
+      num--;
     }
     
     return "";

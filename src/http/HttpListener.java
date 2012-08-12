@@ -5,14 +5,11 @@
 package http;
 
 import exceptions.AlreadyListeningException;
-import http.modules.IHttpModule;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -35,9 +32,7 @@ public class HttpListener implements IHttpListener {
   private int acceptedSockets = 0;
   
   private ExecutorService threadPool;
-  
-  
-  //private final List<IHttpModule> modules = new ArrayList<>();
+
   private IHttpContextHandler contextHandler = null;
   
   public HttpListener(int port) {
@@ -114,9 +109,6 @@ public class HttpListener implements IHttpListener {
         WebServerThread wst = new WebServerThread(socket);
     
         wst.setContextHandler(contextHandler);
-        //for (IHttpModule module : modules) {
-        //  wst.addModule(module);
-        //}
         
         threadPool.execute(wst);
       } catch (IOException ex) {
@@ -171,20 +163,5 @@ public class HttpListener implements IHttpListener {
   public void unsetContextHandler() {
     this.contextHandler = null;
   }
-  
-//  @Override
-//  public void addModule(IHttpModule value) {
-//    modules.add(value);
-//  }
-//
-//  @Override
-//  public void removeModule(IHttpModule value) {
-//    modules.remove(value);
-//  }
-//  
-//  @Override
-//  public void clearModules() {
-//    modules.clear();
-//  }
   
 }

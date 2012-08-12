@@ -133,10 +133,12 @@ public class WebServerThread implements Runnable {
   
   private IHttpContext establishContext(InputStream is, OutputStream os) throws IOException, HttpException {
     IHttpRequest httpRequest = parseHttpRequest(is);
+    httpRequest.setInputStream(is);
     
-    IHttpResponse httpResonse = createHttpResponseFromHttpRequest(httpRequest);
+    IHttpResponse httpResponse = createHttpResponseFromHttpRequest(httpRequest);
+    httpResponse.setOutputStream(os);
     
-    return new HttpContext(httpRequest, httpResonse);
+    return new HttpContext(httpRequest, httpResponse);
   }
   
   private IHttpRequest parseHttpRequest(InputStream is) {
@@ -175,6 +177,7 @@ public class WebServerThread implements Runnable {
 		formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
 		Date date = new Date();
 
+    httpResponse.setVersion(HttpVersion.HTTP_11);
     httpResponse.getHeaders().addHeader(new StringHttpHeader("Date", formatter.format(date)));
     httpResponse.getHeaders().addHeader(new StringHttpHeader("Connection", "close"));
   }
