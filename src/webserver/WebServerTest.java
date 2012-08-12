@@ -32,7 +32,7 @@ public class WebServerTest {
     httpFileModule.getResources().addResource(hfr);
     webServer.addModule(httpFileModule);
     
-    webServer.httpListeners.add(httpListener);
+    webServer.addHttpListener(httpListener);
     
     webServer.start();
   }

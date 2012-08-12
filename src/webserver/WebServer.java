@@ -184,10 +184,14 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
   }
 
   @Override
-  public void handleContext(IHttpContext context) {
+  public synchronized void handleContext(IHttpContext context) {
     for (IHttpModule module : modules) {
       module.processHttpContext(context);
     }
+  }
+  
+  public void addHttpListener(IHttpListener listener) {
+    this.httpListeners.add(listener);
   }
   
 }

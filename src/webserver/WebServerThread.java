@@ -59,14 +59,14 @@ public class WebServerThread implements Runnable {
 
   @Override
 	public synchronized void run() {
-		while (true) {
+		//while (true) {
 			if (socket == null) {
 				/* nothing to do */
 				try {
 					wait();
 				} catch (InterruptedException e) {
 					/* should not happen */
-					continue;
+					//continue;
 				}
 			}
 			try {
@@ -76,7 +76,7 @@ public class WebServerThread implements Runnable {
 			}
 
 			socket = null;
-		}
+		//}
 	}
 
 	private void handleClient() throws IOException, SocketTimeoutException {
