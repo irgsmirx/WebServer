@@ -6,7 +6,6 @@ package http.modules;
 
 import exceptions.HttpException;
 import exceptions.ResourceNotFoundException;
-import http.HttpError;
 import http.HttpMethod;
 import http.HttpResponseWriter;
 import http.HttpStatusCode;
@@ -18,13 +17,10 @@ import http.resources.HttpFileResource;
 import http.resources.HttpFileResourceProvider;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sun.net.www.MimeTable;
 import utilities.common.implementation.SystemProperties;
 import web.MimeTypeMap;
 
