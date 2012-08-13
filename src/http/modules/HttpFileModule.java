@@ -16,11 +16,14 @@ import http.IHttpResponseWriter;
 import http.resources.HttpFileResource;
 import http.resources.HttpFileResourceProvider;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.stream.FileImageInputStream;
 import utilities.common.implementation.SystemProperties;
 import web.MimeTypeMap;
 
@@ -73,11 +76,11 @@ public class HttpFileModule extends AbstractHttpModule {
         httpResponseWriter.writeResponse(httpResponse);
         
         int r = -1;
-        FileReader fr;
+        InputStream is;
         try {
-          fr = new FileReader(file);
+          is = new FileInputStream(file);
           try {
-            while ((r = fr.read()) != -1) {
+            while ((r = is.read()) != -1) {
               httpResponse.getOutputStream().write(r);
             }
           } catch (IOException ex) {
