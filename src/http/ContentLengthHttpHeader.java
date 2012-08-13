@@ -8,10 +8,10 @@ package http;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class ContentTypeHttpHeader extends StringHttpHeader {
+public class ContentLengthHttpHeader extends LongHttpHeader {
   
-  public ContentTypeHttpHeader(String rawValue) {
-    super("Content-Type", rawValue);
+  public ContentLengthHttpHeader(long value) {
+    super("Content-Length", value);
   }
   
 }

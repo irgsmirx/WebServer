@@ -74,6 +74,11 @@ public abstract class HttpMessage extends HttpCodes implements HttpConstants, IH
   @Override
   public void setContentLength(long value) {
     this.contentLength = value;
+    if (headers.contains("Content-Length")) {
+      headers.getHeader("Content-Length").setRawValue(String.valueOf(value));
+    } else {
+      headers.addHeader(new ContentLengthHttpHeader(value));
+    }
   }
   
   @Override
@@ -87,7 +92,7 @@ public abstract class HttpMessage extends HttpCodes implements HttpConstants, IH
     if (headers.contains("Content-Type")) {
       headers.getHeader("Content-Type").setRawValue(value);
     } else {
-      headers.addHeader(new StringHttpHeader("Content-Type", value));
+      headers.addHeader(new ContentTypeHttpHeader(value));
     }
   }
   

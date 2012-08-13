@@ -16,6 +16,11 @@ public class LongHttpHeader extends HttpHeader {
     super(name, rawValue);
     this.value = Long.parseLong(rawValue);
   }
+
+  public LongHttpHeader(String name, long value) {
+    super(name, String.valueOf(value));
+    this.value = value;
+  }
   
   public long getValue() {
     return value;
