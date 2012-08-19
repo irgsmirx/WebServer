@@ -72,12 +72,8 @@ public class HttpParser implements IHttpParser {
 				}
 			}
       
-			HttpBuffer keyBuffer = readHeaderKey(is);
-			String key = keyBuffer.toString();
-			HttpBuffer valueBuffer = readHeaderValue(is);
-			String value = valueBuffer.toString();
-
-      httpHeaders.addHeader(httpHeaderFactory.buildHttpHeader(key, value));
+			IHttpHeader header = parseHeader(is);
+      httpHeaders.addHeader(header);
 		}
     
     return httpHeaders;
