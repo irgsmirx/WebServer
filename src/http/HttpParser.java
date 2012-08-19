@@ -219,9 +219,8 @@ public class HttpParser implements IHttpParser {
   
 	protected HttpBuffer readHeaderKey(InputStream is) {
 		HttpBuffer buffer = new HttpBuffer();
-
-    int ch = -1;
     
+    int ch = -1;
 		while (ch != ':') {
 			if (ch == -1) {
 				// unexpected end of input
@@ -278,15 +277,15 @@ public class HttpParser implements IHttpParser {
 		while (true) {
 			if (ch == -1) {
 				break;
-			} else if (ch == '\r') {
+			} else if (isCR(ch)) {
 				if (last == '\\') {
 					if (insideQuote) {
 						buffer.append(ch);
 					}
 				}
 				last = ch;
-			} else if (ch == '\n') {
-				if (last == '\r') {
+			} else if (isLF(ch)) {
+				if (isCR(last)) {
 					if (insideQuote) {
 						buffer.append('\r');
 						buffer.append('\n');
@@ -309,7 +308,7 @@ public class HttpParser implements IHttpParser {
                   throw new exceptions.IOException(ex);
                 }
 							}
-							if (ch != '\r') {
+							if (!isCR(ch)) {
 								// append a single SP for LWS
 								buffer.append(' ');
 								buffer.append(ch);
