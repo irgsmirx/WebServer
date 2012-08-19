@@ -38,6 +38,10 @@ public class HttpParser implements IHttpParser {
       
     }
 
+    if (requestLine.getVersion().isHTTP11() && !httpRequest.getHeaders().contains("host")) {
+      //throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "HTTP/1.1 request without host header.");
+    }
+    
     httpRequest.setVersion(requestLine.getVersion());
     httpRequest.setUri(requestLine.getURI());
     

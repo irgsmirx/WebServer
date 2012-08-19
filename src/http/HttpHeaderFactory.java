@@ -12,7 +12,21 @@ public class HttpHeaderFactory implements IHttpHeaderFactory {
 
   @Override
   public IHttpHeader buildHttpHeader(String name, String rawValue) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    IHttpHeader header;
+    
+    switch (name.toLowerCase()) {
+      case "host":
+        header = new HostHttpHeader(rawValue);
+        break;
+      case "http_x_requested_with":
+        header = new AjaxHttpHeader();
+        break;
+      default:
+        header = new StringHttpHeader(name, rawValue);
+        break;
+    }
+    
+    return header;    
   }
   
 }
