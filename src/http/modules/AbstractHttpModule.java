@@ -15,4 +15,9 @@ public abstract class AbstractHttpModule implements IHttpModule {
   protected boolean handled;
   protected IHttpResourceProvider resourceProvider;
   
+	@Override
+  public boolean isHandled() {
+    return handled;
+  }
+	
 }

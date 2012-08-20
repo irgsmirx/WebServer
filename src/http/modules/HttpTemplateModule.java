@@ -29,9 +29,9 @@ import web.MimeTypeMap;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class HttpFileModule extends AbstractHttpModule {
+public class HttpTemplateModule extends AbstractHttpModule {
  
-  public HttpFileModule() {
+  public HttpTemplateModule() {
     super();
     this.resourceProvider = new HttpFileResourceProvider();
   }
@@ -82,10 +82,10 @@ public class HttpFileModule extends AbstractHttpModule {
               httpResponse.getOutputStream().write(r);
             }
           } catch (IOException ex) {
-            Logger.getLogger(HttpFileModule.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HttpTemplateModule.class.getName()).log(Level.SEVERE, null, ex);
           }
         } catch (FileNotFoundException ex) {
-          Logger.getLogger(HttpFileModule.class.getName()).log(Level.SEVERE, null, ex);
+          Logger.getLogger(HttpTemplateModule.class.getName()).log(Level.SEVERE, null, ex);
         }
       } else {
         throw new ResourceNotFoundException("File not found.");
@@ -140,5 +140,5 @@ public class HttpFileModule extends AbstractHttpModule {
   public HttpFileResourceProvider getResources() {
     return (HttpFileResourceProvider)resourceProvider;
   }
-
+  
 }
