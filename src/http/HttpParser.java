@@ -26,58 +26,39 @@ public class HttpParser implements IHttpParser {
   
   @Override
   public IHttpRequest parseRequest(InputStream is) {
-    IHttpRequest httpRequest = new HttpRequest();
+    IHttpRequest httpRequest = null;
+		try {
+			IHttpRequestLine requestLine = parseRequestLine(is);
+			IHttpHeaders httpHeaders = parseHeaders(is);
+			
+			if (requestLine.getVersion().isHTTP11() && !httpHeaders.contains("host")) {
+				throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "HTTP/1.1 request without host header.");
+			}
+
+			try {
+				parseBody(is, httpHeaders);
+			} catch (Exception ex) {
+				// temporarily not handled because parseBody is not working as it should
+			}
+			
+			httpRequest = new HttpRequest(httpHeaders);
 		
-    IHttpRequestLine requestLine;
-    requestLine = parseRequestLine(is);
-    
-    try {
-      IHttpHeaders httpHeaders = parseHeaders(is);
-      parseBody(is, httpHeaders);
+			httpRequest.setMethod(requestLine.getMethod());
+			httpRequest.setVersion(requestLine.getVersion());
+			httpRequest.setUri(requestLine.getURI());
     } catch (Exception ex) {
-      
     }
 
-    if (requestLine.getVersion().isHTTP11() && !httpRequest.getHeaders().contains("host")) {
-      //throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "HTTP/1.1 request without host header.");
-    }
-    
-    httpRequest.setVersion(requestLine.getVersion());
-    httpRequest.setUri(requestLine.getURI());
-    
     return httpRequest;
   }
   
   @Override
   public IHttpHeaders parseHeaders(InputStream is) {
     IHttpHeaders httpHeaders = new HttpHeaders();
-    
-    int ch = -1;
-    try {
-      ch = is.read();
-    } catch (IOException ex) {
-      Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
-      throw new exceptions.IOException(ex);
-    }
-
-		while (true) {
-			if (isCR(ch)) {
-        try {
-          ch = is.read();
-        } catch (IOException ex) {
-          Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
-          throw new exceptions.IOException(ex);
-        }
-        
-				if (isLF(ch)) {
-					break;
-				} else {
-					throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request contained an unallowed CR control character.");
-				}
-			}
-      
-			IHttpHeader header = parseHeader(is);
-      httpHeaders.addHeader(header);
+		
+		IHttpHeader header;
+		while ((header = parseHeader(is)) != null) {
+			httpHeaders.addHeader(header);
 		}
     
     return httpHeaders;
@@ -85,12 +66,21 @@ public class HttpParser implements IHttpParser {
   
   @Override
   public IHttpHeader parseHeader(InputStream is) {
-    HttpBuffer keyBuffer = readHeaderKey(is);
-    String key = keyBuffer.toString();
-    HttpBuffer valueBuffer = readHeaderValue(is);
-  	String rawValue = valueBuffer.toString();
+		IHttpHeader header;
+		
+		HttpBuffer keyBuffer = readHeaderKey(is);
     
-    return httpHeaderFactory.buildHttpHeader(key, rawValue);
+		if (keyBuffer.length == 0) {
+			header = null;
+		} else {
+			String key = keyBuffer.toString();
+			HttpBuffer valueBuffer = readHeaderValue(is);
+			String rawValue = valueBuffer.toString();
+    
+	    header = httpHeaderFactory.buildHttpHeader(key, rawValue);
+		}
+		
+		return header;
   }
   
   @Override
@@ -219,31 +209,44 @@ public class HttpParser implements IHttpParser {
   
 	protected HttpBuffer readHeaderKey(InputStream is) {
 		HttpBuffer buffer = new HttpBuffer();
-    
-    int ch = -1;
-		while (ch != ':') {
-			if (ch == -1) {
-				// unexpected end of input
-				throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request ended unexpectedly.");
-			} else if (isCTL(ch)) {
-				// CTL character not allowed
-				throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
-            String.format("Your HTTP client's request header contained an unallowed CTL character: '%1s'.", (char) (ch & 0xff)));
-			} else if (isSeparator(ch)) {
-				// separator character not allowed
-				throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
-						String.format("Your HTTP client's request header contained an unallowed separator character: '%1s'.", (char) (ch & 0xff)));
-			} else {
-				buffer.append(ch);
+
+		int last = -1;
+		int ch = -1;
+    try {
+			while ((ch = is.read()) != ':') {
+				if (isCR(ch)) {
+					try {
+						ch = is.read();
+					} catch (IOException ex) {
+						Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+						throw new exceptions.IOException(ex);
+					}
+
+					if (isLF(ch)) {
+						break;
+					} else {
+						throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request contained an unallowed CR control character.");
+					}
+				} else if (ch == -1) {
+					// unexpected end of input
+					throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request ended unexpectedly.");
+				} else if (isCTL(ch)) {
+					// CTL character not allowed
+					throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
+							String.format("Your HTTP client's request header contained an unallowed CTL character: '%1s'.", (char) (ch & 0xff)));
+				} else if (isSeparator(ch)) {
+					// separator character not allowed
+					throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
+							String.format("Your HTTP client's request header contained an unallowed separator character: '%1s'.", (char) (ch & 0xff)));
+				} else {
+					buffer.append(ch);
+				}
 			}
-      
-      try {
-        ch = is.read();
-      } catch (IOException ex) {
-        Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
-        throw new exceptions.IOException(ex);
-      }
-		}
+    } catch (IOException ex) {
+      Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+      throw new exceptions.IOException(ex);
+    }
+
 
 		return buffer;
 	}
@@ -255,98 +258,59 @@ public class HttpParser implements IHttpParser {
     int ch = -1;
     
     try {
-      ch = is.read();
-    } catch (IOException ex) {
-      Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
-      throw new exceptions.IOException(ex);
-    }
-
-		boolean insideQuote = false;
-
-		// skip LWS
-		while (isSP(ch) || isHT(ch)) {
-			last = ch;
-      try {
-        ch = is.read();
-      } catch (IOException ex) {
-        Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
-        throw new exceptions.IOException(ex);
-      }
-		}
-
-		while (true) {
-			if (ch == -1) {
-				break;
-			} else if (isCR(ch)) {
-				if (last == '\\') {
-					if (insideQuote) {
-						buffer.append(ch);
-					}
-				}
-				last = ch;
-			} else if (isLF(ch)) {
-				if (isCR(last)) {
-					if (insideQuote) {
-						buffer.append('\r');
-						buffer.append('\n');
-					} else {
-            try {
-              ch = is.read();
-            } catch (IOException ex) {
-              Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
-              throw new exceptions.IOException(ex);
-            }
-
-						if (isSP(ch) || isHT(ch)) {
-							// we are in a continuation line, skip LWS
-							while (isSP(ch) || isHT(ch)) {
-								last = ch;
-                try {
-                  ch = is.read();
-                } catch (IOException ex) {
-                  Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
-                  throw new exceptions.IOException(ex);
-                }
-							}
-							if (!isCR(ch)) {
-								// append a single SP for LWS
-								buffer.append(' ');
-								buffer.append(ch);
-							}
-						} else {
-							// finished reading value
-							break;
+			boolean insideQuote = false;
+			boolean before = true;
+		
+			while ((ch = is.read()) != -1) {
+				if (before && isLWS(ch)) {
+					// skip LWS
+					continue;
+				} else if (isCR(ch)) {
+					before = false;
+					if (last == '\\') {
+						if (insideQuote) {
+							buffer.append(ch);
 						}
 					}
-				} else {
-					if (insideQuote) {
-						// LF character not allowed in quoted text
-						throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
-								"Your HTTP client's request header contained an LF character in quoted text, which is not allowed.");
+					last = ch;
+				} else if (isLF(ch)) {
+					before = false;
+					if (isCR(last)) {
+						if (insideQuote) {
+							buffer.append('\r');
+							buffer.append('\n');
+						} else {
+							break;
+						}
+					} else {
+						if (insideQuote) {
+							// LF character not allowed in quoted text
+							throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
+									"Your HTTP client's request header contained an LF character in quoted text, which is not allowed.");
+						}
 					}
-				}
-			} else if (ch == '\"') {
-				if (last == '\\') {
-					if (insideQuote) {
-						buffer.append(ch);
+				} else if (ch == '\"') {
+					before = false;
+					if (last == '\\') {
+						if (insideQuote) {
+							buffer.append(ch);
+						} else {
+							insideQuote = true;
+						}
 					} else {
 						insideQuote = !insideQuote;
 					}
 				} else {
-					insideQuote = !insideQuote;
+					before = false;
+					last = ch;
+					buffer.append(ch);
 				}
-			} else {
-				last = ch;
-				buffer.append(ch);
 			}
-      try {
-        ch = is.read();
-      } catch (IOException ex) {
-        Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
-        throw new exceptions.IOException(ex);
-      }
-		}
-
+    } catch (IOException ex) {
+      Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+      throw new exceptions.IOException(ex);
+    }
+		
 		return buffer;
 	}
   
@@ -514,6 +478,10 @@ public class HttpParser implements IHttpParser {
 		return (ch == 9);
 	}
 
+	public static boolean isLWS(int ch) {
+		return isSP(ch) || isHT(ch);
+	}
+	
 	public static boolean isDoubleQuoteMark(int ch) {
 		return (ch == 34);
 	}

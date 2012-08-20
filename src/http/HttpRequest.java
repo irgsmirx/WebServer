@@ -45,17 +45,13 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 
 	public HttpRequest(InputStream is) throws IOException, HttpException {
 		HttpParser parser = new HttpParser();
-    parser.parseHeaders(is);
+    this.headers = parser.parseHeaders(is);
 	}
 
-	public HttpRequest(HttpMethod method, URI uri, int major, int minor, Map<String, String> general_header,
-			Map<String, String> request_header, Map<String, String> entity_header) {
-		this.method = method;
-		this.uri = uri;
+	public HttpRequest(IHttpHeaders httpHeaders) {
+		this.headers = httpHeaders;
 	}
-
-
-
+	
 	protected static int contains(String[] array, String value) {
 		for (int i = 0; i < array.length; i++) {
 			if (array[i].compareTo(value) == 0) {
@@ -98,6 +94,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 	/**
 	 * @return Returns the method.
 	 */
+	@Override
 	public HttpMethod getMethod() {
 		return method;
 	}
@@ -106,6 +103,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 	 * @param method
 	 *          The method to set.
 	 */
+	@Override
 	public void setMethod(HttpMethod value) {
 		this.method = value;
 	}
