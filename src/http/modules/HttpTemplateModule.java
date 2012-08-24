@@ -16,12 +16,6 @@ import http.IHttpResponseWriter;
 import http.resources.HttpTemplateResource;
 import http.resources.HttpTemplateResourceProvider;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import utilities.common.implementation.SystemProperties;
 import utilities.templates.ITemplate;
 import web.MimeTypeMap;
@@ -43,6 +37,8 @@ public class HttpTemplateModule extends AbstractHttpModule {
       if (resourceExists(httpContext.getRequest().getUri().getPath())) {
         HttpTemplateResource templateResource = getTemplateResource(httpContext.getRequest().getUri().getPath());
         writeTemplateResourceToHttpResponse(httpContext.getResponse(), templateResource);
+        
+        handled = true;
       } else {
         throw new ResourceNotFoundException("Resource not found.");
       }

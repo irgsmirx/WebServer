@@ -81,6 +81,8 @@ public class HttpFileModule extends AbstractHttpModule {
           } catch (IOException ex) {
             Logger.getLogger(HttpFileModule.class.getName()).log(Level.SEVERE, null, ex);
             throw new HttpException(HttpStatusCode.STATUS_500_INTERNAL_SERVER_ERROR, "Could not read file.");
+          } finally {
+            handled = true;
           }
         } catch (FileNotFoundException ex) {
           Logger.getLogger(HttpFileModule.class.getName()).log(Level.SEVERE, null, ex);

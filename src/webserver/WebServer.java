@@ -11,6 +11,7 @@ import http.modules.IHttpModule;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -185,8 +186,21 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
 
   @Override
   public synchronized void handleContext(IHttpContext context) {
-    for (IHttpModule module : modules) {
-      module.processHttpContext(context);
+    Iterator<IHttpModule> moduleIterator = modules.iterator();
+    
+    while(moduleIterator.hasNext()) {
+      IHttpModule module = moduleIterator.next();
+      try {
+        module.processHttpContext(context);
+      } catch(Exception ex) {
+        if (!moduleIterator.hasNext()) {
+          throw ex;
+        }
+      } finally {
+        if (module.isHandled()) {
+          break;
+        }
+      }
     }
   }
   
