@@ -17,7 +17,9 @@ import http.resources.HttpTemplateResource;
 import http.resources.HttpTemplateResourceProvider;
 import java.io.File;
 import utilities.common.implementation.SystemProperties;
+import utilities.templates.FileTemplate;
 import utilities.templates.ITemplate;
+import utilities.templates.StringTemplate;
 import web.MimeTypeMap;
 
 /**
@@ -57,18 +59,26 @@ public class HttpTemplateModule extends AbstractHttpModule {
   }
   
   private void writeTemplateResourceToHttpResponse(IHttpResponse httpResponse, HttpTemplateResource templateResource) {
-    File file = new File(templateResource.getServerPath());
+    ITemplate template = templateResource.getTemplate();
+
+    if (template instanceof FileTemplate) {
+      writeFileTemplateToHttpResponse(httpResponse, (FileTemplate)template);
+    } else if (template instanceof StringTemplate) {
+      writeStringTemplateToHttpResponse(httpResponse, (StringTemplate)template);
+    }
+  }
+  
+  private void writeFileTemplateToHttpResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
+    File file = fileTemplate.getTemplate();
     
     if (file.exists()) {
       if (file.canRead()) {
-        ITemplate template = templateResource.getTemplate();
-                
-        addHttpHeadersForTemplateToResponse(httpResponse, file);
+        addHttpHeadersForFileTemplateToResponse(httpResponse, file);
         IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
         
         httpResponseWriter.writeResponse(httpResponse);
         
-        template.renderTo(httpResponse.getOutputStream());
+        fileTemplate.renderTo(httpResponse.getOutputStream());
       } else {
         throw new ResourceNotFoundException("Template not found.");
       }      
@@ -77,10 +87,25 @@ public class HttpTemplateModule extends AbstractHttpModule {
     }
   }
   
-  private void addHttpHeadersForTemplateToResponse(IHttpResponse httpResponse, File file) {
+  private void writeStringTemplateToHttpResponse(IHttpResponse httpResponse, StringTemplate stringTemplate) {
+    addHttpHeadersForStringTemplateToResponse(httpResponse, stringTemplate.getTemplate());
+    IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
+
+    httpResponseWriter.writeResponse(httpResponse);
+
+    stringTemplate.renderTo(httpResponse.getOutputStream());
+  }
+  
+  private void addHttpHeadersForFileTemplateToResponse(IHttpResponse httpResponse, File file) {
     httpResponse.setStatusCode(HttpStatusCode.STATUS_200_OK);
     addContentTypeHeaderForFile(httpResponse, file);
     addContentLengthHeaderForFile(httpResponse, file);
+  }
+  
+  private void addHttpHeadersForStringTemplateToResponse(IHttpResponse httpResponse, String string) {
+    httpResponse.setStatusCode(HttpStatusCode.STATUS_200_OK);
+    addContentTypeHeaderForString(httpResponse);
+    addContentLengthHeaderForString(httpResponse, string);
   }
   
   private void addContentTypeHeaderForFile(IHttpResponse httpResponse, File file) {
@@ -97,8 +122,16 @@ public class HttpTemplateModule extends AbstractHttpModule {
     httpResponse.setContentType(mimeType);
   }
   
+  private void addContentTypeHeaderForString(IHttpResponse httpResponse) {
+    httpResponse.setContentType("text/html");
+  }
+  
   private void addContentLengthHeaderForFile(IHttpResponse httpResponse, File file) {
     httpResponse.setContentLength(file.length());
+  }
+  
+  private void addContentLengthHeaderForString(IHttpResponse httpResponse, String string) {
+    httpResponse.setContentLength(string.getBytes().length);
   }
   
   private String getFileExtensionFromFilename(String filename) {

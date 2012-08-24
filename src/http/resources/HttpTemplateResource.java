@@ -10,7 +10,7 @@ import utilities.templates.ITemplate;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class HttpTemplateResource extends HttpFileResource {
+public class HttpTemplateResource extends AbstractHttpResource {
   
   private ITemplate template;
   
