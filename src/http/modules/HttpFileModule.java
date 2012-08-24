@@ -15,6 +15,7 @@ import http.IHttpResponse;
 import http.IHttpResponseWriter;
 import http.resources.HttpFileResource;
 import http.resources.HttpFileResourceProvider;
+import http.resources.IHttpResource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,7 +40,7 @@ public class HttpFileModule extends AbstractHttpModule {
   @Override
   public void processHttpContext(IHttpContext httpContext) {
     if (isGetOrHeadMethod(httpContext.getRequest())) {
-      if (fileResourceExists(httpContext.getRequest().getUri().getPath())) {
+      if (resourceExists(httpContext.getRequest().getUri().getPath())) {
         HttpFileResource fileResource = getFileResource(httpContext.getRequest().getUri().getPath());
         writeFileResourceToHttpResponse(httpContext.getResponse(), fileResource);
       } else {
@@ -55,12 +56,8 @@ public class HttpFileModule extends AbstractHttpModule {
             || httpRequest.getMethod() == HttpMethod.HEAD;
   }
   
-  private boolean fileResourceExists(String uriPath) {
-    return resourceProvider.containsResource(uriPath);
-  }
-  
   private HttpFileResource getFileResource(String uriPath) {
-    return (HttpFileResource) getResources().getResource(uriPath);
+    return (HttpFileResource) getResource(uriPath);
   }
   
   private void writeFileResourceToHttpResponse(IHttpResponse httpResponse, HttpFileResource fileResource) {
@@ -73,7 +70,7 @@ public class HttpFileModule extends AbstractHttpModule {
         
         httpResponseWriter.writeResponse(httpResponse);
         
-        int r = -1;
+        int r;
         InputStream is;
         try {
           is = new FileInputStream(file);
@@ -83,9 +80,11 @@ public class HttpFileModule extends AbstractHttpModule {
             }
           } catch (IOException ex) {
             Logger.getLogger(HttpFileModule.class.getName()).log(Level.SEVERE, null, ex);
+            throw new HttpException(HttpStatusCode.STATUS_500_INTERNAL_SERVER_ERROR, "Could not read file.");
           }
         } catch (FileNotFoundException ex) {
           Logger.getLogger(HttpFileModule.class.getName()).log(Level.SEVERE, null, ex);
+          throw new ResourceNotFoundException("File not found.");
         }
       } else {
         throw new ResourceNotFoundException("File not found.");
@@ -137,7 +136,7 @@ public class HttpFileModule extends AbstractHttpModule {
     return "";
   }
   
-  public HttpFileResourceProvider getResources() {
+  public HttpFileResourceProvider getFileResources() {
     return (HttpFileResourceProvider)resourceProvider;
   }
 

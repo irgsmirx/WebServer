@@ -4,6 +4,8 @@
  */
 package http.modules;
 
+import http.resources.HttpFileResourceProvider;
+import http.resources.IHttpResource;
 import http.resources.IHttpResourceProvider;
 
 /**
@@ -18,6 +20,18 @@ public abstract class AbstractHttpModule implements IHttpModule {
 	@Override
   public boolean isHandled() {
     return handled;
+  }
+  
+  public IHttpResourceProvider getResources() {
+    return resourceProvider;
+  }
+  
+  protected boolean resourceExists(String uriPath) {
+    return resourceProvider.containsResource(uriPath);
+  }
+  
+  protected IHttpResource getResource(String uriPath) {
+    return resourceProvider.getResource(uriPath);
   }
 	
 }

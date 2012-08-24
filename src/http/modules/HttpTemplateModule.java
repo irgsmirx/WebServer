@@ -13,8 +13,8 @@ import http.IHttpContext;
 import http.IHttpRequest;
 import http.IHttpResponse;
 import http.IHttpResponseWriter;
-import http.resources.HttpFileResource;
-import http.resources.HttpFileResourceProvider;
+import http.resources.HttpTemplateResource;
+import http.resources.HttpTemplateResourceProvider;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utilities.common.implementation.SystemProperties;
+import utilities.templates.ITemplate;
 import web.MimeTypeMap;
 
 /**
@@ -33,15 +34,15 @@ public class HttpTemplateModule extends AbstractHttpModule {
  
   public HttpTemplateModule() {
     super();
-    this.resourceProvider = new HttpFileResourceProvider();
+    this.resourceProvider = new HttpTemplateResourceProvider();
   }
   
   @Override
   public void processHttpContext(IHttpContext httpContext) {
     if (isGetOrHeadMethod(httpContext.getRequest())) {
-      if (fileResourceExists(httpContext.getRequest().getUri().getPath())) {
-        HttpFileResource fileResource = getFileResource(httpContext.getRequest().getUri().getPath());
-        writeFileResourceToHttpResponse(httpContext.getResponse(), fileResource);
+      if (resourceExists(httpContext.getRequest().getUri().getPath())) {
+        HttpTemplateResource templateResource = getTemplateResource(httpContext.getRequest().getUri().getPath());
+        writeTemplateResourceToHttpResponse(httpContext.getResponse(), templateResource);
       } else {
         throw new ResourceNotFoundException("Resource not found.");
       }
@@ -55,47 +56,32 @@ public class HttpTemplateModule extends AbstractHttpModule {
             || httpRequest.getMethod() == HttpMethod.HEAD;
   }
   
-  private boolean fileResourceExists(String uriPath) {
-    return resourceProvider.containsResource(uriPath);
+  private HttpTemplateResource getTemplateResource(String uriPath) {
+    return (HttpTemplateResource) getResource(uriPath);
   }
   
-  private HttpFileResource getFileResource(String uriPath) {
-    return (HttpFileResource) getResources().getResource(uriPath);
-  }
-  
-  private void writeFileResourceToHttpResponse(IHttpResponse httpResponse, HttpFileResource fileResource) {
-    File file = new File(fileResource.getServerPath());
+  private void writeTemplateResourceToHttpResponse(IHttpResponse httpResponse, HttpTemplateResource templateResource) {
+    File file = new File(templateResource.getServerPath());
     
     if (file.exists()) {
       if (file.canRead()) {
-        addHttpHeadersForFileToResponse(httpResponse, file);
+        ITemplate template = templateResource.getTemplate();
+                
+        addHttpHeadersForTemplateToResponse(httpResponse, file);
         IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
         
         httpResponseWriter.writeResponse(httpResponse);
         
-        int r = -1;
-        InputStream is;
-        try {
-          is = new FileInputStream(file);
-          try {
-            while ((r = is.read()) != -1) {
-              httpResponse.getOutputStream().write(r);
-            }
-          } catch (IOException ex) {
-            Logger.getLogger(HttpTemplateModule.class.getName()).log(Level.SEVERE, null, ex);
-          }
-        } catch (FileNotFoundException ex) {
-          Logger.getLogger(HttpTemplateModule.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        template.renderTo(httpResponse.getOutputStream());
       } else {
-        throw new ResourceNotFoundException("File not found.");
+        throw new ResourceNotFoundException("Template not found.");
       }      
     } else {
-      throw new ResourceNotFoundException("File not found.");
+      throw new ResourceNotFoundException("Template not found.");
     }
   }
   
-  private void addHttpHeadersForFileToResponse(IHttpResponse httpResponse, File file) {
+  private void addHttpHeadersForTemplateToResponse(IHttpResponse httpResponse, File file) {
     httpResponse.setStatusCode(HttpStatusCode.STATUS_200_OK);
     addContentTypeHeaderForFile(httpResponse, file);
     addContentLengthHeaderForFile(httpResponse, file);
@@ -137,8 +123,8 @@ public class HttpTemplateModule extends AbstractHttpModule {
     return "";
   }
   
-  public HttpFileResourceProvider getResources() {
-    return (HttpFileResourceProvider)resourceProvider;
+  public HttpTemplateResourceProvider getTemplateResources() {
+    return (HttpTemplateResourceProvider)resourceProvider;
   }
   
 }
