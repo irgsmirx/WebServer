@@ -5,6 +5,7 @@ package webserver;
  * Implementation notes are in WebServer.html, and also
  * as comments in the source code.
  */
+import exceptions.ResourceNotFoundException;
 import http.*;
 import http.handlers.IHttpRequestHandler;
 import http.modules.IHttpModule;
@@ -188,17 +189,16 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
   public synchronized void handleContext(IHttpContext context) {
     Iterator<IHttpModule> moduleIterator = modules.iterator();
     
+    boolean processed = false;
     while(moduleIterator.hasNext()) {
       IHttpModule module = moduleIterator.next();
       try {
-        module.processHttpContext(context);
+        if (module.processHttpContext(context)) {
+          break;
+        }
       } catch(Exception ex) {
         if (!moduleIterator.hasNext()) {
           throw ex;
-        }
-      } finally {
-        if (module.isHandled()) {
-          break;
         }
       }
     }

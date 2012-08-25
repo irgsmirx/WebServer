@@ -34,15 +34,14 @@ public class HttpTemplateModule extends AbstractHttpModule {
   }
   
   @Override
-  public void processHttpContext(IHttpContext httpContext) {
+  public boolean processHttpContext(IHttpContext httpContext) {
     if (isGetOrHeadMethod(httpContext.getRequest())) {
       if (resourceExists(httpContext.getRequest().getUri().getPath())) {
         HttpTemplateResource templateResource = getTemplateResource(httpContext.getRequest().getUri().getPath());
         writeTemplateResourceToHttpResponse(httpContext.getResponse(), templateResource);
-        
-        handled = true;
+        return true;
       } else {
-        throw new ResourceNotFoundException("Resource not found.");
+        return false;
       }
     } else {
       throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Error");
@@ -110,14 +109,7 @@ public class HttpTemplateModule extends AbstractHttpModule {
   
   private void addContentTypeHeaderForFile(IHttpResponse httpResponse, File file) {
     String extension = getFileExtensionFromFilename(file.getName());
-    
-    String mimeType = "application/octet-stream";
-    if (extension.compareTo("") != 0) {
-      String mimeType2 = MimeTypeMap.getInstance().getMimeTypeForExtension(extension);
-      if (mimeType2 != null) {
-        mimeType = mimeType2;
-      }
-    }
+    String mimeType = getMimeTypeForExtension(extension);
     
     httpResponse.setContentType(mimeType);
   }
@@ -154,6 +146,14 @@ public class HttpTemplateModule extends AbstractHttpModule {
   
   public HttpTemplateResourceProvider getTemplateResources() {
     return (HttpTemplateResourceProvider)resourceProvider;
+  }
+
+  private String getMimeTypeForExtension(String extension) {
+    String mimeType = MimeTypeMap.getInstance().getMimeTypeForExtension(extension);
+    if (mimeType == null) {
+      mimeType = "application/octet-stream";
+    }
+    return mimeType;
   }
   
 }

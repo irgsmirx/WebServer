@@ -13,7 +13,6 @@ import web.modules.IModule;
  */
 public interface IHttpModule extends IModule {
   
-  void processHttpContext(IHttpContext httpContext);
-  boolean isHandled();
+  boolean processHttpContext(IHttpContext httpContext);
   
 }

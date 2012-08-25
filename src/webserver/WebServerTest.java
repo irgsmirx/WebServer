@@ -40,15 +40,11 @@ public class WebServerTest {
   public static class Bla implements IHttpModule {
 
     @Override
-    public void processHttpContext(IHttpContext context) {
+    public boolean processHttpContext(IHttpContext context) {
       System.out.println(context.getRequest().getMethod());
       System.out.println(context.getRequest().getUri());
       System.out.println(context.getRequest().getVersion());
-    }
-
-    @Override
-    public boolean isHandled() {
-      return false;
+      return true;
     }
         
   }

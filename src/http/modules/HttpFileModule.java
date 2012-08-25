@@ -15,7 +15,6 @@ import http.IHttpResponse;
 import http.IHttpResponseWriter;
 import http.resources.HttpFileResource;
 import http.resources.HttpFileResourceProvider;
-import http.resources.IHttpResource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -38,13 +37,14 @@ public class HttpFileModule extends AbstractHttpModule {
   }
   
   @Override
-  public void processHttpContext(IHttpContext httpContext) {
+  public boolean processHttpContext(IHttpContext httpContext) {
     if (isGetOrHeadMethod(httpContext.getRequest())) {
       if (resourceExists(httpContext.getRequest().getUri().getPath())) {
         HttpFileResource fileResource = getFileResource(httpContext.getRequest().getUri().getPath());
         writeFileResourceToHttpResponse(httpContext.getResponse(), fileResource);
+        return true;
       } else {
-        throw new ResourceNotFoundException("Resource not found.");
+        return false;
       }
     } else {
       throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Error");
@@ -82,7 +82,6 @@ public class HttpFileModule extends AbstractHttpModule {
             Logger.getLogger(HttpFileModule.class.getName()).log(Level.SEVERE, null, ex);
             throw new HttpException(HttpStatusCode.STATUS_500_INTERNAL_SERVER_ERROR, "Could not read file.");
           } finally {
-            handled = true;
           }
         } catch (FileNotFoundException ex) {
           Logger.getLogger(HttpFileModule.class.getName()).log(Level.SEVERE, null, ex);
