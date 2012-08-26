@@ -13,8 +13,8 @@ import http.IHttpContext;
 import http.IHttpRequest;
 import http.IHttpResponse;
 import http.IHttpResponseWriter;
-import http.resources.HttpTemplateResource;
-import http.resources.HttpTemplateResourceProvider;
+import http.resources.HttpStaticTemplateResource;
+import http.resources.HttpStaticTemplateResourceProvider;
 import java.io.File;
 import utilities.common.implementation.SystemProperties;
 import utilities.templates.FileTemplate;
@@ -26,18 +26,18 @@ import web.MimeTypeMap;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class HttpTemplateModule extends AbstractHttpModule {
+public class HttpStaticTemplateModule extends AbstractHttpModule {
  
-  public HttpTemplateModule() {
+  public HttpStaticTemplateModule() {
     super();
-    this.resourceProvider = new HttpTemplateResourceProvider();
+    this.resourceProvider = new HttpStaticTemplateResourceProvider();
   }
   
   @Override
   public boolean processHttpContext(IHttpContext httpContext) {
     if (isGetOrHeadMethod(httpContext.getRequest())) {
       if (resourceExists(httpContext.getRequest().getUri().getPath())) {
-        HttpTemplateResource templateResource = getTemplateResource(httpContext.getRequest().getUri().getPath());
+        HttpStaticTemplateResource templateResource = getTemplateResource(httpContext.getRequest().getUri().getPath());
         writeTemplateResourceToHttpResponse(httpContext.getResponse(), templateResource);
         return true;
       } else {
@@ -53,11 +53,11 @@ public class HttpTemplateModule extends AbstractHttpModule {
             || httpRequest.getMethod() == HttpMethod.HEAD;
   }
   
-  private HttpTemplateResource getTemplateResource(String uriPath) {
-    return (HttpTemplateResource) getResource(uriPath);
+  private HttpStaticTemplateResource getTemplateResource(String uriPath) {
+    return (HttpStaticTemplateResource) getResource(uriPath);
   }
   
-  private void writeTemplateResourceToHttpResponse(IHttpResponse httpResponse, HttpTemplateResource templateResource) {
+  private void writeTemplateResourceToHttpResponse(IHttpResponse httpResponse, HttpStaticTemplateResource templateResource) {
     ITemplate template = templateResource.getTemplate();
 
     if (template instanceof FileTemplate) {
@@ -144,8 +144,8 @@ public class HttpTemplateModule extends AbstractHttpModule {
     return "";
   }
   
-  public HttpTemplateResourceProvider getTemplateResources() {
-    return (HttpTemplateResourceProvider)resourceProvider;
+  public HttpStaticTemplateResourceProvider getTemplateResources() {
+    return (HttpStaticTemplateResourceProvider)resourceProvider;
   }
 
   private String getMimeTypeForExtension(String extension) {

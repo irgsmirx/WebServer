@@ -8,7 +8,7 @@ package http.resources;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class HttpTemplateResourceProvider extends HttpFileResourceProvider {
+public class HttpStaticTemplateResourceProvider extends HttpFileResourceProvider {
  
   
 }

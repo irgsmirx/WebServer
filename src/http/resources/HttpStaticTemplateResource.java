@@ -10,11 +10,11 @@ import utilities.templates.ITemplate;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class HttpTemplateResource extends AbstractHttpResource {
+public class HttpStaticTemplateResource extends AbstractHttpResource {
   
   private ITemplate template;
   
-  public HttpTemplateResource(ITemplate template) {
+  public HttpStaticTemplateResource(ITemplate template) {
     this.template = template;
   }
   
