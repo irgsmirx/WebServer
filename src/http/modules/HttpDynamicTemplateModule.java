@@ -17,10 +17,6 @@ import http.resources.HttpDynamicTemplateResource;
 import http.resources.HttpDynamicTemplateResourceProvider;
 import http.templates.WebFileTemplate;
 import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import utilities.common.implementation.SystemProperties;
 import utilities.templates.FileTemplate;
 import utilities.templates.StringTemplate;
@@ -32,6 +28,8 @@ import web.MimeTypeMap;
  */
 public class HttpDynamicTemplateModule extends AbstractHttpModule {
  
+  private IWebFileTemplateInstantiator instantiator = new DefaultWebFileTemplateInstantiator();
+  
   public HttpDynamicTemplateModule() {
     super();
     this.resourceProvider = new HttpDynamicTemplateResourceProvider();
@@ -42,28 +40,11 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
     if (isGetOrHeadMethod(httpContext.getRequest())) {
       if (resourceExists(httpContext.getRequest().getUri().getPath())) {
         HttpDynamicTemplateResource templateResource = getTemplateResource(httpContext.getRequest().getUri().getPath());
-        
-        try {
-          Constructor<? extends WebFileTemplate> constructor = templateResource.getTemplateType().getConstructor(new Class<?>[0]);
-          constructor.setAccessible(true);
-          WebFileTemplate template = constructor.newInstance(new Object[0]);
-          template.setContext(httpContext);
-          template.load();
-          writeFileTemplateToHttpResponse(httpContext.getResponse(), template);
-        } catch (InstantiationException ex) {
-          Logger.getLogger(HttpDynamicTemplateModule.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-          Logger.getLogger(HttpDynamicTemplateModule.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-          Logger.getLogger(HttpDynamicTemplateModule.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
-          Logger.getLogger(HttpDynamicTemplateModule.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchMethodException ex) {
-          Logger.getLogger(HttpDynamicTemplateModule.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-          Logger.getLogger(HttpDynamicTemplateModule.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+
+        WebFileTemplate template = instantiator.instantiate(templateResource);
+        template.setContext(httpContext);
+        template.load();
+        writeFileTemplateToHttpResponse(httpContext.getResponse(), template);
         return true;
       } else {
         return false;
