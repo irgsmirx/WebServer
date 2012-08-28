@@ -152,4 +152,8 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
     return mimeType;
   }
   
+  public void setInstantiator(IWebFileTemplateInstantiator value) {
+    this.instantiator = value;
+  }
+  
 }
