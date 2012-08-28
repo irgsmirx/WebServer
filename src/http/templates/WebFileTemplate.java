@@ -12,7 +12,7 @@ import utilities.templates.FileTemplate;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class WebFileTemplate extends FileTemplate {
+public class WebFileTemplate extends FileTemplate implements IWebTemplate {
   
   protected IHttpContext context;
   
@@ -32,14 +32,17 @@ public class WebFileTemplate extends FileTemplate {
     super(filePath, placeholderBeginTag, placeholderEndTag, escapeCharacter);
   }
 
+	@Override
   public IHttpContext getContext() {
     return context;
   }
 
+	@Override
   public void setContext(IHttpContext context) {
     this.context = context;
   }
 
+	@Override
   public void load() {
   }
 
