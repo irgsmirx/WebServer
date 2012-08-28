@@ -46,6 +46,16 @@ public class HttpParser implements IHttpParser {
 			httpRequest.setMethod(requestLine.getMethod());
 			httpRequest.setVersion(requestLine.getVersion());
 			httpRequest.setUri(requestLine.getURI());
+      
+      if (requestLine.getURI().getQuery() != null) {
+        String[] queryParameters = requestLine.getURI().getQuery().split("&");
+        for (String queryParameter : queryParameters) {
+          String[] keyValuePair = queryParameter.split("=");
+          if (keyValuePair.length == 2) {
+            httpRequest.getQueryString().add(keyValuePair[0], keyValuePair[1]);
+          }
+        }
+      }
     } catch (Exception ex) {
     }
 

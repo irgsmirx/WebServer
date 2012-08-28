@@ -19,4 +19,14 @@ public interface IHttpRequest extends IHttpMessage, IRequest {
   URI getUri();
   void setUri(URI value);
   
+	public NameValueMap getQueryString();
+  public String getQueryString(String key);
+  public void setQueryString(String key, String value);
+
+  public NameValueMap getForm();
+  public String getForm(String key);
+  public void setForm(String key, String value);
+  
+	public NameValueMap getParams();
+  
 }

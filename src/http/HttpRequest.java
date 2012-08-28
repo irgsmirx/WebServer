@@ -21,9 +21,9 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 
   protected byte[] body;
 
-	protected Map<String, String> queryString = null;
-	protected Map<String, String> form = null;
-	protected Map<String, String> serverVariables = null;
+	protected NameValueMap queryString = new NameValueMap();
+	protected NameValueMap form = new NameValueMap();
+	protected NameValueMap serverVariables = new NameValueMap();
 
 	protected URI urlReferrer;
 	
@@ -37,8 +37,6 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 	public HttpRequest() {
 		method = HttpMethod.GET;
 		uri = null;
-
-		queryString = null;
 
 		headers = new HttpHeaders();
 	}
@@ -111,24 +109,38 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 	/**
 	 * @return Returns the query.
 	 */
-	public Map<String, String> getQueryString() {
+  @Override
+	public NameValueMap getQueryString() {
 		return queryString;
 	}
 
+  @Override
   public String getQueryString(String key) {
     return queryString.get(key);
   }
+
+  @Override
+  public void setQueryString(String key, String value) {
+    this.queryString.add(key, value);
+  }
   
+
 	/**
-	 * @param query
-	 *          The query to set.
+	 * @return Returns the query.
 	 */
-	public void setQueryString(Map<String, String> query) {
-		this.queryString = query;
+  @Override
+	public NameValueMap getForm() {
+		return form;
 	}
 
-  public void setQueryString(String key, String value) {
-    this.queryString.put(key, value);
+  @Override
+  public String getForm(String key) {
+    return form.get(key);
+  }
+
+  @Override
+  public void setForm(String key, String value) {
+    this.form.add(key, value);
   }
   
 	/**	 * @return Returns the uri.
@@ -217,24 +229,24 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 		return value;
 	}
 	
-	public Map<String, String> getParams() {
-		Map<String, String> params = new HashMap<>();
-		params.putAll(queryString);
-		params.putAll(form);
+	public NameValueMap getParams() {
+		NameValueMap params = queryString.union(form);
 		
 		for (HttpCookie cookie : cookies.values()) {
-			params.put(cookie.getName(), cookie.getValue());
+			params.add(cookie.getName(), cookie.getValue());
 		}
 		
-		params.putAll(serverVariables);
+		params.addAll(serverVariables);
 		
 		return params;
 	}
 	
+  @Override
 	public String getContentType() {
 		return contentType;
 	}
 	
+  @Override
 	public void setContentType(String value) {
 		this.contentType = value;
 	}
