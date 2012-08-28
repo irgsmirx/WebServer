@@ -48,18 +48,65 @@ public class HttpParser implements IHttpParser {
 			httpRequest.setUri(requestLine.getURI());
       
       if (requestLine.getURI().getQuery() != null) {
-        String[] queryParameters = requestLine.getURI().getQuery().split("&");
-        for (String queryParameter : queryParameters) {
-          String[] keyValuePair = queryParameter.split("=");
-          if (keyValuePair.length == 2) {
-            httpRequest.getQueryString().add(keyValuePair[0], keyValuePair[1]);
-          }
-        }
+//        String[] queryParameters = requestLine.getURI().getQuery().split("&");
+//        for (String queryParameter : queryParameters) {
+//          String[] keyValuePair = queryParameter.split("=");
+//          if (keyValuePair.length == 2) {
+//            httpRequest.getQueryString().add(keyValuePair[0], keyValuePair[1]);
+//          }
+//        }
+        fillQueryString(httpRequest, requestLine.getURI().getQuery());
       }
     } catch (Exception ex) {
     }
 
     return httpRequest;
+  }
+  
+  public void fillQueryString(IHttpRequest request, String queryString) {
+    	boolean urlencoded = false;
+      
+      if (queryString == null) {
+        return;
+      }
+      
+      int queryStringLength = queryString.length();
+			for (int i = 0; i < queryStringLength; i++)	{
+				int num2 = i;
+				int num3 = -1;
+				while (i < queryStringLength)	{
+					int c = queryString.codePointAt(i);
+					if (c == '=')	{
+						if (num3 < 0)	{
+							num3 = i;
+						}
+					}	else {
+						if (c == '&')	{
+							break;
+						}
+					}
+					i++;
+				}
+				
+        String name = null;
+				String value;
+				if (num3 >= 0) {
+					name = queryString.substring(num2, num3);
+					value = queryString.substring(num3 + 1, i);
+				}	else {
+					value = queryString.substring(num2, i);
+				}
+        
+				if (urlencoded)	{
+					//base.Add(HttpUtility.UrlDecode(text, encoding), HttpUtility.UrlDecode(text2, encoding));
+				}	else {
+					request.getQueryString().add(name, value);
+				}
+        
+				if (i == queryStringLength - 1 && queryString.codePointAt(i) == '&') {
+					//base.Add(null, string.Empty);
+				}
+			}
   }
   
   @Override
