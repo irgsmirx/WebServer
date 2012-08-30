@@ -20,6 +20,6 @@ public interface IHttpParser {
 
   IHttpHeader parseHeader(InputStream is);
     
-  void parseBody(InputStream is, IHttpHeaders headers);
+  byte[] parseBody(InputStream is, IHttpHeaders headers);
   
 }

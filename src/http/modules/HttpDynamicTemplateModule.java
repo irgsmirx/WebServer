@@ -18,6 +18,7 @@ import http.resources.HttpDynamicTemplateResourceProvider;
 import http.templates.WebFileTemplate;
 import java.io.File;
 import utilities.common.implementation.SystemProperties;
+import utilities.path.Path;
 import utilities.templates.FileTemplate;
 import utilities.templates.StringTemplate;
 import web.MimeTypeMap;
@@ -37,14 +38,25 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
   
   @Override
   public boolean processHttpContext(IHttpContext httpContext) {
-    if (isGetOrHeadMethod(httpContext.getRequest())) {
+    if (isGetOrHeadOrPostMethod(httpContext.getRequest())) {
       if (resourceExists(httpContext.getRequest().getUri().getPath())) {
         HttpDynamicTemplateResource templateResource = getTemplateResource(httpContext.getRequest().getUri().getPath());
 
         WebFileTemplate template = instantiator.instantiate(templateResource);
         template.setContext(httpContext);
         template.load();
-        writeFileTemplateToHttpResponse(httpContext.getResponse(), template);
+        
+        switch (httpContext.getRequest().getMethod()) {
+          case GET:
+            writeFileTemplateToHttpResponse(httpContext.getResponse(), template);
+            break;
+          case HEAD:
+            writeFileTemplateHeadersToHttpResponse(httpContext.getResponse(), template);
+            break;
+          case POST:
+            writeFileTemplateToHttpResponse(httpContext.getResponse(), template);
+            break;
+        }
         return true;
       } else {
         return false;
@@ -54,33 +66,28 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
     }
   }
   
-  private boolean isGetOrHeadMethod(IHttpRequest httpRequest) {
-    return httpRequest.getMethod() == HttpMethod.GET
-            || httpRequest.getMethod() == HttpMethod.HEAD;
-  }
-  
   private HttpDynamicTemplateResource getTemplateResource(String uriPath) {
     return (HttpDynamicTemplateResource) getResource(uriPath);
   }
   
   private void writeFileTemplateToHttpResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
+    writeFileTemplateHeadersToHttpResponse(httpResponse, fileTemplate);
+
+    fileTemplate.renderTo(httpResponse.getOutputStream());
+  }
+  
+  private void writeFileTemplateHeadersToHttpResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
     File file = fileTemplate.getTemplate();
     
-    if (file.exists()) {
-      if (file.canRead()) {
-        addHttpHeadersForFileTemplateToResponse(httpResponse, file);
-        IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
-        
-        httpResponseWriter.writeResponse(httpResponse);
-        
-        fileTemplate.renderTo(httpResponse.getOutputStream());
-      } else {
-        throw new ResourceNotFoundException("Template not found.");
-      }      
-    } else {
-      throw new ResourceNotFoundException("Template not found.");
-    }
+    assertFileExists(file);
+    assertFileIsReadable(file);
+    
+    addHttpHeadersForFileTemplateToResponse(httpResponse, file);
+    IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
+
+    httpResponseWriter.writeResponse(httpResponse);
   }
+  
   
   private void writeStringTemplateToHttpResponse(IHttpResponse httpResponse, StringTemplate stringTemplate) {
     addHttpHeadersForStringTemplateToResponse(httpResponse, stringTemplate.getTemplate());
@@ -104,7 +111,7 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
   }
   
   private void addContentTypeHeaderForFile(IHttpResponse httpResponse, File file) {
-    String extension = getFileExtensionFromFilename(file.getName());
+    String extension = Path.getFileExtensionFromFilename(file.getName());
     String mimeType = getMimeTypeForExtension(extension);
     
     httpResponse.setContentType(mimeType);
@@ -121,25 +128,7 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
   private void addContentLengthHeaderForString(IHttpResponse httpResponse, String string) {
     httpResponse.setContentLength(string.getBytes().length);
   }
-  
-  private String getFileExtensionFromFilename(String filename) {
-    int length = filename.length();
-    
-    int num = length - 1;
-    while (num >= 0) {
-      int c = filename.codePointAt(num);
-      if (c == '.') {
-        return filename.substring(num + 1, length);
-      }
-      if (c == SystemProperties.getFileSeparator().codePointAt(0)) {
-        break;
-      }
-      num--;
-    }
-    
-    return "";
-  }
-  
+
   public HttpDynamicTemplateResourceProvider getTemplateResources() {
     return (HttpDynamicTemplateResourceProvider)resourceProvider;
   }

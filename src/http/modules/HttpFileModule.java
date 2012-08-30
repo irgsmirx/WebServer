@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utilities.common.implementation.SystemProperties;
+import utilities.path.Path;
 import web.MimeTypeMap;
 
 /**
@@ -38,10 +39,21 @@ public class HttpFileModule extends AbstractHttpModule {
   
   @Override
   public boolean processHttpContext(IHttpContext httpContext) {
-    if (isGetOrHeadMethod(httpContext.getRequest())) {
+    if (isGetOrHeadOrPostMethod(httpContext.getRequest())) {
       if (resourceExists(httpContext.getRequest().getUri().getPath())) {
         HttpFileResource fileResource = getFileResource(httpContext.getRequest().getUri().getPath());
-        writeFileResourceToHttpResponse(httpContext.getResponse(), fileResource);
+        
+        switch (httpContext.getRequest().getMethod()) {
+          case GET:
+            writeFileResourceToHttpResponse(httpContext.getResponse(), fileResource);
+            break;
+          case HEAD:
+            writeFileResourceHeadersToHttpResponse(httpContext.getResponse(), fileResource);
+            break;
+          case POST:
+            writeFileResourceToHttpResponse(httpContext.getResponse(), fileResource);
+            break;
+        }
         return true;
       } else {
         return false;
@@ -51,48 +63,54 @@ public class HttpFileModule extends AbstractHttpModule {
     }
   }
   
-  private boolean isGetOrHeadMethod(IHttpRequest httpRequest) {
-    return httpRequest.getMethod() == HttpMethod.GET
-            || httpRequest.getMethod() == HttpMethod.HEAD;
-  }
-  
   private HttpFileResource getFileResource(String uriPath) {
     return (HttpFileResource) getResource(uriPath);
   }
   
-  private void writeFileResourceToHttpResponse(IHttpResponse httpResponse, HttpFileResource fileResource) {
-    File file = new File(fileResource.getServerPath());
+  private void writeFileToHttpResponse(IHttpResponse httpResponse, File file) {
+    assertFileExists(file);
+    assertFileIsReadable(file);
     
-    if (file.exists()) {
-      if (file.canRead()) {
-        addHttpHeadersForFileToResponse(httpResponse, file);
-        IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
-        
-        httpResponseWriter.writeResponse(httpResponse);
-        
-        int r;
-        InputStream is;
-        try {
-          is = new FileInputStream(file);
-          try {
-            while ((r = is.read()) != -1) {
-              httpResponse.getOutputStream().write(r);
-            }
-          } catch (IOException ex) {
-            Logger.getLogger(HttpFileModule.class.getName()).log(Level.SEVERE, null, ex);
-            throw new HttpException(HttpStatusCode.STATUS_500_INTERNAL_SERVER_ERROR, "Could not read file.");
-          } finally {
-          }
-        } catch (FileNotFoundException ex) {
-          Logger.getLogger(HttpFileModule.class.getName()).log(Level.SEVERE, null, ex);
-          throw new ResourceNotFoundException("File not found.");
+    addHttpHeadersForFileToResponse(httpResponse, file);
+
+    IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
+    httpResponseWriter.writeResponse(httpResponse);
+    
+    int r;
+    InputStream is;
+    try {
+      is = new FileInputStream(file);
+      try {
+        while ((r = is.read()) != -1) {
+          httpResponse.getOutputStream().write(r);
         }
-      } else {
-        throw new ResourceNotFoundException("File not found.");
-      }      
-    } else {
+      } catch (IOException ex) {
+        Logger.getLogger(HttpFileModule.class.getName()).log(Level.SEVERE, null, ex);
+        throw new HttpException(HttpStatusCode.STATUS_500_INTERNAL_SERVER_ERROR, "Could not read file.");
+      } finally {
+      }
+    } catch (FileNotFoundException ex) {
+      Logger.getLogger(HttpFileModule.class.getName()).log(Level.SEVERE, null, ex);
       throw new ResourceNotFoundException("File not found.");
     }
+  }
+  
+  private void writeFileHeadersToHttpResponse(IHttpResponse httpResponse, File file) {
+    assertFileExists(file);
+    assertFileIsReadable(file);
+    
+    addHttpHeadersForFileToResponse(httpResponse, file);
+
+    IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
+    httpResponseWriter.writeResponse(httpResponse);
+  }
+  
+  private void writeFileResourceToHttpResponse(IHttpResponse httpResponse, HttpFileResource fileResource) {
+    writeFileToHttpResponse(httpResponse, new File(fileResource.getServerPath()));
+  }
+  
+  private void writeFileResourceHeadersToHttpResponse(IHttpResponse httpResponse, HttpFileResource fileResource) {
+    writeFileHeadersToHttpResponse(httpResponse, new File(fileResource.getServerPath()));
   }
   
   private void addHttpHeadersForFileToResponse(IHttpResponse httpResponse, File file) {
@@ -102,7 +120,7 @@ public class HttpFileModule extends AbstractHttpModule {
   }
   
   private void addContentTypeHeaderForFile(IHttpResponse httpResponse, File file) {
-    String extension = getFileExtensionFromFilename(file.getName());
+    String extension = Path.getFileExtensionFromFilename(file.getName());
     
     String mimeType = "application/octet-stream";
     if (extension.compareTo("") != 0) {
@@ -118,25 +136,7 @@ public class HttpFileModule extends AbstractHttpModule {
   private void addContentLengthHeaderForFile(IHttpResponse httpResponse, File file) {
     httpResponse.setContentLength(file.length());
   }
-  
-  private String getFileExtensionFromFilename(String filename) {
-    int length = filename.length();
     
-    int num = length - 1;
-    while (num >= 0) {
-      int c = filename.codePointAt(num);
-      if (c == '.') {
-        return filename.substring(num + 1, length);
-      }
-      if (c == SystemProperties.getFileSeparator().codePointAt(0)) {
-        break;
-      }
-      num--;
-    }
-    
-    return "";
-  }
-  
   public HttpFileResourceProvider getFileResources() {
     return (HttpFileResourceProvider)resourceProvider;
   }

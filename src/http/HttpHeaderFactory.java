@@ -21,6 +21,15 @@ public class HttpHeaderFactory implements IHttpHeaderFactory {
       case "http_x_requested_with":
         header = new AjaxHttpHeader();
         break;
+      case "content-length":
+        header = new ContentLengthHttpHeader(Long.parseLong(rawValue));
+        break;
+      case "content-type":
+        header = new ContentTypeHttpHeader(rawValue);
+        break;
+      case "transfer-encoding":
+        header = new TransferEncodingHttpHeader(rawValue);
+        break;
       default:
         header = new StringHttpHeader(name, rawValue);
         break;

@@ -17,6 +17,7 @@ import http.resources.HttpStaticTemplateResource;
 import http.resources.HttpStaticTemplateResourceProvider;
 import java.io.File;
 import utilities.common.implementation.SystemProperties;
+import utilities.path.Path;
 import utilities.templates.FileTemplate;
 import utilities.templates.ITemplate;
 import utilities.templates.StringTemplate;
@@ -35,10 +36,21 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
   
   @Override
   public boolean processHttpContext(IHttpContext httpContext) {
-    if (isGetOrHeadMethod(httpContext.getRequest())) {
+    if (isGetOrHeadOrPostMethod(httpContext.getRequest())) {
       if (resourceExists(httpContext.getRequest().getUri().getPath())) {
         HttpStaticTemplateResource templateResource = getTemplateResource(httpContext.getRequest().getUri().getPath());
-        writeTemplateResourceToHttpResponse(httpContext.getResponse(), templateResource);
+    
+        switch (httpContext.getRequest().getMethod()) {
+          case GET:
+            writeTemplateResourceToHttpResponse(httpContext.getResponse(), templateResource);
+            break;
+          case HEAD:
+            writeTemplateResourceHeadersToHttpResponse(httpContext.getResponse(), templateResource);
+            break;
+          case POST:
+            writeTemplateResourceToHttpResponse(httpContext.getResponse(), templateResource);
+            break;
+        }
         return true;
       } else {
         return false;
@@ -47,12 +59,7 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
       throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Error");
     }
   }
-  
-  private boolean isGetOrHeadMethod(IHttpRequest httpRequest) {
-    return httpRequest.getMethod() == HttpMethod.GET
-            || httpRequest.getMethod() == HttpMethod.HEAD;
-  }
-  
+ 
   private HttpStaticTemplateResource getTemplateResource(String uriPath) {
     return (HttpStaticTemplateResource) getResource(uriPath);
   }
@@ -67,33 +74,47 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
     }
   }
   
-  private void writeFileTemplateToHttpResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
-    File file = fileTemplate.getTemplate();
-    
-    if (file.exists()) {
-      if (file.canRead()) {
-        addHttpHeadersForFileTemplateToResponse(httpResponse, file);
-        IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
-        
-        httpResponseWriter.writeResponse(httpResponse);
-        
-        fileTemplate.renderTo(httpResponse.getOutputStream());
-      } else {
-        throw new ResourceNotFoundException("Template not found.");
-      }      
-    } else {
-      throw new ResourceNotFoundException("Template not found.");
+  private void writeTemplateResourceHeadersToHttpResponse(IHttpResponse httpResponse, HttpStaticTemplateResource templateResource) {
+    ITemplate template = templateResource.getTemplate();
+
+    if (template instanceof FileTemplate) {
+      writeFileTemplateHeadersToHttpResponse(httpResponse, (FileTemplate)template);
+    } else if (template instanceof StringTemplate) {
+      writeStringTemplateHeadersToHttpResponse(httpResponse, (StringTemplate)template);
     }
   }
   
-  private void writeStringTemplateToHttpResponse(IHttpResponse httpResponse, StringTemplate stringTemplate) {
+  private void writeFileTemplateHeadersToHttpResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
+    File file = fileTemplate.getTemplate();
+
+    assertFileExists(file);
+    assertFileIsReadable(file);
+
+    addHttpHeadersForFileTemplateToResponse(httpResponse, file);
+    IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
+
+    httpResponseWriter.writeResponse(httpResponse);
+  }
+  
+  private void writeFileTemplateToHttpResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
+    writeFileTemplateHeadersToHttpResponse(httpResponse, fileTemplate);
+
+    fileTemplate.renderTo(httpResponse.getOutputStream());
+  }
+
+  private void writeStringTemplateHeadersToHttpResponse(IHttpResponse httpResponse, StringTemplate stringTemplate) {
     addHttpHeadersForStringTemplateToResponse(httpResponse, stringTemplate.getTemplate());
     IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
 
     httpResponseWriter.writeResponse(httpResponse);
+  }
 
+  private void writeStringTemplateToHttpResponse(IHttpResponse httpResponse, StringTemplate stringTemplate) {
+    writeStringTemplateHeadersToHttpResponse(httpResponse, stringTemplate);
+    
     stringTemplate.renderTo(httpResponse.getOutputStream());
   }
+  
   
   private void addHttpHeadersForFileTemplateToResponse(IHttpResponse httpResponse, File file) {
     httpResponse.setStatusCode(HttpStatusCode.STATUS_200_OK);
@@ -108,7 +129,7 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
   }
   
   private void addContentTypeHeaderForFile(IHttpResponse httpResponse, File file) {
-    String extension = getFileExtensionFromFilename(file.getName());
+    String extension = Path.getFileExtensionFromFilename(file.getName());
     String mimeType = getMimeTypeForExtension(extension);
     
     httpResponse.setContentType(mimeType);
@@ -124,24 +145,6 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
   
   private void addContentLengthHeaderForString(IHttpResponse httpResponse, String string) {
     httpResponse.setContentLength(string.getBytes().length);
-  }
-  
-  private String getFileExtensionFromFilename(String filename) {
-    int length = filename.length();
-    
-    int num = length - 1;
-    while (num >= 0) {
-      int c = filename.codePointAt(num);
-      if (c == '.') {
-        return filename.substring(num + 1, length);
-      }
-      if (c == SystemProperties.getFileSeparator().codePointAt(0)) {
-        break;
-      }
-      num--;
-    }
-    
-    return "";
   }
   
   public HttpStaticTemplateResourceProvider getTemplateResources() {

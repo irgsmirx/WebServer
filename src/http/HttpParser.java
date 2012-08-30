@@ -35,78 +35,90 @@ public class HttpParser implements IHttpParser {
 				throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "HTTP/1.1 request without host header.");
 			}
 
+      byte[] bodyBytes = null;
 			try {
-				parseBody(is, httpHeaders);
+				bodyBytes = parseBody(is, httpHeaders);
 			} catch (Exception ex) {
 				// temporarily not handled because parseBody is not working as it should
 			}
-			
-			httpRequest = new HttpRequest(httpHeaders);
+      
+      httpRequest = new HttpRequest(httpHeaders);
 		
 			httpRequest.setMethod(requestLine.getMethod());
 			httpRequest.setVersion(requestLine.getVersion());
 			httpRequest.setUri(requestLine.getURI());
       
       if (requestLine.getURI().getQuery() != null) {
-//        String[] queryParameters = requestLine.getURI().getQuery().split("&");
-//        for (String queryParameter : queryParameters) {
-//          String[] keyValuePair = queryParameter.split("=");
-//          if (keyValuePair.length == 2) {
-//            httpRequest.getQueryString().add(keyValuePair[0], keyValuePair[1]);
-//          }
-//        }
-        fillQueryString(httpRequest, requestLine.getURI().getQuery());
+        fillQueryString(httpRequest, requestLine.getURI().getQuery(), true);
+      }
+      
+      if (bodyBytes != null && bodyBytes.length > 0) {
+        fillForm(httpRequest, new String(bodyBytes, "UTF-8"));
       }
     } catch (Exception ex) {
     }
 
     return httpRequest;
   }
-  
-  public void fillQueryString(IHttpRequest request, String queryString) {
-    	boolean urlencoded = false;
-      
-      if (queryString == null) {
-        return;
+
+  public NameValueMap parseParameters(IHttpRequest request, String parameterString, boolean urlEncoded) {
+    NameValueMap result = new NameValueMap();
+    
+    if (parameterString == null) {
+      return result;
+    }
+
+    int queryStringLength = parameterString.length();
+    for (int i = 0; i < queryStringLength; i++)	{
+      int startOfCurrentParameter = i;
+      int indexOfEqualsSign = -1;
+      while (i < queryStringLength)	{
+        int c = parameterString.codePointAt(i);
+        if (c == '=')	{
+          if (indexOfEqualsSign < 0)	{
+            indexOfEqualsSign = i;
+          }
+        }	else {
+          if (c == '&')	{
+            break;
+          }
+        }
+        i++;
       }
-      
-      int queryStringLength = queryString.length();
-			for (int i = 0; i < queryStringLength; i++)	{
-				int num2 = i;
-				int num3 = -1;
-				while (i < queryStringLength)	{
-					int c = queryString.codePointAt(i);
-					if (c == '=')	{
-						if (num3 < 0)	{
-							num3 = i;
-						}
-					}	else {
-						if (c == '&')	{
-							break;
-						}
-					}
-					i++;
-				}
-				
-        String name = null;
-				String value;
-				if (num3 >= 0) {
-					name = queryString.substring(num2, num3);
-					value = queryString.substring(num3 + 1, i);
-				}	else {
-					value = queryString.substring(num2, i);
-				}
-        
-				if (urlencoded)	{
-					//base.Add(HttpUtility.UrlDecode(text, encoding), HttpUtility.UrlDecode(text2, encoding));
-				}	else {
-					request.getQueryString().add(name, value);
-				}
-        
-				if (i == queryStringLength - 1 && queryString.codePointAt(i) == '&') {
-					//base.Add(null, string.Empty);
-				}
-			}
+
+      String name = null;
+      String value;
+      if (indexOfEqualsSign >= 0) {
+        name = parameterString.substring(startOfCurrentParameter, indexOfEqualsSign);
+        value = parameterString.substring(indexOfEqualsSign + 1, i);
+      }	else {
+        value = parameterString.substring(startOfCurrentParameter, i);
+      }
+
+      if (urlEncoded)	{
+        try {
+          request.getQueryString().add(URLDecoder.decode(name, "UTF-8"), URLDecoder.decode(value, "UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+          Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }	else {
+        request.getQueryString().add(name, value);
+      }
+
+      if (i == queryStringLength - 1 && parameterString.codePointAt(i) == '&') {
+        //base.Add(null, string.Empty);
+      }
+    }
+    
+    return result;
+  }
+  
+  public void fillQueryString(IHttpRequest request, String queryString, boolean urlEncoded) {
+    request.getQueryString().addAll(parseParameters(request, queryString, urlEncoded));
+  }
+  
+  public void fillForm(IHttpRequest request, String form) {
+    request.getForm().addAll(parseParameters(request, form, true));
   }
   
   @Override
@@ -191,10 +203,6 @@ public class HttpParser implements IHttpParser {
 				throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "URI '" + uriString + "' not valid!");
 			}
 
-			if (uri.getQuery() != null) {
-				parseQuery(uri.getQuery());
-			}
-
 			if (versionString.compareTo(HttpUtils.httpVersion(1, 0)) == 0) {
 				version = new HttpVersion(1, 0);
 			} else if (versionString.compareTo(HttpUtils.httpVersion(1, 1)) == 0) {
@@ -235,17 +243,17 @@ public class HttpParser implements IHttpParser {
 			if (ch == -1) {
 				// unepected end of input
 				throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request ended unexpectedly.");
-			} else if (ch == '\r') {
+			} else if (isCR(ch)) {
 				last = ch;
-			} else if (ch == '\n') {
-				if (last == '\r') {
+			} else if (isLF(ch)) {
+				if (isCR(last)) {
 					break;
 				} else {
 					throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
 							"Your HTTP client's request contained an unallowed LF control character.");
 				}
 			} else {
-				if (last == '\r') {
+				if (isCR(last)) {
 					throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
 							"Your HTTP client's request contained an unallowed LF control character.");
 				} else {
@@ -370,58 +378,29 @@ public class HttpParser implements IHttpParser {
 		
 		return buffer;
 	}
-  
-  protected Map<String, String> parseQuery(String query) {
-		Map<String, String> result = null;
-
-		if (query != null) {
-			result = new HashMap<>();
-
-			try {
-				String[] pairs = query.split("\\&");
-
-				for (int i = 0; i < pairs.length; i++) {
-					String[] fields = pairs[i].split("=");
-
-					if (fields.length == 2) {
-						String key = URLDecoder.decode(fields[0], "UTF-8");
-						String value = URLDecoder.decode(fields[1], "UTF-8");
-						result.put(key, value);
-					} else {
-						throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, 
-              String.format("Query part '%1s' is not valid!", pairs[i]));
-					}
-				}
-			} catch (UnsupportedEncodingException e) {
-				throw new HttpException(HttpStatusCode.STATUS_500_INTERNAL_SERVER_ERROR, 
-          String.format("An error occured decoding query '%1s'!", query));
-			}
-		} else {
-			throw new HttpException(HttpStatusCode.STATUS_500_INTERNAL_SERVER_ERROR, 
-        String.format("An error occured decoding query '%1s'!", query));
-		}
-
-		return result;
-	}
 
   @Override
-  public void parseBody(InputStream is, IHttpHeaders headers) {
-		LongHttpHeader contentLengthHeader = ((LongHttpHeader)headers.getHeader("Content-Length"));
-		StringHttpHeader contentTypeHeader = ((StringHttpHeader)headers.getHeader("Content-Type"));
-    StringHttpHeader transferEncodingHeader = ((StringHttpHeader)headers.getHeader("Transfer-Encoding"));
+  public byte[] parseBody(InputStream is, IHttpHeaders headers) {
+		ContentLengthHttpHeader contentLengthHeader = ((ContentLengthHttpHeader)headers.getHeader("Content-Length"));
+		ContentTypeHttpHeader contentTypeHeader = ((ContentTypeHttpHeader)headers.getHeader("Content-Type"));
+    
+    IHttpHeader transferEncoding = headers.getHeader("Transfer-Encoding");
+    TransferEncodingHttpHeader transferEncodingHeader = null;
+    if (transferEncoding != null) {
+      transferEncodingHeader = (TransferEncodingHttpHeader)transferEncoding;
+    }
     
     String contentType = contentTypeHeader.getValue();
-		String transferEncoding = transferEncodingHeader.getValue();
 
-		if (transferEncoding == null) {
+		if (transferEncodingHeader == null || transferEncodingHeader.getValue() == null) {
 			if (contentLengthHeader == null) {
 				// well, no body present, as it seems
-				return;
+				return new byte[0];
 			} else {
 				if (contentType.compareTo("application/x-www-form-urlencoded") == 0) {
 					try {
             long contentLength = contentLengthHeader.getValue();						
-            readPlain(is, contentLength);
+            return readPlain(is, contentLength);
 					} catch (NumberFormatException e) {
 						throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, 
               String.format("Header field Content-Length contained invalid value '%1s'.", contentLengthHeader.rawValue));
@@ -431,8 +410,8 @@ public class HttpParser implements IHttpParser {
 				}
 			}
 		} else {
-			if (transferEncoding.compareTo("chunked") == 0) {
-				readChunked(is, headers);
+			if (transferEncodingHeader.getValue().compareTo("chunked") == 0) {
+				return readChunked(is, headers);
 			} else {
 				throw new HttpException(HttpStatusCode.STATUS_501_NOT_IMPLEMENTED, 
           String.format("The Transfer-Encoding '%1s' is not supported.", transferEncoding));
@@ -440,7 +419,7 @@ public class HttpParser implements IHttpParser {
 		}
 	}
   
-  protected void readPlain(InputStream is, long contentLength) {
+  protected byte[] readPlain(InputStream is, long contentLength) {
 		HttpBuffer buffer = new HttpBuffer();
 		int written = 1;
 
@@ -468,10 +447,10 @@ public class HttpParser implements IHttpParser {
       }
 		}
 
-		body = buffer.getCopy();
+    return buffer.getCopy();
 	}
 
-	protected void readChunked(InputStream is, IHttpHeaders headers) {
+	protected byte[] readChunked(InputStream is, IHttpHeaders headers) {
 		HttpBuffer buffer = new HttpBuffer();
 		ChunkedInputStream cis = new ChunkedInputStream(is, headers);
 
@@ -492,7 +471,7 @@ public class HttpParser implements IHttpParser {
 			}
 		}
 
-		body = buffer.getCopy();
+		return buffer.getCopy();
 	}
   
   public static boolean isCHAR(int ch) {
