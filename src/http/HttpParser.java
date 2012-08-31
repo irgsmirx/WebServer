@@ -97,12 +97,12 @@ public class HttpParser implements IHttpParser {
 
       if (urlEncoded)	{
         try {
-          request.getQueryString().add(URLDecoder.decode(name, "UTF-8"), URLDecoder.decode(value, "UTF-8"));
+          result.add(URLDecoder.decode(name, "UTF-8"), URLDecoder.decode(value, "UTF-8"));
         } catch (UnsupportedEncodingException ex) {
           Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
         }
       }	else {
-        request.getQueryString().add(name, value);
+        result.add(name, value);
       }
 
       if (i == queryStringLength - 1 && parameterString.codePointAt(i) == '&') {
