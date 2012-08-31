@@ -2,15 +2,19 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package http;
+package http.parsers;
 
+import http.IHttpHeader;
+import http.IHttpHeaders;
+import http.IHttpRequest;
+import http.IHttpRequestLine;
 import java.io.InputStream;
 
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IHttpParser {
+public interface IHttpRequestParser {
   
   IHttpRequest parseRequest(InputStream is);
   

@@ -1,5 +1,7 @@
 package webserver;
 
+import http.parsers.HttpRequestParser;
+import http.parsers.IHttpRequestParser;
 import exceptions.HttpException;
 import exceptions.ResourceNotFoundException;
 import http.*;
@@ -142,7 +144,7 @@ public class WebServerThread implements Runnable {
   }
   
   private IHttpRequest parseHttpRequest(InputStream is) {
-    IHttpParser httpParser = new HttpParser();
+    IHttpRequestParser httpParser = new HttpRequestParser();
     
     return httpParser.parseRequest(is);
   }

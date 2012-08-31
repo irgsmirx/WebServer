@@ -1,4 +1,4 @@
-package http;
+package http.parsers;
 
 public class HttpBuffer {
 

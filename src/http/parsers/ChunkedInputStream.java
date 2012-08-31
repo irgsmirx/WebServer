@@ -1,6 +1,8 @@
-package http;
+package http.parsers;
 
 import exceptions.HttpException;
+import http.IHttpHeaders;
+import http.parsers.HttpRequestParser;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,7 +94,7 @@ public class ChunkedInputStream extends FilterInputStream {
 			if (currentChunkSize == 0) {
 				// last chunk, read headers
 				try {
-          HttpParser httpParser = new HttpParser();
+          HttpRequestParser httpParser = new HttpRequestParser();
           headers = httpParser.parseHeaders(in);
 				} catch (HttpException e) {
 					throw new IOException(e.getMessage());

@@ -1,5 +1,6 @@
 package http;
 
+import http.parsers.HttpRequestParser;
 import exceptions.HttpException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +43,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 	}
 
 	public HttpRequest(InputStream is) throws IOException, HttpException {
-		HttpParser parser = new HttpParser();
+		HttpRequestParser parser = new HttpRequestParser();
     this.headers = parser.parseHeaders(is);
 	}
 

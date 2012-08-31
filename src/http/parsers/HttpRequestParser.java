@@ -2,9 +2,27 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package http;
+package http.parsers;
 
 import exceptions.HttpException;
+import http.ContentLengthHttpHeader;
+import http.ContentTypeHttpHeader;
+import http.HttpHeaderFactory;
+import http.HttpHeaders;
+import http.HttpMethod;
+import http.HttpRequest;
+import http.HttpRequestLine;
+import http.HttpStatusCode;
+import http.HttpUtils;
+import http.HttpVersion;
+import http.IHttpHeader;
+import http.IHttpHeaderFactory;
+import http.IHttpHeaders;
+import http.IHttpRequest;
+import http.IHttpRequestLine;
+import http.IHttpVersion;
+import http.NameValueMap;
+import http.TransferEncodingHttpHeader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -20,7 +38,7 @@ import java.util.logging.Logger;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class HttpParser implements IHttpParser {
+public class HttpRequestParser implements IHttpRequestParser {
 
   private IHttpHeaderFactory httpHeaderFactory = new HttpHeaderFactory();
   
@@ -99,7 +117,7 @@ public class HttpParser implements IHttpParser {
         try {
           result.add(URLDecoder.decode(name, "UTF-8"), URLDecoder.decode(value, "UTF-8"));
         } catch (UnsupportedEncodingException ex) {
-          Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+          Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
         }
       }	else {
         result.add(name, value);
@@ -225,7 +243,7 @@ public class HttpParser implements IHttpParser {
     try {
       ch = is.read();
     } catch (IOException ex) {
-      Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
       throw new exceptions.IOException(ex);
     }
 
@@ -234,7 +252,7 @@ public class HttpParser implements IHttpParser {
       try {
         ch = is.read();
       } catch (IOException ex) {
-        Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
         throw new exceptions.IOException(ex);
       }
 		}
@@ -264,7 +282,7 @@ public class HttpParser implements IHttpParser {
       try {
         ch = is.read();
       } catch (IOException ex) {
-        Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
         throw new exceptions.IOException(ex);
       }
 		}
@@ -283,7 +301,7 @@ public class HttpParser implements IHttpParser {
 					try {
 						ch = is.read();
 					} catch (IOException ex) {
-						Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+						Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
 						throw new exceptions.IOException(ex);
 					}
 
@@ -308,7 +326,7 @@ public class HttpParser implements IHttpParser {
 				}
 			}
     } catch (IOException ex) {
-      Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
       throw new exceptions.IOException(ex);
     }
 
@@ -372,7 +390,7 @@ public class HttpParser implements IHttpParser {
 				}
 			}
     } catch (IOException ex) {
-      Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
       throw new exceptions.IOException(ex);
     }
 		
@@ -403,7 +421,7 @@ public class HttpParser implements IHttpParser {
             return readPlain(is, contentLength);
 					} catch (NumberFormatException e) {
 						throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, 
-              String.format("Header field Content-Length contained invalid value '%1s'.", contentLengthHeader.rawValue));
+              String.format("Header field Content-Length contained invalid value '%1s'.", contentLengthHeader.getRawValue()));
 					}
 				} else {
 					throw new HttpException(HttpStatusCode.STATUS_415_UNSUPPORTED_MEDIA_TYPE, "Media type is not supported.");
@@ -428,7 +446,7 @@ public class HttpParser implements IHttpParser {
     try {
       ch = is.read();
     } catch (IOException ex) {
-      Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
       throw new exceptions.IOException(ex);
     }
 
@@ -442,7 +460,7 @@ public class HttpParser implements IHttpParser {
       try {
         ch = is.read();
       } catch (IOException ex) {
-        Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
         throw new exceptions.IOException(ex);
       }
 		}
@@ -459,7 +477,7 @@ public class HttpParser implements IHttpParser {
     try {
       ch = cis.read();
     } catch (IOException ex) {
-      Logger.getLogger(HttpParser.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
       throw new exceptions.IOException(ex);
     }
 
