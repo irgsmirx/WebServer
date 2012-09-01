@@ -40,6 +40,10 @@ public class NameValueMap implements Iterable<String> {
     map.clear();
   }
   
+  public int numberOfEntries() {
+    return map.size();
+  }
+  
   public void addAll(NameValueMap nameValueMap) {
     for (String name : nameValueMap) {
       add(name, nameValueMap.get(name));

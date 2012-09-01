@@ -1,5 +1,6 @@
 package http;
 
+import http.headers.StringHttpHeader;
 import exceptions.HttpException;
 import java.io.File;
 import java.io.OutputStream;

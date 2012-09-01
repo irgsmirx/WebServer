@@ -1,5 +1,7 @@
 package http;
 
+import http.headers.entity.ContentTypeHttpHeader;
+import http.headers.entity.ContentLengthHttpHeader;
 import java.util.Map;
 
 public abstract class HttpMessage extends HttpCodes implements HttpConstants, IHttpMessage {

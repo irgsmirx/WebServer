@@ -2,7 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package http;
+package http.headers.general;
+
+import http.headers.StringHttpHeader;
 
 /**
  *
@@ -10,8 +12,10 @@ package http;
  */
 public class TransferEncodingHttpHeader extends StringHttpHeader {
   
+  public static final String TRANSFER_ENCODING = "Transfer-Encoding";
+  
   public TransferEncodingHttpHeader(String rawValue) {
-    super("Transfer-Encoding", rawValue);
+    super(TRANSFER_ENCODING, rawValue);
   }
   
 }

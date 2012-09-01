@@ -1,5 +1,6 @@
 package webserver;
 
+import http.headers.StringHttpHeader;
 import http.parsers.HttpRequestParser;
 import http.parsers.IHttpRequestParser;
 import exceptions.HttpException;

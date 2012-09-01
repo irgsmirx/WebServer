@@ -5,8 +5,8 @@
 package http.parsers;
 
 import exceptions.HttpException;
-import http.ContentLengthHttpHeader;
-import http.ContentTypeHttpHeader;
+import http.headers.entity.ContentLengthHttpHeader;
+import http.headers.entity.ContentTypeHttpHeader;
 import http.HttpHeaderFactory;
 import http.HttpHeaders;
 import http.HttpMethod;
@@ -22,7 +22,7 @@ import http.IHttpRequest;
 import http.IHttpRequestLine;
 import http.IHttpVersion;
 import http.NameValueMap;
-import http.TransferEncodingHttpHeader;
+import http.headers.general.TransferEncodingHttpHeader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;

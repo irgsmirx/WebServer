@@ -4,6 +4,13 @@
  */
 package http;
 
+import http.headers.HostHttpHeader;
+import http.headers.general.TransferEncodingHttpHeader;
+import http.headers.AjaxHttpHeader;
+import http.headers.entity.ContentTypeHttpHeader;
+import http.headers.StringHttpHeader;
+import http.headers.entity.ContentLengthHttpHeader;
+
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
