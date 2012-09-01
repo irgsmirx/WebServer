@@ -5,8 +5,6 @@
 package http.parsers;
 
 import exceptions.HttpException;
-import http.headers.entity.ContentLengthHttpHeader;
-import http.headers.entity.ContentTypeHttpHeader;
 import http.HttpHeaderFactory;
 import http.HttpHeaders;
 import http.HttpMethod;
@@ -22,6 +20,8 @@ import http.IHttpRequest;
 import http.IHttpRequestLine;
 import http.IHttpVersion;
 import http.NameValueMap;
+import http.headers.entity.ContentLengthHttpHeader;
+import http.headers.entity.ContentTypeHttpHeader;
 import http.headers.general.TransferEncodingHttpHeader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,8 +29,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -337,28 +335,27 @@ public class HttpRequestParser implements IHttpRequestParser {
 	protected HttpBuffer readHeaderValue(InputStream is) {
 		HttpBuffer buffer = new HttpBuffer();
 
-		int last = -1;
-    int ch = -1;
+		int lastCharacter = -1;
+    int currentCharacter = -1;
     
     try {
 			boolean insideQuote = false;
-			boolean before = true;
+			boolean beforeValue = true;
 		
-			while ((ch = is.read()) != -1) {
-				if (before && isLWS(ch)) {
-					// skip LWS
+			while ((currentCharacter = is.read()) != -1) {
+				if (beforeValue && isLWS(currentCharacter)) {
 					continue;
-				} else if (isCR(ch)) {
-					before = false;
-					if (last == '\\') {
+				} else if (isCR(currentCharacter)) {
+					beforeValue = false;
+					if (lastCharacter == '\\') {
 						if (insideQuote) {
-							buffer.append(ch);
+							buffer.append(currentCharacter);
 						}
 					}
-					last = ch;
-				} else if (isLF(ch)) {
-					before = false;
-					if (isCR(last)) {
+					lastCharacter = currentCharacter;
+				} else if (isLF(currentCharacter)) {
+					beforeValue = false;
+					if (isCR(lastCharacter)) {
 						if (insideQuote) {
 							buffer.append('\r');
 							buffer.append('\n');
@@ -372,11 +369,11 @@ public class HttpRequestParser implements IHttpRequestParser {
 									"Your HTTP client's request header contained an LF character in quoted text, which is not allowed.");
 						}
 					}
-				} else if (ch == '\"') {
-					before = false;
-					if (last == '\\') {
+				} else if (currentCharacter == '\"') {
+					beforeValue = false;
+					if (lastCharacter == '\\') {
 						if (insideQuote) {
-							buffer.append(ch);
+							buffer.append(currentCharacter);
 						} else {
 							insideQuote = true;
 						}
@@ -384,9 +381,9 @@ public class HttpRequestParser implements IHttpRequestParser {
 						insideQuote = !insideQuote;
 					}
 				} else {
-					before = false;
-					last = ch;
-					buffer.append(ch);
+					beforeValue = false;
+					lastCharacter = currentCharacter;
+					buffer.append(currentCharacter);
 				}
 			}
     } catch (IOException ex) {
