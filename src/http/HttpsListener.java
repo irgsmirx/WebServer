@@ -15,20 +15,21 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.net.ServerSocketFactory;
+import javax.net.ssl.SSLServerSocketFactory;
 import webserver.WebServerThread;
 
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class HttpListener implements IHttpListener {
+public class HttpsListener implements IHttpListener {
 
   private int port = 0;
   private int backlog = 0;
   private InetAddress listenAddress;
   private boolean listening = false;
   
-  private static final ServerSocketFactory serverSocketFactory = ServerSocketFactory.getDefault(); 
+  private static final ServerSocketFactory serverSocketFactory = SSLServerSocketFactory.getDefault();
   private ServerSocket listeningSocket;
   
   private int acceptedSockets = 0;
@@ -37,11 +38,11 @@ public class HttpListener implements IHttpListener {
 
   private IHttpContextHandler contextHandler = null;
   
-  public HttpListener(int port) {
+  public HttpsListener(int port) {
     try {
       this.listenAddress = InetAddress.getLocalHost();
     } catch (UnknownHostException ex) {
-      Logger.getLogger(HttpListener.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
       throw new exceptions.UnknownHostException(ex);
     }
     this.port = port;
@@ -49,7 +50,7 @@ public class HttpListener implements IHttpListener {
     initializeThreadPool();
   }
   
-  public HttpListener(InetAddress listenAddress, int port) {
+  public HttpsListener(InetAddress listenAddress, int port) {
     this.listenAddress = listenAddress;
     this.port = port;
   }
@@ -117,7 +118,7 @@ public class HttpListener implements IHttpListener {
         if (listening) {
           throw new exceptions.AlreadyListeningException(ex);
         } else {
-          Logger.getLogger(HttpListener.class.getName()).log(Level.SEVERE, null, ex);
+          Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
           return;
         }
       }
@@ -132,7 +133,7 @@ public class HttpListener implements IHttpListener {
     try {
       listeningSocket = serverSocketFactory.createServerSocket(port, backlog, listenAddress);
     } catch (IOException ex) {
-      Logger.getLogger(HttpListener.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
       throw new exceptions.IOException(ex);
     }
   }
@@ -144,7 +145,7 @@ public class HttpListener implements IHttpListener {
     try {
       listeningSocket.close();
     } catch (IOException ex) {
-      Logger.getLogger(HttpListener.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
       throw new exceptions.IOException(ex);
     }
 
