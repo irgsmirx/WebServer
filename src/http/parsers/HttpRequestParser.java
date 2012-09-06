@@ -415,7 +415,7 @@ public class HttpRequestParser implements IHttpRequestParser {
 				if (contentType.compareTo("application/x-www-form-urlencoded") == 0) {
 					try {
             long contentLength = contentLengthHeader.getValue();						
-            return readPlain(is, contentLength);
+            return readPlain2(is, contentLength);
 					} catch (NumberFormatException e) {
 						throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, 
               String.format("Header field Content-Length contained invalid value '%1s'.", contentLengthHeader.getRawValue()));
@@ -433,6 +433,29 @@ public class HttpRequestParser implements IHttpRequestParser {
 			}
 		}
 	}
+  
+  protected byte[] readPlain2(InputStream is, long contentLength) {
+		HttpBuffer buffer = new HttpBuffer();
+		int written = 0;
+
+    int ch;
+    try {
+      while (written < contentLength && (ch = is.read()) != -1) {
+        buffer.append(ch);
+        written++;
+      }
+    } catch (IOException ex) {
+      Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
+      throw new exceptions.IOException(ex);
+    }
+
+    if (written < contentLength) {
+      throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Unexpected end of stream.");
+    }
+    
+    return buffer.getCopy();
+	}
+  
   
   protected byte[] readPlain(InputStream is, long contentLength) {
 		HttpBuffer buffer = new HttpBuffer();
