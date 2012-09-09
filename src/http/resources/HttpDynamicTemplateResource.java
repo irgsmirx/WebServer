@@ -4,7 +4,7 @@
  */
 package http.resources;
 
-import http.templates.WebFileTemplate;
+import http.templates.IWebTemplate;
 
 /**
  *
@@ -12,17 +12,17 @@ import http.templates.WebFileTemplate;
  */
 public class HttpDynamicTemplateResource extends AbstractHttpResource {
   
-  private Class<? extends WebFileTemplate> templateType;
+  private Class<? extends IWebTemplate> templateType;
   
-  public HttpDynamicTemplateResource(Class<? extends WebFileTemplate> templateType) {
+  public HttpDynamicTemplateResource(Class<? extends IWebTemplate> templateType) {
     this.templateType = templateType;
   }
   
-  public Class<? extends WebFileTemplate> getTemplateType() {
+  public Class<? extends IWebTemplate> getTemplateType() {
     return templateType;
   }
   
-  public void setTemplateServerPath(Class<? extends WebFileTemplate> value) {
+  public void setTemplateServerPath(Class<? extends IWebTemplate> value) {
     this.templateType = value;
   }
   

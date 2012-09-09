@@ -15,9 +15,10 @@ import http.IHttpResponse;
 import http.IHttpResponseWriter;
 import http.resources.HttpDynamicTemplateResource;
 import http.resources.HttpDynamicTemplateResourceProvider;
+import http.templates.IWebTemplate;
 import http.templates.WebFileTemplate;
+import http.templates.WebStringTemplate;
 import java.io.File;
-import utilities.common.implementation.SystemProperties;
 import utilities.path.Path;
 import utilities.templates.FileTemplate;
 import utilities.templates.StringTemplate;
@@ -29,7 +30,7 @@ import web.MimeTypeMap;
  */
 public class HttpDynamicTemplateModule extends AbstractHttpModule {
  
-  private IWebFileTemplateInstantiator instantiator = new DefaultWebFileTemplateInstantiator();
+  private IWebTemplateInstantiator fileInstantiator = new DefaultWebFileTemplateInstantiator();
   
   public HttpDynamicTemplateModule() {
     super();
@@ -42,20 +43,35 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
       if (resourceExists(httpContext.getRequest().getUri().getPath())) {
         HttpDynamicTemplateResource templateResource = getTemplateResource(httpContext.getRequest().getUri().getPath());
 
-        WebFileTemplate template = instantiator.instantiate(templateResource);
+        
+        IWebTemplate template = fileInstantiator.instantiate(templateResource);
         template.setContext(httpContext);
         template.load();
         
-        switch (httpContext.getRequest().getMethod()) {
-          case GET:
-            writeFileTemplateToHttpResponse(httpContext.getResponse(), template);
-            break;
-          case HEAD:
-            writeFileTemplateHeadersToHttpResponse(httpContext.getResponse(), template);
-            break;
-          case POST:
-            writeFileTemplateToHttpResponse(httpContext.getResponse(), template);
-            break;
+        if (template instanceof WebFileTemplate) {
+          switch (httpContext.getRequest().getMethod()) {
+            case GET:
+              writeFileTemplateToHttpResponse(httpContext.getResponse(), (WebFileTemplate)template);
+              break;
+            case HEAD:
+              writeFileTemplateHeadersToHttpResponse(httpContext.getResponse(), (WebFileTemplate)template);
+              break;
+            case POST:
+              writeFileTemplateToHttpResponse(httpContext.getResponse(), (WebFileTemplate)template);
+              break;
+          }
+        } else if (template instanceof WebStringTemplate) {
+          switch (httpContext.getRequest().getMethod()) {
+            case GET:
+              writeStringTemplateToHttpResponse(httpContext.getResponse(), (WebStringTemplate)template);
+              break;
+            case HEAD:
+              writeStringTemplateHeadersToHttpResponse(httpContext.getResponse(), (WebStringTemplate)template);
+              break;
+            case POST:
+              writeStringTemplateToHttpResponse(httpContext.getResponse(), (WebStringTemplate)template);
+              break;
+          }
         }
         return true;
       } else {
@@ -78,11 +94,18 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
   
   private void writeFileTemplateHeadersToHttpResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
     File file = fileTemplate.getTemplate();
-    
+        
     assertFileExists(file);
     assertFileIsReadable(file);
     
     addHttpHeadersForFileTemplateToResponse(httpResponse, file);
+    IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
+
+    httpResponseWriter.writeResponse(httpResponse);
+  }
+  
+  private void writeStringTemplateHeadersToHttpResponse(IHttpResponse httpResponse, StringTemplate stringTemplate) {
+    addHttpHeadersForStringTemplateToResponse(httpResponse, stringTemplate.getTemplate());
     IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
 
     httpResponseWriter.writeResponse(httpResponse);
@@ -141,8 +164,8 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
     return mimeType;
   }
   
-  public void setInstantiator(IWebFileTemplateInstantiator value) {
-    this.instantiator = value;
+  public void setInstantiator(IWebTemplateInstantiator value) {
+    this.fileInstantiator = value;
   }
-  
+
 }

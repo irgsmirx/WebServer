@@ -5,14 +5,15 @@
 package http.modules;
 
 import http.resources.HttpDynamicTemplateResource;
+import http.templates.IWebTemplate;
 import http.templates.WebFileTemplate;
 
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public interface IWebFileTemplateInstantiator {
+public interface IWebTemplateInstantiator {
   
-  WebFileTemplate instantiate(HttpDynamicTemplateResource templateResource);
+  IWebTemplate instantiate(HttpDynamicTemplateResource templateResource);
   
 }
