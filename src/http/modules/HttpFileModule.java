@@ -6,11 +6,9 @@ package http.modules;
 
 import exceptions.HttpException;
 import exceptions.ResourceNotFoundException;
-import http.HttpMethod;
 import http.HttpResponseWriter;
 import http.HttpStatusCode;
 import http.IHttpContext;
-import http.IHttpRequest;
 import http.IHttpResponse;
 import http.IHttpResponseWriter;
 import http.resources.HttpFileResource;
@@ -22,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import utilities.common.implementation.SystemProperties;
 import utilities.path.Path;
 import web.MimeTypeMap;
 
@@ -56,7 +53,7 @@ public class HttpFileModule extends AbstractHttpModule {
         }
         return true;
       } else {
-        return false;
+        throw new HttpException(HttpStatusCode.STATUS_404_NOT_FOUND, "Resource not found!");
       }
     } else {
       throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Error");

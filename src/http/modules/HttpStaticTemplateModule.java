@@ -5,18 +5,14 @@
 package http.modules;
 
 import exceptions.HttpException;
-import exceptions.ResourceNotFoundException;
-import http.HttpMethod;
 import http.HttpResponseWriter;
 import http.HttpStatusCode;
 import http.IHttpContext;
-import http.IHttpRequest;
 import http.IHttpResponse;
 import http.IHttpResponseWriter;
 import http.resources.HttpStaticTemplateResource;
 import http.resources.HttpStaticTemplateResourceProvider;
 import java.io.File;
-import utilities.common.implementation.SystemProperties;
 import utilities.path.Path;
 import utilities.templates.FileTemplate;
 import utilities.templates.ITemplate;
@@ -53,7 +49,7 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
         }
         return true;
       } else {
-        return false;
+        throw new HttpException(HttpStatusCode.STATUS_404_NOT_FOUND, "Resource not found!");
       }
     } else {
       throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Error");

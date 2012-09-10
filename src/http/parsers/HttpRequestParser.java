@@ -71,7 +71,7 @@ public class HttpRequestParser implements IHttpRequestParser {
       if (bodyBytes != null && bodyBytes.length > 0) {
         fillForm(httpRequest, new String(bodyBytes, "UTF-8"));
       }
-    } catch (Exception ex) {
+    } catch (HttpException | UnsupportedEncodingException ex) {
     }
 
     return httpRequest;
