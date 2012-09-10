@@ -30,7 +30,7 @@ import web.MimeTypeMap;
  */
 public class HttpDynamicTemplateModule extends AbstractHttpModule {
  
-  private IWebTemplateInstantiator fileInstantiator = new DefaultWebFileTemplateInstantiator();
+  private IWebTemplateInstantiator fileInstantiator = new DefaultWebTemplateInstantiator();
   
   public HttpDynamicTemplateModule() {
     super();

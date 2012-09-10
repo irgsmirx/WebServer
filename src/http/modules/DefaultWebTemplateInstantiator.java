@@ -6,7 +6,6 @@ package http.modules;
 
 import http.resources.HttpDynamicTemplateResource;
 import http.templates.IWebTemplate;
-import http.templates.WebFileTemplate;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
@@ -16,7 +15,7 @@ import java.util.logging.Logger;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class DefaultWebFileTemplateInstantiator implements IWebTemplateInstantiator {
+public class DefaultWebTemplateInstantiator implements IWebTemplateInstantiator {
 
   @Override
   public IWebTemplate instantiate(HttpDynamicTemplateResource templateResource) {
@@ -25,22 +24,22 @@ public class DefaultWebFileTemplateInstantiator implements IWebTemplateInstantia
       constructor.setAccessible(true);
       return constructor.newInstance(new Object[0]);
     } catch (InstantiationException ex) {
-      Logger.getLogger(DefaultWebFileTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
       throw new RuntimeException(ex);
     } catch (IllegalAccessException ex) {
-      Logger.getLogger(DefaultWebFileTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
       throw new RuntimeException(ex);
     } catch (IllegalArgumentException ex) {
-      Logger.getLogger(DefaultWebFileTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
       throw new RuntimeException(ex);
     } catch (InvocationTargetException ex) {
-      Logger.getLogger(DefaultWebFileTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
       throw new RuntimeException(ex);
     } catch (NoSuchMethodException ex) {
-      Logger.getLogger(DefaultWebFileTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
       throw new RuntimeException(ex);
     } catch (SecurityException ex) {
-      Logger.getLogger(DefaultWebFileTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
       throw new RuntimeException(ex);
     }
   }
