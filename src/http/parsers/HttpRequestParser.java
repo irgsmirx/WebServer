@@ -69,7 +69,15 @@ public class HttpRequestParser implements IHttpRequestParser {
       }
       
       if (bodyBytes != null && bodyBytes.length > 0) {
-        fillForm(httpRequest, new String(bodyBytes, "UTF-8"));
+     		ContentTypeHttpHeader contentTypeHeader = ((ContentTypeHttpHeader)httpHeaders.getHeader("Content-Type"));
+        
+        if (contentTypeHeader != null) {
+          if (contentTypeHeader.getValue().equalsIgnoreCase("application/x-www-form-urlencoded")) {
+            fillForm(httpRequest, new String(bodyBytes, "UTF-8"));
+          } else if (contentTypeHeader.getValue().equalsIgnoreCase("application/json")) {
+            // parse JSON data
+          }
+        }
       }
     } catch (HttpException | UnsupportedEncodingException ex) {
     }
@@ -412,15 +420,16 @@ public class HttpRequestParser implements IHttpRequestParser {
 				// well, no body present, as it seems
 				return new byte[0];
 			} else {
-				if (contentType.compareTo("application/x-www-form-urlencoded") == 0) {
+				if (contentType.compareTo("application/x-www-form-urlencoded") == 0
+            || contentType.compareTo("application/json") == 0) {
 					try {
             long contentLength = contentLengthHeader.getValue();						
-            return readPlain2(is, contentLength);
+            return readPlain(is, contentLength);
 					} catch (NumberFormatException e) {
 						throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, 
               String.format("Header field Content-Length contained invalid value '%1s'.", contentLengthHeader.getRawValue()));
 					}
-				} else {
+        } else {
 					throw new HttpException(HttpStatusCode.STATUS_415_UNSUPPORTED_MEDIA_TYPE, "Media type is not supported.");
 				}
 			}
@@ -434,7 +443,7 @@ public class HttpRequestParser implements IHttpRequestParser {
 		}
 	}
   
-  protected byte[] readPlain2(InputStream is, long contentLength) {
+  protected byte[] readPlain(InputStream is, long contentLength) {
 		HttpBuffer buffer = new HttpBuffer();
 		int written = 0;
 
@@ -453,38 +462,6 @@ public class HttpRequestParser implements IHttpRequestParser {
       throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Unexpected end of stream.");
     }
     
-    return buffer.getCopy();
-	}
-  
-  
-  protected byte[] readPlain(InputStream is, long contentLength) {
-		HttpBuffer buffer = new HttpBuffer();
-		int written = 1;
-
-    byte[] body;
-    int ch = -1;
-    try {
-      ch = is.read();
-    } catch (IOException ex) {
-      Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
-      throw new exceptions.IOException(ex);
-    }
-
-		while (written < contentLength) {
-			if (ch == -1) {
-				throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Unexpected end of stream.");
-			} else {
-				buffer.append(ch);
-				written++;
-			}
-      try {
-        ch = is.read();
-      } catch (IOException ex) {
-        Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
-        throw new exceptions.IOException(ex);
-      }
-		}
-
     return buffer.getCopy();
 	}
 
