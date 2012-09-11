@@ -52,6 +52,8 @@ public class HttpListener implements IHttpListener {
   public HttpListener(InetAddress listenAddress, int port) {
     this.listenAddress = listenAddress;
     this.port = port;
+
+    initializeThreadPool();
   }
   
   private void initializeThreadPool() {
