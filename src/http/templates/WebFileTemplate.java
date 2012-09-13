@@ -5,8 +5,11 @@
 package http.templates;
 
 import http.IHttpContext;
+import http.IHttpResponse;
 import java.io.File;
+import utilities.path.Path;
 import utilities.templates.FileTemplate;
+import web.MimeTypeMap;
 
 /**
  *
@@ -44,6 +47,24 @@ public class WebFileTemplate extends FileTemplate implements IWebTemplate {
 
 	@Override
   public void load() {
+  }
+  
+  private String getMimeTypeForFile() {
+    String extension = Path.getFileExtensionFromFilename(getTemplate().getName());
+    return getMimeTypeForExtension(extension);
+  }
+  
+  private String getMimeTypeForExtension(String extension) {
+    String mimeType = MimeTypeMap.getInstance().getMimeTypeForExtension(extension);
+    if (mimeType == null) {
+      mimeType = "application/octet-stream";
+    }
+    return mimeType;
+  }
+
+  @Override
+  public String getContentType() {
+    return getMimeTypeForFile();
   }
 
 }

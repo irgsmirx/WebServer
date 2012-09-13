@@ -17,5 +17,7 @@ public interface IWebTemplate {
   void setContext(IHttpContext context);
 
   void load();
+  
+  String getContentType();
 	
 }

@@ -80,6 +80,7 @@ public class HttpRequestParser implements IHttpRequestParser {
         }
       }
     } catch (HttpException | UnsupportedEncodingException ex) {
+  		Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
     }
 
     return httpRequest;

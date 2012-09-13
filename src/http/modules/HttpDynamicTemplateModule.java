@@ -48,13 +48,13 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
         if (template instanceof WebFileTemplate) {
           switch (httpContext.getRequest().getMethod()) {
             case GET:
-              writeFileTemplateToHttpResponse(httpContext.getResponse(), (WebFileTemplate)template);
+              writeWebFileTemplateToHttpResponse(httpContext.getResponse(), (WebFileTemplate)template);
               break;
             case HEAD:
-              writeFileTemplateHeadersToHttpResponse(httpContext.getResponse(), (WebFileTemplate)template);
+              writeWebFileTemplateHeadersToHttpResponse(httpContext.getResponse(), (WebFileTemplate)template);
               break;
             case POST:
-              writeFileTemplateToHttpResponse(httpContext.getResponse(), (WebFileTemplate)template);
+              writeWebFileTemplateToHttpResponse(httpContext.getResponse(), (WebFileTemplate)template);
               break;
           }
         } else if (template instanceof WebStringTemplate) {
@@ -83,19 +83,19 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
     return (HttpDynamicTemplateResource) getResource(uriPath);
   }
   
-  private void writeFileTemplateToHttpResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
-    writeFileTemplateHeadersToHttpResponse(httpResponse, fileTemplate);
+  private void writeWebFileTemplateToHttpResponse(IHttpResponse httpResponse, WebFileTemplate webFileTemplate) {
+    writeWebFileTemplateHeadersToHttpResponse(httpResponse, webFileTemplate);
 
-    fileTemplate.renderTo(httpResponse.getOutputStream());
+    webFileTemplate.renderTo(httpResponse.getOutputStream());
   }
   
-  private void writeFileTemplateHeadersToHttpResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
-    File file = fileTemplate.getTemplate();
+  private void writeWebFileTemplateHeadersToHttpResponse(IHttpResponse httpResponse, WebFileTemplate webFileTemplate) {
+    File file = webFileTemplate.getTemplate();
         
     assertFileExists(file);
     assertFileIsReadable(file);
     
-    addHttpHeadersForFileTemplateToResponse(httpResponse, file);
+    addHttpHeadersForWebFileTemplateToResponse(httpResponse, webFileTemplate);
     IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
 
     httpResponseWriter.writeResponse(httpResponse);
@@ -118,10 +118,10 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
     stringTemplate.renderTo(httpResponse.getOutputStream());
   }
   
-  private void addHttpHeadersForFileTemplateToResponse(IHttpResponse httpResponse, File file) {
+  private void addHttpHeadersForWebFileTemplateToResponse(IHttpResponse httpResponse, WebFileTemplate webFileTemplate) {
     httpResponse.setStatusCode(HttpStatusCode.STATUS_200_OK);
-    addContentTypeHeaderForFile(httpResponse, file);
-    addContentLengthHeaderForFile(httpResponse, file);
+    addContentTypeHeaderForFileTemplate(httpResponse, webFileTemplate);
+    addContentLengthHeaderForFile(httpResponse, webFileTemplate.getTemplate());
   }
   
   private void addHttpHeadersForStringTemplateToResponse(IHttpResponse httpResponse, String string) {
@@ -130,16 +130,18 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
     addContentLengthHeaderForString(httpResponse, string);
   }
   
-  private void addContentTypeHeaderForFile(IHttpResponse httpResponse, File file) {
-    String extension = Path.getFileExtensionFromFilename(file.getName());
-    String mimeType = getMimeTypeForExtension(extension);
-    
-    httpResponse.setContentType(mimeType);
+  private void addContentTypeHeaderForFileTemplate(IHttpResponse httpResponse, WebFileTemplate webFileTemplate) {
+    httpResponse.setContentType(webFileTemplate.getContentType());
   }
   
   private void addContentTypeHeaderForString(IHttpResponse httpResponse) {
     httpResponse.setContentType("text/html");
   }
+
+  private void addContentTypeHeaderForJSON(IHttpResponse httpResponse) {
+    httpResponse.setContentType("application/json");
+  }
+
   
   private void addContentLengthHeaderForFile(IHttpResponse httpResponse, File file) {
     httpResponse.setContentLength(file.length());
@@ -151,14 +153,6 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
 
   public HttpDynamicTemplateResourceProvider getTemplateResources() {
     return (HttpDynamicTemplateResourceProvider)resourceProvider;
-  }
-
-  private String getMimeTypeForExtension(String extension) {
-    String mimeType = MimeTypeMap.getInstance().getMimeTypeForExtension(extension);
-    if (mimeType == null) {
-      mimeType = "application/octet-stream";
-    }
-    return mimeType;
   }
   
   public void setInstantiator(IWebTemplateInstantiator value) {

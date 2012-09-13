@@ -13,7 +13,10 @@ import utilities.templates.StringTemplate;
  */
 public class WebStringTemplate extends StringTemplate implements IWebTemplate {
   
+  private static final String DEFAULT_CONTENT_TYPE = "text/html";
+  
   protected IHttpContext context;
+  protected String contentType = DEFAULT_CONTENT_TYPE;  
   
   public WebStringTemplate(String template) {
     super(template);
@@ -31,6 +34,11 @@ public class WebStringTemplate extends StringTemplate implements IWebTemplate {
 
 	@Override
   public void load() {
+  }
+
+  @Override
+  public final String getContentType() {
+    return contentType;
   }
 
 }
