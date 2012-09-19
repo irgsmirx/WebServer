@@ -86,7 +86,7 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
     assertFileExists(file);
     assertFileIsReadable(file);
 
-    addHttpHeadersForFileTemplateToResponse(httpResponse, file);
+    addHttpHeadersForFileTemplateToResponse(httpResponse, fileTemplate);
     IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
 
     httpResponseWriter.writeResponse(httpResponse);
@@ -112,10 +112,10 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
   }
   
   
-  private void addHttpHeadersForFileTemplateToResponse(IHttpResponse httpResponse, File file) {
+  private void addHttpHeadersForFileTemplateToResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
     httpResponse.setStatusCode(HttpStatusCode.STATUS_200_OK);
-    addContentTypeHeaderForFile(httpResponse, file);
-    addContentLengthHeaderForFile(httpResponse, file);
+    addContentTypeHeaderForFile(httpResponse, fileTemplate.getTemplate());
+    addContentLengthHeaderForTemplate(httpResponse, fileTemplate);
   }
   
   private void addHttpHeadersForStringTemplateToResponse(IHttpResponse httpResponse, String string) {
@@ -137,6 +137,10 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
   
   private void addContentLengthHeaderForFile(IHttpResponse httpResponse, File file) {
     httpResponse.setContentLength(file.length());
+  }
+  
+  private void addContentLengthHeaderForTemplate(IHttpResponse httpResponse, FileTemplate fileTemplate) {
+    httpResponse.setContentLength(fileTemplate.getLength());
   }
   
   private void addContentLengthHeaderForString(IHttpResponse httpResponse, String string) {

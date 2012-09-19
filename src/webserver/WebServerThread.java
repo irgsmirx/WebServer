@@ -117,12 +117,16 @@ public class WebServerThread implements Runnable {
       responseWriter.writeResponse(httpResponse);
     } finally {
       if (!socket.isClosed()) {
-        os.flush();
+        try {
+          os.flush();
 
-        is.close();
-        os.close();
+          is.close();
+          os.close();
 
-        socket.close();
+          socket.close();
+        } catch (Exception ex) {
+          
+        }
       }
 		}
 	}
@@ -135,13 +139,17 @@ public class WebServerThread implements Runnable {
   }
   
   private IHttpContext establishContext(InputStream is, OutputStream os) throws IOException, HttpException {
-    IHttpRequest httpRequest = parseHttpRequest(is);
-    httpRequest.setInputStream(is);
-    
-    IHttpResponse httpResponse = createHttpResponseFromHttpRequest(httpRequest);
-    httpResponse.setOutputStream(os);
-    
-    return new HttpContext(httpRequest, httpResponse);
+    try {
+      IHttpRequest httpRequest = parseHttpRequest(is);
+      httpRequest.setInputStream(is);
+
+      IHttpResponse httpResponse = createHttpResponseFromHttpRequest(httpRequest);
+      httpResponse.setOutputStream(os);
+
+      return new HttpContext(httpRequest, httpResponse);
+    } catch (Exception ex) {
+			throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request ended unexpectedly.");
+    }
   }
   
   private IHttpRequest parseHttpRequest(InputStream is) {
