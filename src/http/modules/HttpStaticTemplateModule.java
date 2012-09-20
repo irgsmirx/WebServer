@@ -99,7 +99,7 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
   }
 
   private void writeStringTemplateHeadersToHttpResponse(IHttpResponse httpResponse, StringTemplate stringTemplate) {
-    addHttpHeadersForStringTemplateToResponse(httpResponse, stringTemplate.getTemplate());
+    addHttpHeadersForStringTemplateToResponse(httpResponse, stringTemplate);
     IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
 
     httpResponseWriter.writeResponse(httpResponse);
@@ -118,10 +118,10 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
     addContentLengthHeaderForTemplate(httpResponse, fileTemplate);
   }
   
-  private void addHttpHeadersForStringTemplateToResponse(IHttpResponse httpResponse, String string) {
+  private void addHttpHeadersForStringTemplateToResponse(IHttpResponse httpResponse, StringTemplate stringTemplate) {
     httpResponse.setStatusCode(HttpStatusCode.STATUS_200_OK);
     addContentTypeHeaderForString(httpResponse);
-    addContentLengthHeaderForString(httpResponse, string);
+    addContentLengthHeaderForStringTemplate(httpResponse, stringTemplate);
   }
   
   private void addContentTypeHeaderForFile(IHttpResponse httpResponse, File file) {
@@ -145,6 +145,10 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
   
   private void addContentLengthHeaderForString(IHttpResponse httpResponse, String string) {
     httpResponse.setContentLength(string.getBytes().length);
+  }
+  
+  private void addContentLengthHeaderForStringTemplate(IHttpResponse httpResponse, StringTemplate stringTemplate) {
+    httpResponse.setContentLength(stringTemplate.getLength());
   }
   
   public HttpStaticTemplateResourceProvider getTemplateResources() {
