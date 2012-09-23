@@ -10,157 +10,151 @@ import java.util.*;
 
 public class HttpResponse extends HttpMessage implements IHttpResponse {
 
-  private OutputStream outputStream;
-  
-	protected IHttpStatusCode statusCode;
-  protected ConnectionType connectionType;
+    private OutputStream outputStream;
+    protected IHttpStatusCode statusCode;
+    protected ConnectionType connectionType;
+    protected String body;
+    protected Map<String, String> responseHeader;
 
-  protected String body;
+    public HttpResponse() {
+        super();
 
-	protected Map<String, String> responseHeader;
-  
-	public HttpResponse() {
-    super();
-    
-		contentLength = 0;
-		body = null;
+        contentLength = 0;
+        body = null;
 
-		generalHeader = new HashMap<>();
-		responseHeader = new HashMap<>();
-		entityHeader = new HashMap<>();
-	}
-  
-  public HttpResponse(IHttpVersion version) {
-    this();
-    this.version = version;
-  }
+        generalHeader = new HashMap<>();
+        responseHeader = new HashMap<>();
+        entityHeader = new HashMap<>();
+    }
 
-  public HttpResponse(IHttpStatusCode statusCode) {
-    this();
-    this.statusCode = statusCode;
-  }
-  
-  public HttpResponse(IHttpVersion version, IHttpStatusCode statusCode) {
-    this();
-    this.version = version;
-    this.statusCode = statusCode;
-  }
+    public HttpResponse(IHttpVersion version) {
+        this();
+        this.version = version;
+    }
 
-	public HttpResponse(SocketTimeoutException e) {
-		this(new HttpException(HTTP_REQUEST_TIMEOUT));
-	}
+    public HttpResponse(IHttpStatusCode statusCode) {
+        this();
+        this.statusCode = statusCode;
+    }
 
-	public HttpResponse(HttpException e) {
-		//version = HTTP11;
-		//status = e.getErrorCode();
-		//reason = get(status);
+    public HttpResponse(IHttpVersion version, IHttpStatusCode statusCode) {
+        this();
+        this.version = version;
+        this.statusCode = statusCode;
+    }
 
-		generalHeader = new HashMap<>();
-		responseHeader = new HashMap<>();
-		entityHeader = new HashMap<>();
+    public HttpResponse(SocketTimeoutException e) {
+        this(new HttpException(HTTP_REQUEST_TIMEOUT));
+    }
 
-    String version = "";
-    String status = "";
-    String reason = "";
-    
-		String title = "ERROR " + status + " (" + reason + ")";
+    public HttpResponse(HttpException e) {
+        //version = HTTP11;
+        //status = e.getErrorCode();
+        //reason = get(status);
 
-		//XHTMLDocument document = errorDocument(e, title);
-
-		StringBuffer sb = new StringBuffer();
-		//document.appendXML(sb);
-
-		body = sb.toString();
-
-		contentLength = sb.length();
-
-		generateDefaultHeader();
-	}
-
-	public HttpResponse(File f) {
-		if (f.exists()) {
-			if (f.canRead()) {
-				if (f.isFile()) {
-
-				} else if (f.isDirectory()) {
-					//version = HTTP11;
-					//status = HTTP_OK;
-					//reason = get(status);
-
-					generalHeader = new HashMap<>();
-					responseHeader = new HashMap<>();
-					entityHeader = new HashMap<>();
-
-					//XHTMLDocument document = directoryListing(f);
-
-					StringBuffer sb = new StringBuffer();
-					//document.appendXML(sb);
-
-					body = sb.toString();
-
-					contentLength = sb.length();
-
-					generateDefaultHeader();
-				} else {
-
-				}
-			} else {
-				//version = HTTP11;
-				//status = HTTP_FORBIDDEN;
-				//reason = get(status);
-
-				generalHeader = new HashMap<>();
-				responseHeader = new HashMap<>();
-				entityHeader = new HashMap<>();
+        generalHeader = new HashMap<>();
+        responseHeader = new HashMap<>();
+        entityHeader = new HashMap<>();
 
         String version = "";
         String status = "";
         String reason = "";
-        
-				String title = "ERROR " + status + " (" + reason + ")";
 
-				//XHTMLDocument document = accessDenied(f, title);
+        String title = "ERROR " + status + " (" + reason + ")";
 
-				StringBuffer sb = new StringBuffer();
-				//document.appendXML(sb);
+        //XHTMLDocument document = errorDocument(e, title);
 
-				body = sb.toString();
+        StringBuffer sb = new StringBuffer();
+        //document.appendXML(sb);
 
-				contentLength = sb.length();
+        body = sb.toString();
 
-				generateDefaultHeader();
-			}
-		} else {
-			//version = HTTP11;
-			//status = HTTP_NOT_FOUND;
-			//reason = get(status);
+        contentLength = sb.length();
 
-			generalHeader = new HashMap<>();
-			responseHeader = new HashMap<>();
-			entityHeader = new HashMap<>();
+        generateDefaultHeader();
+    }
 
-      String version = "";
-      String status = "";
-      String reason = "";
+    public HttpResponse(File f) {
+        if (f.exists()) {
+            if (f.canRead()) {
+                if (f.isFile()) {
+                } else if (f.isDirectory()) {
+                    //version = HTTP11;
+                    //status = HTTP_OK;
+                    //reason = get(status);
 
-			String title = "ERROR " + status + " (" + reason + ")";
+                    generalHeader = new HashMap<>();
+                    responseHeader = new HashMap<>();
+                    entityHeader = new HashMap<>();
 
-			//XHTMLDocument document = fileNotFound(f, title);
+                    //XHTMLDocument document = directoryListing(f);
 
-			StringBuffer sb = new StringBuffer();
-			//document.appendXML(sb);
+                    StringBuffer sb = new StringBuffer();
+                    //document.appendXML(sb);
 
-			body = sb.toString();
+                    body = sb.toString();
 
-			contentLength = sb.length();
+                    contentLength = sb.length();
 
-			generateDefaultHeader();
-		}
-	}
+                    generateDefaultHeader();
+                } else {
+                }
+            } else {
+                //version = HTTP11;
+                //status = HTTP_FORBIDDEN;
+                //reason = get(status);
 
-	protected void generateDefaultHeader() {
+                generalHeader = new HashMap<>();
+                responseHeader = new HashMap<>();
+                entityHeader = new HashMap<>();
 
-	}
+                String version = "";
+                String status = "";
+                String reason = "";
+
+                String title = "ERROR " + status + " (" + reason + ")";
+
+                //XHTMLDocument document = accessDenied(f, title);
+
+                StringBuffer sb = new StringBuffer();
+                //document.appendXML(sb);
+
+                body = sb.toString();
+
+                contentLength = sb.length();
+
+                generateDefaultHeader();
+            }
+        } else {
+            //version = HTTP11;
+            //status = HTTP_NOT_FOUND;
+            //reason = get(status);
+
+            generalHeader = new HashMap<>();
+            responseHeader = new HashMap<>();
+            entityHeader = new HashMap<>();
+
+            String version = "";
+            String status = "";
+            String reason = "";
+
+            String title = "ERROR " + status + " (" + reason + ")";
+
+            //XHTMLDocument document = fileNotFound(f, title);
+
+            StringBuffer sb = new StringBuffer();
+            //document.appendXML(sb);
+
+            body = sb.toString();
+
+            contentLength = sb.length();
+
+            generateDefaultHeader();
+        }
+    }
+
+    protected void generateDefaultHeader() {
+    }
 
 //	protected XHTMLDocument errorDocument(Exception e, String title) {
 //		XHTMLHeading1 heading = new XHTMLHeading1();
@@ -325,51 +319,48 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 //
 //		return document;
 //	}
+    protected static int contains(String[] array, String value) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].compareTo(value) == 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
+    @Override
+    public IHttpStatusCode getStatusCode() {
+        return statusCode;
+    }
 
-	protected static int contains(String[] array, String value) {
-		for (int i = 0; i < array.length; i++) {
-			if (array[i].compareTo(value) == 0) {
-				return i;
-			}
-		}
-		return -1;
-	}
+    @Override
+    public void setStatusCode(IHttpStatusCode value) {
+        this.statusCode = value;
+    }
 
-  @Override
-  public IHttpStatusCode getStatusCode() {
-    return statusCode;
-  }
+    @Override
+    public ConnectionType getConnectionType() {
+        return connectionType;
+    }
 
-  @Override
-  public void setStatusCode(IHttpStatusCode value) {
-    this.statusCode = value;
-  }
+    @Override
+    public void setConnectionType(ConnectionType value) {
+        this.connectionType = value;
+    }
 
-  @Override
-  public ConnectionType getConnectionType() {
-    return connectionType;
-  }
+    @Override
+    public void redirect(String destination) {
+        statusCode = HttpStatusCode.STATUS_302_FOUND;
+        headers.addHeader(new StringHttpHeader("Location", destination));
+    }
 
-  @Override
-  public void setConnectionType(ConnectionType value) {
-    this.connectionType = value;
-  }
+    @Override
+    public OutputStream getOutputStream() {
+        return outputStream;
+    }
 
-  @Override
-  public void redirect(String destination) {
-    statusCode = HttpStatusCode.STATUS_302_FOUND;
-    headers.addHeader(new StringHttpHeader("Location", destination));
-  }
-  
-  @Override
-  public OutputStream getOutputStream() {
-    return outputStream;
-  }
-
-  @Override
-  public void setOutputStream(OutputStream value) {
-    this.outputStream = value;
-  }
-  
+    @Override
+    public void setOutputStream(OutputStream value) {
+        this.outputStream = value;
+    }
 }

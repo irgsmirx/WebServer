@@ -11,9 +11,6 @@ import java.util.Stack;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public abstract class HttpApplicationFactory {
-  
-  protected Stack<HttpApplication> applications = new Stack<>();
-  
-  
-  
+
+    protected Stack<HttpApplication> applications = new Stack<>();
 }

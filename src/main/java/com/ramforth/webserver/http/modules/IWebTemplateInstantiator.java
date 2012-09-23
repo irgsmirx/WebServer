@@ -13,7 +13,6 @@ import com.ramforth.webserver.http.templates.WebFileTemplate;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IWebTemplateInstantiator {
-  
-  IWebTemplate instantiate(HttpDynamicTemplateResource templateResource);
-  
+
+    IWebTemplate instantiate(HttpDynamicTemplateResource templateResource);
 }

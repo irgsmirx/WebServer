@@ -9,6 +9,4 @@ package com.ramforth.webserver.web;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class Header implements IHeader {
-  
-  
 }

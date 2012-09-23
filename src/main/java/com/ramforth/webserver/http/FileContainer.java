@@ -5,19 +5,18 @@ import java.io.*;
 
 public class FileContainer implements WebContainer {
 
-	final static int BUF_SIZE = 2048;
+    final static int BUF_SIZE = 2048;
+    private byte[] buf;
+    private String filename;
+    private File file;
+    private String contentType;
 
-	private byte[] buf;
-	private String filename;
-	private File file;
-	private String contentType;
+    public FileContainer() {
+        buf = new byte[BUF_SIZE];
+    }
 
-	public FileContainer() {
-		buf = new byte[BUF_SIZE];
-	}
-
-  @Override
-	public void print(PrintStream p) throws IOException {
+    @Override
+    public void print(PrintStream p) throws IOException {
 //		if (file.isFile()) {
 //			try (InputStream is = new FileInputStream(file.getAbsolutePath())) {
 //				int n;
@@ -68,76 +67,72 @@ public class FileContainer implements WebContainer {
 //			xd.appendXML(sb);
 //
 //		}
-	}
+    }
 
-  @Override
-	public boolean isConsistent() {
-		return (file != null && file.exists() && file.isFile());
-	}
+    @Override
+    public boolean isConsistent() {
+        return ( file != null && file.exists() && file.isFile() );
+    }
 
-	/**
-	 * @return Returns the buf.
-	 */
-	public byte[] getBuf() {
-		return buf;
-	}
+    /**
+     * @return Returns the buf.
+     */
+    public byte[] getBuf() {
+        return buf;
+    }
 
-	/**
-	 * @param buf
-	 *          The buf to set.
-	 */
-	public void setBuf(byte[] buf) {
-		this.buf = buf;
-	}
+    /**
+     * @param buf The buf to set.
+     */
+    public void setBuf(byte[] buf) {
+        this.buf = buf;
+    }
 
-	/**
-	 * @return Returns the file.
-	 */
-	public File getFile() {
-		return file;
-	}
+    /**
+     * @return Returns the file.
+     */
+    public File getFile() {
+        return file;
+    }
 
-	/**
-	 * @param file
-	 *          The file to set.
-	 */
-	public void setFile(File file) {
-		this.file = file;
+    /**
+     * @param file The file to set.
+     */
+    public void setFile(File file) {
+        this.file = file;
 
-		if (file.isFile()) {
-		} else if (file.isDirectory()) {
+        if (file.isFile()) {
+        } else if (file.isDirectory()) {
+        }
+    }
 
-		}
-	}
+    /**
+     * @return Returns the suffix.
+     */
+    public String getSuffix() {
+        return file.getName().substring(file.getName().lastIndexOf('.'));
+    }
 
-	/**
-	 * @return Returns the suffix.
-	 */
-	public String getSuffix() {
-		return file.getName().substring(file.getName().lastIndexOf('.'));
-	}
+    @Override
+    public String getContentType() {
+        if (contentType != null) {
+            return contentType;
+        } else {
+            return HttpMimeTypes.getMimeType(getSuffix());
+        }
+    }
 
-  @Override
-	public String getContentType() {
-		if (contentType != null) {
-			return contentType;
-		} else {
-			return HttpMimeTypes.getMimeType(getSuffix());
-		}
-	}
+    @Override
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
 
-  @Override
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
-
-  @Override
-	public long getContentLength() {
-		if (file != null) {
-			return file.length();
-		} else {
-			return 0;
-		}
-	}
-
+    @Override
+    public long getContentLength() {
+        if (file != null) {
+            return file.length();
+        } else {
+            return 0;
+        }
+    }
 }

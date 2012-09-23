@@ -10,14 +10,13 @@ package com.ramforth.webserver.http.resources;
  */
 public class HttpFileResource extends AbstractHttpResource {
 
-  protected String serverPath;
-  
-  public void setServerPath(String value) {
-    this.serverPath = value;
-  }
-  
-  public String getServerPath() {
-    return serverPath;
-  }
-  
+    protected String serverPath;
+
+    public void setServerPath(String value) {
+        this.serverPath = value;
+    }
+
+    public String getServerPath() {
+        return serverPath;
+    }
 }

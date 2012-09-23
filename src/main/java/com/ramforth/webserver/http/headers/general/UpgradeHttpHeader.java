@@ -9,8 +9,6 @@ package com.ramforth.webserver.http.headers.general;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class UpgradeHttpHeader {
-  
-  public static final String UPGRADE = "Upgrade";
 
-  
+    public static final String UPGRADE = "Upgrade";
 }

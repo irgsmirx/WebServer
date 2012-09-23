@@ -12,27 +12,26 @@ import java.io.OutputStream;
  */
 public class Response extends Message implements IResponse {
 
-  protected OutputStream outputStream;
-  protected ConnectionType connectionType;
-  
-  @Override
-  public ConnectionType getConnectionType() {
-    return connectionType;
-  }
+    protected OutputStream outputStream;
+    protected ConnectionType connectionType;
 
-  @Override
-  public void setConnectionType(ConnectionType value) {
-    this.connectionType = value;
-  }
-  
-  @Override
-  public OutputStream getOutputStream() {
-    return outputStream;
-  }
-  
-  @Override
-  public void setOutputStream(OutputStream value) {
-    this.outputStream = value;
-  }
-  
+    @Override
+    public ConnectionType getConnectionType() {
+        return connectionType;
+    }
+
+    @Override
+    public void setConnectionType(ConnectionType value) {
+        this.connectionType = value;
+    }
+
+    @Override
+    public OutputStream getOutputStream() {
+        return outputStream;
+    }
+
+    @Override
+    public void setOutputStream(OutputStream value) {
+        this.outputStream = value;
+    }
 }

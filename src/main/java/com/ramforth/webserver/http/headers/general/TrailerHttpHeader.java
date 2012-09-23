@@ -10,6 +10,5 @@ package com.ramforth.webserver.http.headers.general;
  */
 public class TrailerHttpHeader {
 
-  public static final String TRAILED = "Trailer";
-  
+    public static final String TRAILED = "Trailer";
 }

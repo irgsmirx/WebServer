@@ -12,7 +12,6 @@ import com.ramforth.webserver.web.modules.IModule;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IHttpModule extends IModule {
-  
-  boolean processHttpContext(IHttpContext httpContext);
-  
+
+    boolean processHttpContext(IHttpContext httpContext);
 }

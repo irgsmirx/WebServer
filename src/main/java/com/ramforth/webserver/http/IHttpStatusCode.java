@@ -9,14 +9,16 @@ package com.ramforth.webserver.http;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IHttpStatusCode {
- 
-  HttpStatusCodeClass getStatusCodeClass();
-  void setStatusCodeClass(HttpStatusCodeClass value);
-  
-  int getCode();
-  void setCode(int value);
-  
-  String getReason();
-  void setReason(String value);
-  
+
+    HttpStatusCodeClass getStatusCodeClass();
+
+    void setStatusCodeClass(HttpStatusCodeClass value);
+
+    int getCode();
+
+    void setCode(int value);
+
+    String getReason();
+
+    void setReason(String value);
 }

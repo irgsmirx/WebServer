@@ -9,43 +9,42 @@ package com.ramforth.webserver.http;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class MediaType implements IMediaType {
-  
-  protected String type;
-  protected NameValueMap parameters = new NameValueMap();
 
-  @Override
-  public String getType() {
-    return type;
-  }
+    protected String type;
+    protected NameValueMap parameters = new NameValueMap();
 
-  @Override
-  public void setType(String value) {
-    this.type = value;
-  }
+    @Override
+    public String getType() {
+        return type;
+    }
 
-  @Override
-  public NameValueMap getParameters() {
-    return parameters;
-  }
+    @Override
+    public void setType(String value) {
+        this.type = value;
+    }
 
-  @Override
-  public void addParameter(String name, String value) {
-    parameters.add(name, value);
-  }
-  
-  @Override
-  public void removeParameter(String name) {
-    parameters.remove(name);
-  }
-  
-  @Override
-  public void clearParameters() {
-    parameters.clear();
-  }
+    @Override
+    public NameValueMap getParameters() {
+        return parameters;
+    }
 
-  @Override
-  public int numberOfParameters() {
-    return parameters.numberOfEntries();
-  }
-  
+    @Override
+    public void addParameter(String name, String value) {
+        parameters.add(name, value);
+    }
+
+    @Override
+    public void removeParameter(String name) {
+        parameters.remove(name);
+    }
+
+    @Override
+    public void clearParameters() {
+        parameters.clear();
+    }
+
+    @Override
+    public int numberOfParameters() {
+        return parameters.numberOfEntries();
+    }
 }

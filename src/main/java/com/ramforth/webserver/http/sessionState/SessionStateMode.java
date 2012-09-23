@@ -9,9 +9,10 @@ package com.ramforth.webserver.http.sessionState;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public enum SessionStateMode {
-  Off,
-  InProc,
-  StateServer,
-  SQLServer,
-  Custom
+
+    Off,
+    InProc,
+    StateServer,
+    SQLServer,
+    Custom
 }

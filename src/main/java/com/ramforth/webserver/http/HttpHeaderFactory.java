@@ -17,32 +17,31 @@ import com.ramforth.webserver.http.headers.entity.ContentLengthHttpHeader;
  */
 public class HttpHeaderFactory implements IHttpHeaderFactory {
 
-  @Override
-  public IHttpHeader buildHttpHeader(String name, String rawValue) {
-    IHttpHeader header;
-    
-    switch (name.toLowerCase()) {
-      case "host":
-        header = new HostHttpHeader(rawValue);
-        break;
-      case "http_x_requested_with":
-        header = new AjaxHttpHeader();
-        break;
-      case "content-length":
-        header = new ContentLengthHttpHeader(Long.parseLong(rawValue));
-        break;
-      case "content-type":
-        header = new ContentTypeHttpHeader(rawValue);
-        break;
-      case "transfer-encoding":
-        header = new TransferEncodingHttpHeader(rawValue);
-        break;
-      default:
-        header = new StringHttpHeader(name, rawValue);
-        break;
+    @Override
+    public IHttpHeader buildHttpHeader(String name, String rawValue) {
+        IHttpHeader header;
+
+        switch (name.toLowerCase()) {
+            case "host":
+                header = new HostHttpHeader(rawValue);
+                break;
+            case "http_x_requested_with":
+                header = new AjaxHttpHeader();
+                break;
+            case "content-length":
+                header = new ContentLengthHttpHeader(Long.parseLong(rawValue));
+                break;
+            case "content-type":
+                header = new ContentTypeHttpHeader(rawValue);
+                break;
+            case "transfer-encoding":
+                header = new TransferEncodingHttpHeader(rawValue);
+                break;
+            default:
+                header = new StringHttpHeader(name, rawValue);
+                break;
+        }
+
+        return header;
     }
-    
-    return header;    
-  }
-  
 }

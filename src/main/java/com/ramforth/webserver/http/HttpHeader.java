@@ -12,32 +12,31 @@ import com.ramforth.webserver.web.Header;
  */
 public class HttpHeader extends Header implements IHttpHeader {
 
-  private String name;
-  protected String rawValue;
-  
-  public HttpHeader(String name, String rawValue) {
-    this.name = name;
-    this.rawValue = rawValue;
-  }
-  
-  @Override
-  public String getName() {
-    return name;
-  }
+    private String name;
+    protected String rawValue;
 
-  @Override
-  public void setName(String value) {
-    this.name = value;
-  }
+    public HttpHeader(String name, String rawValue) {
+        this.name = name;
+        this.rawValue = rawValue;
+    }
 
-  @Override
-  public String getRawValue() {
-    return rawValue;
-  }
+    @Override
+    public String getName() {
+        return name;
+    }
 
-  @Override
-  public void setRawValue(String value) {
-    this.rawValue = value;
-  }
-  
+    @Override
+    public void setName(String value) {
+        this.name = value;
+    }
+
+    @Override
+    public String getRawValue() {
+        return rawValue;
+    }
+
+    @Override
+    public void setRawValue(String value) {
+        this.rawValue = value;
+    }
 }

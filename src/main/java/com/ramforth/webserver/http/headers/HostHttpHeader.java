@@ -9,9 +9,8 @@ package com.ramforth.webserver.http.headers;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class HostHttpHeader extends StringHttpHeader {
-  
-  public HostHttpHeader(String hostname) {
-    super("Host", hostname);
-  }
-  
+
+    public HostHttpHeader(String hostname) {
+        super("Host", hostname);
+    }
 }

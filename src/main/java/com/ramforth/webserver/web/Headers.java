@@ -12,31 +12,30 @@ import java.util.TreeMap;
  */
 public class Headers implements IHeaders {
 
-  private TreeMap<String, IHeader> headers = new TreeMap<>();
-  
-  @Override
-  public void addHeader(String name, IHeader value) {
-    headers.put(name, value);
-  }
+    private TreeMap<String, IHeader> headers = new TreeMap<>();
 
-  @Override
-  public void removeHeader(String name) {
-    headers.remove(name);
-  }
-  
-  @Override
-  public IHeader getHeader(String name) {
-    return headers.get(name);
-  }
+    @Override
+    public void addHeader(String name, IHeader value) {
+        headers.put(name, value);
+    }
 
-  @Override
-  public void clear() {
-    headers.clear();
-  }
+    @Override
+    public void removeHeader(String name) {
+        headers.remove(name);
+    }
 
-  @Override
-  public int numberOfHeaders() {
-    return headers.size();
-  }
-  
+    @Override
+    public IHeader getHeader(String name) {
+        return headers.get(name);
+    }
+
+    @Override
+    public void clear() {
+        headers.clear();
+    }
+
+    @Override
+    public int numberOfHeaders() {
+        return headers.size();
+    }
 }

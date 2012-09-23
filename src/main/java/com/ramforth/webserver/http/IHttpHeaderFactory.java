@@ -9,7 +9,6 @@ package com.ramforth.webserver.http;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IHttpHeaderFactory {
-  
-  IHttpHeader buildHttpHeader(String name, String rawValue);
-  
+
+    IHttpHeader buildHttpHeader(String name, String rawValue);
 }

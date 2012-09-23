@@ -9,8 +9,8 @@ package com.ramforth.webserver.http.resources;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IHttpResource {
- 
-  void setRelativePath(String value);
-  String getRelativePath();
-  
+
+    void setRelativePath(String value);
+
+    String getRelativePath();
 }

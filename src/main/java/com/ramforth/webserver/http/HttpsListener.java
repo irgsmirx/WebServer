@@ -24,147 +24,146 @@ import javax.net.ssl.SSLServerSocketFactory;
  */
 public class HttpsListener implements IHttpListener {
 
-  private int port = 0;
-  private int backlog = 0;
-  private InetAddress listenAddress;
-  private boolean listening = false;
-  
-  private static final ServerSocketFactory serverSocketFactory = SSLServerSocketFactory.getDefault();
-  private ServerSocket listeningSocket;
-  
-  private int acceptedSockets = 0;
-  
-  private ExecutorService threadPool;
+    private int port = 0;
+    private int backlog = 0;
+    private InetAddress listenAddress;
+    private boolean listening = false;
+    private static final ServerSocketFactory serverSocketFactory = SSLServerSocketFactory.getDefault();
+    private ServerSocket listeningSocket;
+    private int acceptedSockets = 0;
+    private ExecutorService threadPool;
+    private IHttpContextHandler contextHandler = null;
 
-  private IHttpContextHandler contextHandler = null;
-  
-  public HttpsListener(int port) {
-    try {
-      this.listenAddress = InetAddress.getLocalHost();
-    } catch (UnknownHostException ex) {
-      Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
-      throw new com.ramforth.webserver.exceptions.UnknownHostException(ex);
-    }
-    this.port = port;
-    
-    initializeThreadPool();
-  }
-  
-  public HttpsListener(InetAddress listenAddress, int port) {
-    this.listenAddress = listenAddress;
-    this.port = port;
-  }
-  
-  private void initializeThreadPool() {
-    threadPool = Executors.newFixedThreadPool(10);
-  }
- 
-  @Override
-  public int getPort() {
-    return port;
-  }
-
-  @Override
-  public void setPort(int value) {
-    if (listening) {
-      throw new AlreadyListeningException();
-    } else {
-      this.port = value;
-    }
-  }
-
-  @Override
-  public int getBacklog() {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void setBacklog(int value) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public InetAddress getListenAddress() {
-    return listenAddress;
-  }
-
-  @Override
-  public void setListenAddress(InetAddress value) {
-    if (listening) {
-      throw new AlreadyListeningException();
-    } else {
-      this.listenAddress = value;
-    }  
-  }
-
-  @Override
-  public void startListening() {
-		if (listeningSocket != null) {
-      throw new AlreadyListeningException();
-    }
-
-    createServerSocket();
-    listening  = true;
-    
-    while (listening) {
-      try {
-        Socket socket = listeningSocket.accept();
-        WebServerThread wst = new WebServerThread(socket);
-    
-        wst.setContextHandler(contextHandler);
-        
-        threadPool.execute(wst);
-      } catch (IOException ex) {
-        if (listening) {
-          throw new com.ramforth.webserver.exceptions.AlreadyListeningException(ex);
-        } else {
-          Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
-          return;
+    public HttpsListener(int port) {
+        try {
+            this.listenAddress = InetAddress.getLocalHost();
         }
-      }
+        catch (UnknownHostException ex) {
+            Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
+            throw new com.ramforth.webserver.exceptions.UnknownHostException(ex);
+        }
+        this.port = port;
+
+        initializeThreadPool();
     }
 
-    threadPool.shutdown();
-      
-    stopListening();
-  }
-
-  private void createServerSocket() {
-    try {
-      listeningSocket = serverSocketFactory.createServerSocket(port, backlog, listenAddress);
-    } catch (IOException ex) {
-      Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
-      throw new com.ramforth.webserver.exceptions.IOException(ex);
-    }
-  }
-  
-  @Override
-  public void stopListening() {
-    listening = false;
-    
-    try {
-      listeningSocket.close();
-    } catch (IOException ex) {
-      Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
-      throw new com.ramforth.webserver.exceptions.IOException(ex);
+    public HttpsListener(InetAddress listenAddress, int port) {
+        this.listenAddress = listenAddress;
+        this.port = port;
     }
 
-    listeningSocket = null;
-  }
+    private void initializeThreadPool() {
+        threadPool = Executors.newFixedThreadPool(10);
+    }
 
-  @Override
-  public boolean isListening() {
-    return listening;
-  }
+    @Override
+    public int getPort() {
+        return port;
+    }
 
-  @Override
-  public void setContextHandler(IHttpContextHandler value) {
-    this.contextHandler = value;
-  }
-  
-  @Override
-  public void unsetContextHandler() {
-    this.contextHandler = null;
-  }
-  
+    @Override
+    public void setPort(int value) {
+        if (listening) {
+            throw new AlreadyListeningException();
+        } else {
+            this.port = value;
+        }
+    }
+
+    @Override
+    public int getBacklog() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setBacklog(int value) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public InetAddress getListenAddress() {
+        return listenAddress;
+    }
+
+    @Override
+    public void setListenAddress(InetAddress value) {
+        if (listening) {
+            throw new AlreadyListeningException();
+        } else {
+            this.listenAddress = value;
+        }
+    }
+
+    @Override
+    public void startListening() {
+        if (listeningSocket != null) {
+            throw new AlreadyListeningException();
+        }
+
+        createServerSocket();
+        listening = true;
+
+        while (listening) {
+            try {
+                Socket socket = listeningSocket.accept();
+                WebServerThread wst = new WebServerThread(socket);
+
+                wst.setContextHandler(contextHandler);
+
+                threadPool.execute(wst);
+            }
+            catch (IOException ex) {
+                if (listening) {
+                    throw new com.ramforth.webserver.exceptions.AlreadyListeningException(ex);
+                } else {
+                    Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
+                    return;
+                }
+            }
+        }
+
+        threadPool.shutdown();
+
+        stopListening();
+    }
+
+    private void createServerSocket() {
+        try {
+            listeningSocket = serverSocketFactory.createServerSocket(port, backlog, listenAddress);
+        }
+        catch (IOException ex) {
+            Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
+            throw new com.ramforth.webserver.exceptions.IOException(ex);
+        }
+    }
+
+    @Override
+    public void stopListening() {
+        listening = false;
+
+        try {
+            listeningSocket.close();
+        }
+        catch (IOException ex) {
+            Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
+            throw new com.ramforth.webserver.exceptions.IOException(ex);
+        }
+
+        listeningSocket = null;
+    }
+
+    @Override
+    public boolean isListening() {
+        return listening;
+    }
+
+    @Override
+    public void setContextHandler(IHttpContextHandler value) {
+        this.contextHandler = value;
+    }
+
+    @Override
+    public void unsetContextHandler() {
+        this.contextHandler = null;
+    }
 }

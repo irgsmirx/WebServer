@@ -17,31 +17,36 @@ import java.util.logging.Logger;
  */
 public class DefaultWebTemplateInstantiator implements IWebTemplateInstantiator {
 
-  @Override
-  public IWebTemplate instantiate(HttpDynamicTemplateResource templateResource) {
-    try {
-      Constructor<? extends IWebTemplate> constructor = templateResource.getTemplateType().getConstructor(new Class<?>[0]);
-      constructor.setAccessible(true);
-      return constructor.newInstance(new Object[0]);
-    } catch (InstantiationException ex) {
-      Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
-      throw new RuntimeException(ex);
-    } catch (IllegalAccessException ex) {
-      Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
-      throw new RuntimeException(ex);
-    } catch (IllegalArgumentException ex) {
-      Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
-      throw new RuntimeException(ex);
-    } catch (InvocationTargetException ex) {
-      Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
-      throw new RuntimeException(ex);
-    } catch (NoSuchMethodException ex) {
-      Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
-      throw new RuntimeException(ex);
-    } catch (SecurityException ex) {
-      Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
-      throw new RuntimeException(ex);
+    @Override
+    public IWebTemplate instantiate(HttpDynamicTemplateResource templateResource) {
+        try {
+            Constructor<? extends IWebTemplate> constructor = templateResource.getTemplateType().getConstructor(new Class<?>[0]);
+            constructor.setAccessible(true);
+            return constructor.newInstance(new Object[0]);
+        }
+        catch (InstantiationException ex) {
+            Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        }
+        catch (IllegalAccessException ex) {
+            Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        }
+        catch (IllegalArgumentException ex) {
+            Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        }
+        catch (InvocationTargetException ex) {
+            Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        }
+        catch (NoSuchMethodException ex) {
+            Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        }
+        catch (SecurityException ex) {
+            Logger.getLogger(DefaultWebTemplateInstantiator.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        }
     }
-  }
-  
 }

@@ -9,11 +9,10 @@ package com.ramforth.webserver.http;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IHttpContext {
-  
-  IHttpRequest getRequest();
-  
-  IHttpResponse getResponse();
-  
-  HttpSessionState getSession();
-  
+
+    IHttpRequest getRequest();
+
+    IHttpResponse getResponse();
+
+    HttpSessionState getSession();
 }

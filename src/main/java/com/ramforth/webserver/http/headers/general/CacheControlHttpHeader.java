@@ -10,6 +10,5 @@ package com.ramforth.webserver.http.headers.general;
  */
 public class CacheControlHttpHeader {
 
-  public static final String CACHE_CONTROL = "Cache-Control";
-
+    public static final String CACHE_CONTROL = "Cache-Control";
 }

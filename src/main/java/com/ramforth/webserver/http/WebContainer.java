@@ -5,13 +5,13 @@ import java.io.PrintStream;
 
 public interface WebContainer {
 
-	public void print(PrintStream p) throws IOException;
+    public void print(PrintStream p) throws IOException;
 
-	public boolean isConsistent();
+    public boolean isConsistent();
 
-	public String getContentType();
-	public void setContentType(String contentType);
+    public String getContentType();
 
-	public long getContentLength();
+    public void setContentType(String contentType);
 
+    public long getContentLength();
 }

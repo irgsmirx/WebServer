@@ -11,55 +11,53 @@ import com.ramforth.webserver.exceptions.HttpException;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class HttpApplication {
-  
-  private HttpContext context;
-  private HttpSessionState session;
-  
-  
-  public IHttpRequest getRequest() {
-    IHttpRequest httpRequest = null;
-    
-    if (context != null) {
-      httpRequest = context.getRequest();
-    }
-    
-    if (httpRequest == null) {
-      throw new HttpException("Request not available");
-    }
-    
-    return httpRequest;
-  }
 
-  public IHttpResponse getResponse() {
-    IHttpResponse httpResponse = null;
-    
-    if (context != null) {
-      httpResponse = context.getResponse();
+    private HttpContext context;
+    private HttpSessionState session;
+
+    public IHttpRequest getRequest() {
+        IHttpRequest httpRequest = null;
+
+        if (context != null) {
+            httpRequest = context.getRequest();
+        }
+
+        if (httpRequest == null) {
+            throw new HttpException("Request not available");
+        }
+
+        return httpRequest;
     }
-    
-    if (httpResponse == null) {
-      throw new HttpException("Response not available");
+
+    public IHttpResponse getResponse() {
+        IHttpResponse httpResponse = null;
+
+        if (context != null) {
+            httpResponse = context.getResponse();
+        }
+
+        if (httpResponse == null) {
+            throw new HttpException("Response not available");
+        }
+
+        return httpResponse;
     }
-    
-    return httpResponse;
-  }
-    
-  public HttpSessionState getSession() {
-    HttpSessionState httpSessionState = null;
-    
-    if (session != null) {
-      httpSessionState = session;
-    } else {
-      if (context != null) {
-        httpSessionState = context.getSession();
-      }
+
+    public HttpSessionState getSession() {
+        HttpSessionState httpSessionState = null;
+
+        if (session != null) {
+            httpSessionState = session;
+        } else {
+            if (context != null) {
+                httpSessionState = context.getSession();
+            }
+        }
+
+        if (httpSessionState == null) {
+            throw new HttpException("Session not available");
+        }
+
+        return httpSessionState;
     }
-    
-    if (httpSessionState == null) {
-      throw new HttpException("Session not available");
-    }
-    
-    return httpSessionState;
-  }
-  
 }

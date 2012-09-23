@@ -11,7 +11,6 @@ import com.ramforth.webserver.http.IHttpRequest;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IHttpRequestHandler {
-  
-  void handleRequest(IHttpRequest request);
-  
+
+    void handleRequest(IHttpRequest request);
 }

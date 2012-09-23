@@ -9,5 +9,4 @@ package com.ramforth.webserver.http.headers.request;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class UserAgentHttpRequestHeader {
-  
 }

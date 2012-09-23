@@ -9,5 +9,4 @@ package com.ramforth.webserver.http.headers;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class AbstractHttpResponseHeader extends AbstractHttpHeader {
-  
 }

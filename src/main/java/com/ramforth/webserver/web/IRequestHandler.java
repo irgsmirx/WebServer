@@ -9,7 +9,6 @@ package com.ramforth.webserver.web;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IRequestHandler {
-  
-  void handleRequest();
-  
+
+    void handleRequest();
 }

@@ -9,8 +9,9 @@ package com.ramforth.webserver.http;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public enum HttpCookieMode {
-  UseUri,
-  UseCookies,
-  AutoDetect,
-  UseDeviceProfile
+
+    UseUri,
+    UseCookies,
+    AutoDetect,
+    UseDeviceProfile
 }

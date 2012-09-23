@@ -9,7 +9,4 @@ package com.ramforth.webserver.web.modules;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IModule {
-  
-  
-  
 }

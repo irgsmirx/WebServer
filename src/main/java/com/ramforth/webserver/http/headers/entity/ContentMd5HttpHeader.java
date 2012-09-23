@@ -12,10 +12,9 @@ import com.ramforth.webserver.http.headers.LongHttpHeader;
  */
 public class ContentMd5HttpHeader extends LongHttpHeader {
 
-  public static final String CONTENT_MD5 = "Content-MD5";
+    public static final String CONTENT_MD5 = "Content-MD5";
 
-  public ContentMd5HttpHeader(long value) {
-    super(CONTENT_MD5, value);
-  }
-  
+    public ContentMd5HttpHeader(long value) {
+        super(CONTENT_MD5, value);
+    }
 }

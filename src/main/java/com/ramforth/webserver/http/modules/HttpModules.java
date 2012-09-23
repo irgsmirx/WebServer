@@ -14,31 +14,30 @@ import java.util.List;
  */
 public class HttpModules implements IHttpModules {
 
-  private List<IHttpModule> modules = new ArrayList<>();
-  
-  @Override
-  public void add(IHttpModule module) {
-    modules.add(module);
-  }
+    private List<IHttpModule> modules = new ArrayList<>();
 
-  @Override
-  public void remove(IHttpModule module) {
-    modules.remove(module);
-  }
+    @Override
+    public void add(IHttpModule module) {
+        modules.add(module);
+    }
 
-  @Override
-  public IHttpModule getAt(int index) {
-    return modules.get(index);
-  }
+    @Override
+    public void remove(IHttpModule module) {
+        modules.remove(module);
+    }
 
-  @Override
-  public int numberOfModules() {
-    return modules.size();
-  }
+    @Override
+    public IHttpModule getAt(int index) {
+        return modules.get(index);
+    }
 
-  @Override
-  public Iterator<IHttpModule> iterator() {
-    return modules.iterator();
-  }
-  
+    @Override
+    public int numberOfModules() {
+        return modules.size();
+    }
+
+    @Override
+    public Iterator<IHttpModule> iterator() {
+        return modules.iterator();
+    }
 }

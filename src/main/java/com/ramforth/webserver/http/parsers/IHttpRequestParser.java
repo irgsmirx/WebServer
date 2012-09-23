@@ -15,15 +15,14 @@ import java.io.InputStream;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IHttpRequestParser {
-  
-  IHttpRequest parseRequest(InputStream is);
-  
-  IHttpHeaders parseHeaders(InputStream is);
-  
-  IHttpRequestLine parseRequestLine(InputStream is);
 
-  IHttpHeader parseHeader(InputStream is);
-    
-  byte[] parseBody(InputStream is, IHttpHeaders headers);
-  
+    IHttpRequest parseRequest(InputStream is);
+
+    IHttpHeaders parseHeaders(InputStream is);
+
+    IHttpRequestLine parseRequestLine(InputStream is);
+
+    IHttpHeader parseHeader(InputStream is);
+
+    byte[] parseBody(InputStream is, IHttpHeaders headers);
 }

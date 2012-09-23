@@ -12,7 +12,6 @@ import java.io.InputStream;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IHttpRequestBodyParser {
-  
-  HttpRequestBodyData parse(InputStream inputStream);  
-  
+
+    HttpRequestBodyData parse(InputStream inputStream);
 }

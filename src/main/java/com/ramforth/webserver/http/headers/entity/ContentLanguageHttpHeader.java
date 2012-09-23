@@ -11,11 +11,10 @@ import com.ramforth.webserver.http.headers.LongHttpHeader;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class ContentLanguageHttpHeader extends LongHttpHeader {
-  
-  public static final String CONTENT_LANGUAGE = "Content-Language";
-  
-  public ContentLanguageHttpHeader(long value) {
-    super(CONTENT_LANGUAGE, value);
-  }
-  
+
+    public static final String CONTENT_LANGUAGE = "Content-Language";
+
+    public ContentLanguageHttpHeader(long value) {
+        super(CONTENT_LANGUAGE, value);
+    }
 }

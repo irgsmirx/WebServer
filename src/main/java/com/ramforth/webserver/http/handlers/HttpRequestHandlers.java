@@ -14,31 +14,30 @@ import java.util.List;
  */
 public class HttpRequestHandlers implements IHttpRequestHandlers {
 
-  private List<IHttpRequestHandler> handlers = new ArrayList<>();
-  
-  @Override
-  public void add(IHttpRequestHandler handler) {
-    handlers.add(handler);
-  }
+    private List<IHttpRequestHandler> handlers = new ArrayList<>();
 
-  @Override
-  public void remove(IHttpRequestHandler handler) {
-    handlers.remove(handler);
-  }
+    @Override
+    public void add(IHttpRequestHandler handler) {
+        handlers.add(handler);
+    }
 
-  @Override
-  public IHttpRequestHandler getAt(int index) {
-    return handlers.get(index);
-  }
+    @Override
+    public void remove(IHttpRequestHandler handler) {
+        handlers.remove(handler);
+    }
 
-  @Override
-  public int numberOfHandlers() {
-    return handlers.size();
-  }
+    @Override
+    public IHttpRequestHandler getAt(int index) {
+        return handlers.get(index);
+    }
 
-  @Override
-  public Iterator<IHttpRequestHandler> iterator() {
-    return handlers.iterator();
-  }
-  
+    @Override
+    public int numberOfHandlers() {
+        return handlers.size();
+    }
+
+    @Override
+    public Iterator<IHttpRequestHandler> iterator() {
+        return handlers.iterator();
+    }
 }

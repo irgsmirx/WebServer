@@ -10,6 +10,5 @@ package com.ramforth.webserver.http.headers.general;
  */
 public class ViaHttpHeader {
 
-  public static final String VIA = "Via";
-
+    public static final String VIA = "Via";
 }

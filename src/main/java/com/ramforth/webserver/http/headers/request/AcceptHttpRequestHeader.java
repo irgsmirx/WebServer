@@ -11,7 +11,6 @@ import com.ramforth.webserver.http.IMediaType;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class AcceptHttpRequestHeader {
-  
-  private IMediaType mediaType;
-  
+
+    private IMediaType mediaType;
 }

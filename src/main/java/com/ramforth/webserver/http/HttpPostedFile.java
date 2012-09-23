@@ -11,29 +11,27 @@ import java.io.InputStream;
  * @author tobias
  */
 public class HttpPostedFile {
-	
-	private int contentLength;
-	private String contentType;
-	private String fileName;
-	
-	public int getContentLength() {
-		return contentLength;
-	}
-	
-	public String getContentType() {
-		return contentType;
-	}
-	
-	public String getFileName() {
-		return fileName;
-	}
-	
-	public InputStream getInputStream() {
-		return null;
-	}
-	
-	public void saveAs(String filename) {
-		
-	}
-	
+
+    private int contentLength;
+    private String contentType;
+    private String fileName;
+
+    public int getContentLength() {
+        return contentLength;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public InputStream getInputStream() {
+        return null;
+    }
+
+    public void saveAs(String filename) {
+    }
 }

@@ -11,13 +11,12 @@ import com.ramforth.webserver.http.IHttpContext;
  * @author tobias
  */
 public interface IWebTemplate {
-	
-	IHttpContext getContext();
 
-  void setContext(IHttpContext context);
+    IHttpContext getContext();
 
-  void load();
-  
-  String getContentType();
-	
+    void setContext(IHttpContext context);
+
+    void load();
+
+    String getContentType();
 }

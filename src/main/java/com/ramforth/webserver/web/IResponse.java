@@ -11,12 +11,12 @@ import java.io.OutputStream;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IResponse {
-    
-  ConnectionType getConnectionType();
-  void setConnectionType(ConnectionType value);
-  
-  OutputStream getOutputStream();
-  void setOutputStream(OutputStream value);
-  
+
+    ConnectionType getConnectionType();
+
+    void setConnectionType(ConnectionType value);
+
+    OutputStream getOutputStream();
+
+    void setOutputStream(OutputStream value);
 }
-  

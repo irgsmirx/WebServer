@@ -10,6 +10,5 @@ package com.ramforth.webserver.http.headers.general;
  */
 public class ConnectionHttpHeader {
 
-  public static final String CONNECTION = "Connection";
-
+    public static final String CONNECTION = "Connection";
 }

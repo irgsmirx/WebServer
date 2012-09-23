@@ -13,9 +13,8 @@ import java.io.InputStream;
  */
 public class HttpRequestWwwFormUrlEncodedBodyParser implements IHttpRequestBodyParser {
 
-  @Override
-  public HttpRequestBodyData parse(InputStream inputStream) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-  
+    @Override
+    public HttpRequestBodyData parse(InputStream inputStream) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

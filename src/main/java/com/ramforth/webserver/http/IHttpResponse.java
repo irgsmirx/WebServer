@@ -11,10 +11,10 @@ import com.ramforth.webserver.web.IResponse;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IHttpResponse extends IHttpMessage, IResponse {
-  
-  IHttpStatusCode getStatusCode();
-  void setStatusCode(IHttpStatusCode value);
- 
-  void redirect(String destination);
-  
+
+    IHttpStatusCode getStatusCode();
+
+    void setStatusCode(IHttpStatusCode value);
+
+    void redirect(String destination);
 }

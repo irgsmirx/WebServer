@@ -10,6 +10,5 @@ package com.ramforth.webserver.http.headers.general;
  */
 public class PragmaHttpHeader {
 
-  public static final String Pragma = "Pragma";
-
+    public static final String Pragma = "Pragma";
 }

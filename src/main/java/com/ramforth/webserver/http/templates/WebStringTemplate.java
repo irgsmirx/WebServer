@@ -12,33 +12,31 @@ import com.ramforth.utilities.templates.StringTemplate;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class WebStringTemplate extends StringTemplate implements IWebTemplate {
-  
-  private static final String DEFAULT_CONTENT_TYPE = "text/html";
-  
-  protected IHttpContext context;
-  protected String contentType = DEFAULT_CONTENT_TYPE;  
-  
-  public WebStringTemplate(String template) {
-    super(template);
-  }
-  
-	@Override
-  public IHttpContext getContext() {
-    return context;
-  }
 
-	@Override
-  public void setContext(IHttpContext context) {
-    this.context = context;
-  }
+    private static final String DEFAULT_CONTENT_TYPE = "text/html";
+    protected IHttpContext context;
+    protected String contentType = DEFAULT_CONTENT_TYPE;
 
-	@Override
-  public void load() {
-  }
+    public WebStringTemplate(String template) {
+        super(template);
+    }
 
-  @Override
-  public final String getContentType() {
-    return contentType;
-  }
+    @Override
+    public IHttpContext getContext() {
+        return context;
+    }
 
+    @Override
+    public void setContext(IHttpContext context) {
+        this.context = context;
+    }
+
+    @Override
+    public void load() {
+    }
+
+    @Override
+    public final String getContentType() {
+        return contentType;
+    }
 }

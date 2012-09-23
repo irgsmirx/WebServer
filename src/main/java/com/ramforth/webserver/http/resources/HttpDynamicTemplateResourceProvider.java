@@ -9,6 +9,4 @@ package com.ramforth.webserver.http.resources;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class HttpDynamicTemplateResourceProvider extends HttpFileResourceProvider {
- 
-  
 }

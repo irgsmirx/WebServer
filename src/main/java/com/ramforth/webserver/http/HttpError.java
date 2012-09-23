@@ -9,10 +9,11 @@ package com.ramforth.webserver.http;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public enum HttpError {
-  METHOD_NOT_ALLOWED,
-  NOT_IMPLEMENTED,
-  BAD_REQUEST,
-  VERSION_NOT_SUPPORTED,
-  INTERNAL_SERVER_ERROR,
-  UNSUPPORTED_MEDIA_TYPE
+
+    METHOD_NOT_ALLOWED,
+    NOT_IMPLEMENTED,
+    BAD_REQUEST,
+    VERSION_NOT_SUPPORTED,
+    INTERNAL_SERVER_ERROR,
+    UNSUPPORTED_MEDIA_TYPE
 }
