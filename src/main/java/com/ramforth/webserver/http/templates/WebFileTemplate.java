@@ -4,11 +4,11 @@
  */
 package com.ramforth.webserver.http.templates;
 
-import com.ramforth.webserver.http.IHttpContext;
-import java.io.File;
 import com.ramforth.utilities.path.Path;
 import com.ramforth.utilities.templates.FileTemplate;
+import com.ramforth.webserver.http.IHttpContext;
 import com.ramforth.webserver.web.MimeTypeMap;
+import java.io.File;
 
 /**
  *
@@ -47,7 +47,15 @@ public class WebFileTemplate extends FileTemplate implements IWebTemplate {
     @Override
     public void load() {
     }
+    
+    @Override
+    public void post() {
+    }
 
+    @Override
+    public void get() {
+    }
+    
     private String getMimeTypeForFile() {
         String extension = Path.getFileExtensionFromFilename(getTemplate().getName());
         return getMimeTypeForExtension(extension);
@@ -65,4 +73,5 @@ public class WebFileTemplate extends FileTemplate implements IWebTemplate {
     public String getContentType() {
         return getMimeTypeForFile();
     }
+    
 }

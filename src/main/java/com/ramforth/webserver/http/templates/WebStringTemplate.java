@@ -4,8 +4,8 @@
  */
 package com.ramforth.webserver.http.templates;
 
-import com.ramforth.webserver.http.IHttpContext;
 import com.ramforth.utilities.templates.StringTemplate;
+import com.ramforth.webserver.http.IHttpContext;
 
 /**
  *
@@ -33,6 +33,14 @@ public class WebStringTemplate extends StringTemplate implements IWebTemplate {
 
     @Override
     public void load() {
+    }
+    
+    @Override
+    public void post() {
+    }
+
+    @Override
+    public void get() {
     }
 
     @Override

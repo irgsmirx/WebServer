@@ -42,6 +42,16 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
                 template.setContext(httpContext);
                 template.load();
 
+                switch (httpContext.getRequest().getMethod()) {
+                        case GET:
+                        case HEAD:
+                            template.get();
+                            break;
+                        case POST:
+                            template.post();
+                            break;                    
+                }
+                
                 if (template instanceof WebFileTemplate) {
                     switch (httpContext.getRequest().getMethod()) {
                         case GET:
