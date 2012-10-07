@@ -75,15 +75,15 @@ public class HttpRequestParser implements IHttpRequestParser {
                 ContentTypeHttpHeader contentTypeHeader = ( (ContentTypeHttpHeader) httpHeaders.getHeader("Content-Type") );
 
                 if (contentTypeHeader != null) {
-                    if (contentTypeHeader.getValue().equalsIgnoreCase("application/x-www-form-urlencoded")) {
-                        fillForm(httpRequest, new String(bodyBytes, "UTF-8"));
+                    if (contentTypeHeader.getMediaType().getType().equalsIgnoreCase("application/x-www-form-urlencoded")) {
+                        fillForm(httpRequest, new String(bodyBytes, contentTypeHeader.getCharset()));
                     } else if (contentTypeHeader.getValue().equalsIgnoreCase("application/json")) {
                         // parse JSON data
                     }
                 }
             }
         }
-        catch (HttpException | UnsupportedEncodingException ex) {
+        catch (HttpException ex) {
             Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
         }
 
