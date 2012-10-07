@@ -4,6 +4,8 @@
  */
 package com.ramforth.webserver.http.modules;
 
+import com.ramforth.utilities.templates.AbstractTemplate;
+import com.ramforth.utilities.templates.ITemplate;
 import com.ramforth.utilities.templates.StringTemplate;
 import com.ramforth.webserver.exceptions.HttpException;
 import com.ramforth.webserver.http.HttpResponseWriter;

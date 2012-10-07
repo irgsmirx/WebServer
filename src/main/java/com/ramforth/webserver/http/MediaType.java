@@ -4,13 +4,17 @@
  */
 package com.ramforth.webserver.http;
 
+import java.nio.charset.Charset;
+
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class MediaType implements IMediaType {
 
-    protected String type;
+    private static final String DEFAULT_MEDIA_TYPE = "application/octet-stream";
+    
+    protected String type = DEFAULT_MEDIA_TYPE;
     protected NameValueMap parameters = new NameValueMap();
 
     @Override
@@ -47,4 +51,26 @@ public class MediaType implements IMediaType {
     public int numberOfParameters() {
         return parameters.numberOfEntries();
     }
+    
+    @Override
+    public String getValue(String name) {
+        return parameters.get(name);
+    }
+    
+    @Override
+    public boolean containsParameter(String name) {
+        return parameters.containsName(name);
+    }
+    
+    @Override
+    public Charset getCharset() {
+        try {
+            String charsetString = parameters.get("charset");
+            return Charset.forName(charsetString);
+        }
+        catch (Exception ex) {
+            return Charset.defaultCharset();
+        }
+    }
+    
 }

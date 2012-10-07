@@ -25,10 +25,12 @@ import com.ramforth.webserver.http.headers.entity.ContentTypeHttpHeader;
 import com.ramforth.webserver.http.headers.general.TransferEncodingHttpHeader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -424,8 +426,9 @@ public class HttpRequestParser implements IHttpRequestParser {
             transferEncodingHeader = (TransferEncodingHttpHeader) transferEncoding;
         }
 
-        String contentType = contentTypeHeader.getValue();
-
+        String contentType = contentTypeHeader.getMediaType().getType();
+        Charset charset = contentTypeHeader.getMediaType().getCharset();
+        
         if (transferEncodingHeader == null || transferEncodingHeader.getValue() == null) {
             if (contentLengthHeader == null) {
                 // well, no body present, as it seems
@@ -435,7 +438,7 @@ public class HttpRequestParser implements IHttpRequestParser {
                         || contentType.compareTo("application/json") == 0) {
                     try {
                         long contentLength = contentLengthHeader.getValue();
-                        return readPlain(is, contentLength);
+                        return readPlain(is, contentLength, charset);
                     }
                     catch (NumberFormatException e) {
                         throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
@@ -455,13 +458,15 @@ public class HttpRequestParser implements IHttpRequestParser {
         }
     }
 
-    protected byte[] readPlain(InputStream is, long contentLength) {
+    protected byte[] readPlain(InputStream is, long contentLength, Charset charset) {
         HttpBuffer buffer = new HttpBuffer();
         int written = 0;
 
+        InputStreamReader isr = new InputStreamReader(is, charset);
+        
         int ch;
         try {
-            while (written < contentLength && ( ch = is.read() ) != -1) {
+            while (written < contentLength && ( ch = isr.read() ) != -1) {
                 buffer.append(ch);
                 written++;
             }

@@ -4,6 +4,8 @@
  */
 package com.ramforth.webserver.http;
 
+import java.nio.charset.Charset;
+
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
@@ -23,4 +25,11 @@ public interface IMediaType {
     void clearParameters();
 
     int numberOfParameters();
+    
+    String getValue(String name);
+    
+    boolean containsParameter(String name);
+    
+    Charset getCharset();
+    
 }
