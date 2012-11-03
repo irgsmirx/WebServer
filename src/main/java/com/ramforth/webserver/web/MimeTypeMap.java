@@ -67,6 +67,7 @@ public class MimeTypeMap {
         insertEntry("application/dsptype", "tsp");
         insertEntry("application/futuresplash", "spl");
         insertEntry("application/hta", "hta");
+        insertEntry("application/javascript", "js");
         insertEntry("application/mac-binhex40", "hqx");
         insertEntry("application/mac-compactpro", "cpt");
         insertEntry("application/mathematica", "nb");
