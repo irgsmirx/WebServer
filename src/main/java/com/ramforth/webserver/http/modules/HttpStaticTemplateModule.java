@@ -12,11 +12,12 @@ import com.ramforth.webserver.http.IHttpResponse;
 import com.ramforth.webserver.http.IHttpResponseWriter;
 import com.ramforth.webserver.http.resources.HttpStaticTemplateResource;
 import com.ramforth.webserver.http.resources.HttpStaticTemplateResourceProvider;
-import com.ramforth.utilities.path.Path;
 import com.ramforth.utilities.templates.FileTemplate;
 import com.ramforth.utilities.templates.ITemplate;
 import com.ramforth.utilities.templates.StringTemplate;
 import com.ramforth.webserver.web.MimeTypeMap;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 
 /**
@@ -124,7 +125,7 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
     }
 
     private void addContentTypeHeaderForFile(IHttpResponse httpResponse, File file) {
-        String extension = Path.getFileExtensionFromFilename(file.getName());
+        String extension = FilenameUtils.getExtension(file.getName());
         String mimeType = getMimeTypeForExtension(extension);
 
         httpResponse.setContentType(mimeType);
