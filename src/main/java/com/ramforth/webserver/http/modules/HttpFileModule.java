@@ -13,8 +13,9 @@ import com.ramforth.webserver.http.IHttpResponse;
 import com.ramforth.webserver.http.IHttpResponseWriter;
 import com.ramforth.webserver.http.resources.HttpFileResource;
 import com.ramforth.webserver.http.resources.HttpFileResourceProvider;
-import com.ramforth.utilities.path.Path;
 import com.ramforth.webserver.web.MimeTypeMap;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -120,7 +121,7 @@ public class HttpFileModule extends AbstractHttpModule {
     }
 
     private void addContentTypeHeaderForFile(IHttpResponse httpResponse, File file) {
-        String extension = Path.getFileExtensionFromFilename(file.getName());
+        String extension = FilenameUtils.getExtension(file.getName());
 
         String mimeType = "application/octet-stream";
         if (extension.compareTo("") != 0) {
