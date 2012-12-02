@@ -1,11 +1,13 @@
 package com.ramforth.webserver.http;
 
 import com.ramforth.webserver.exceptions.IOException;
-import java.io.*;
+
+import java.io.File;
+import java.io.PrintStream;
 
 public class FileContainer implements WebContainer {
 
-    final static int BUF_SIZE = 2048;
+    static final int BUF_SIZE = 2048;
     private byte[] buf;
     private String filename;
     private File file;

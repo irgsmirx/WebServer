@@ -25,7 +25,7 @@ public class WebServerThread implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebServerThread.class);
 
-    final static int BUF_SIZE = 4096;
+    static final int BUF_SIZE = 4096;
     static final byte SP = (byte) ' ';
     static final byte CR = (byte) '\r';
     static final byte LF = (byte) '\n';
@@ -36,7 +36,6 @@ public class WebServerThread implements Runnable {
      */
     protected byte[] buf;
     private Socket socket;
-    private IHttpContext context;
     private IHttpRequestHandlers requestHandlers = new HttpRequestHandlers();
     //private IHttpModules modules = new HttpModules();
     private IHttpContextHandler contextHandler = null;
@@ -98,7 +97,7 @@ public class WebServerThread implements Runnable {
         clearBuffer();
 
         try {
-            context = establishContext(is, os);
+            IHttpContext context = establishContext(is, os);
 
             handleContext(context);
         }

@@ -27,7 +27,6 @@ public class HttpListener implements IHttpListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpListener.class);
 
     private int port = 0;
-    private int backlog = 0;
     private InetAddress listenAddress;
     private boolean listening = false;
     private static final ServerSocketFactory serverSocketFactory = ServerSocketFactory.getDefault();
@@ -133,6 +132,7 @@ public class HttpListener implements IHttpListener {
 
     private void createServerSocket() {
         try {
+            int backlog = 0;
             listeningSocket = serverSocketFactory.createServerSocket(port, backlog, listenAddress);
         }
         catch (IOException ex) {
