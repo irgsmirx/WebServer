@@ -4,8 +4,13 @@
  */
 package com.ramforth.webserver.http;
 
-import com.ramforth.webserver.exceptions.AlreadyListeningException;
 import com.ramforth.webserver.WebServerThread;
+import com.ramforth.webserver.exceptions.AlreadyListeningException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.net.ServerSocketFactory;
+import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -13,16 +18,14 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.net.ServerSocketFactory;
-import javax.net.ssl.SSLServerSocketFactory;
 
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class HttpsListener implements IHttpListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpsListener.class);
 
     private int port = 0;
     private int backlog = 0;
@@ -39,7 +42,7 @@ public class HttpsListener implements IHttpListener {
             this.listenAddress = InetAddress.getLocalHost();
         }
         catch (UnknownHostException ex) {
-            Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warn("Error", ex); //TODO Enter precise error message
             throw new com.ramforth.webserver.exceptions.UnknownHostException(ex);
         }
         this.port = port;
@@ -116,7 +119,7 @@ public class HttpsListener implements IHttpListener {
                 if (listening) {
                     throw new com.ramforth.webserver.exceptions.AlreadyListeningException(ex);
                 } else {
-                    Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.warn("Error", ex); //TODO Enter precise error message
                     return;
                 }
             }
@@ -132,7 +135,7 @@ public class HttpsListener implements IHttpListener {
             listeningSocket = serverSocketFactory.createServerSocket(port, backlog, listenAddress);
         }
         catch (IOException ex) {
-            Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warn("Error", ex); //TODO Enter precise error message
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
     }
@@ -145,7 +148,7 @@ public class HttpsListener implements IHttpListener {
             listeningSocket.close();
         }
         catch (IOException ex) {
-            Logger.getLogger(HttpsListener.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warn("Error", ex); //TODO Enter precise error message
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
 

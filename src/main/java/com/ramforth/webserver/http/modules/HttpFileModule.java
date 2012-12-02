@@ -6,29 +6,23 @@ package com.ramforth.webserver.http.modules;
 
 import com.ramforth.webserver.exceptions.HttpException;
 import com.ramforth.webserver.exceptions.ResourceNotFoundException;
-import com.ramforth.webserver.http.HttpResponseWriter;
-import com.ramforth.webserver.http.HttpStatusCode;
-import com.ramforth.webserver.http.IHttpContext;
-import com.ramforth.webserver.http.IHttpResponse;
-import com.ramforth.webserver.http.IHttpResponseWriter;
+import com.ramforth.webserver.http.*;
 import com.ramforth.webserver.http.resources.HttpFileResource;
 import com.ramforth.webserver.http.resources.HttpFileResourceProvider;
 import com.ramforth.webserver.web.MimeTypeMap;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.*;
 
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class HttpFileModule extends AbstractHttpModule {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpFileModule.class);
 
     public HttpFileModule() {
         super();
@@ -84,14 +78,14 @@ public class HttpFileModule extends AbstractHttpModule {
                 }
             }
             catch (IOException ex) {
-                Logger.getLogger(HttpFileModule.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.warn("Error", ex); //TODO Enter precise error message
                 throw new HttpException(HttpStatusCode.STATUS_500_INTERNAL_SERVER_ERROR, "Could not read file.");
             }
             finally {
             }
         }
         catch (FileNotFoundException ex) {
-            Logger.getLogger(HttpFileModule.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warn("Error", ex); //TODO Enter precise error message
             throw new ResourceNotFoundException("File not found.");
         }
     }

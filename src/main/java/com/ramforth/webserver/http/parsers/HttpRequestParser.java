@@ -5,24 +5,13 @@
 package com.ramforth.webserver.http.parsers;
 
 import com.ramforth.webserver.exceptions.HttpException;
-import com.ramforth.webserver.http.HttpHeaderFactory;
-import com.ramforth.webserver.http.HttpHeaders;
-import com.ramforth.webserver.http.HttpMethod;
-import com.ramforth.webserver.http.HttpRequest;
-import com.ramforth.webserver.http.HttpRequestLine;
-import com.ramforth.webserver.http.HttpStatusCode;
-import com.ramforth.webserver.http.HttpUtils;
-import com.ramforth.webserver.http.HttpVersion;
-import com.ramforth.webserver.http.IHttpHeader;
-import com.ramforth.webserver.http.IHttpHeaderFactory;
-import com.ramforth.webserver.http.IHttpHeaders;
-import com.ramforth.webserver.http.IHttpRequest;
-import com.ramforth.webserver.http.IHttpRequestLine;
-import com.ramforth.webserver.http.IHttpVersion;
-import com.ramforth.webserver.http.NameValueMap;
+import com.ramforth.webserver.http.*;
 import com.ramforth.webserver.http.headers.entity.ContentLengthHttpHeader;
 import com.ramforth.webserver.http.headers.entity.ContentTypeHttpHeader;
 import com.ramforth.webserver.http.headers.general.TransferEncodingHttpHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,14 +20,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public class HttpRequestParser implements IHttpRequestParser {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestParser.class);
 
     private IHttpHeaderFactory httpHeaderFactory = new HttpHeaderFactory();
 
@@ -84,7 +73,7 @@ public class HttpRequestParser implements IHttpRequestParser {
             }
         }
         catch (HttpException ex) {
-            Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warn("Error", ex); //TODO Enter precise error message
         }
 
         return httpRequest;
@@ -129,7 +118,7 @@ public class HttpRequestParser implements IHttpRequestParser {
                     result.add(URLDecoder.decode(name, "UTF-8"), URLDecoder.decode(value, "UTF-8"));
                 }
                 catch (UnsupportedEncodingException ex) {
-                    Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.warn("Error", ex); //TODO Enter precise error message
                 }
             } else {
                 result.add(name, value);
@@ -257,7 +246,7 @@ public class HttpRequestParser implements IHttpRequestParser {
             ch = is.read();
         }
         catch (IOException ex) {
-            Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warn("Error", ex); //TODO Enter precise error message
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
 
@@ -267,7 +256,7 @@ public class HttpRequestParser implements IHttpRequestParser {
                 ch = is.read();
             }
             catch (IOException ex) {
-                Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.warn("Error", ex); //TODO Enter precise error message
                 throw new com.ramforth.webserver.exceptions.IOException(ex);
             }
         }
@@ -298,7 +287,7 @@ public class HttpRequestParser implements IHttpRequestParser {
                 ch = is.read();
             }
             catch (IOException ex) {
-                Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.warn("Error", ex); //TODO Enter precise error message
                 throw new com.ramforth.webserver.exceptions.IOException(ex);
             }
         }
@@ -318,7 +307,7 @@ public class HttpRequestParser implements IHttpRequestParser {
                         ch = is.read();
                     }
                     catch (IOException ex) {
-                        Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
+                        LOGGER.warn("Error", ex); //TODO Enter precise error message
                         throw new com.ramforth.webserver.exceptions.IOException(ex);
                     }
 
@@ -344,7 +333,7 @@ public class HttpRequestParser implements IHttpRequestParser {
             }
         }
         catch (IOException ex) {
-            Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warn("Error", ex); //TODO Enter precise error message
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
 
@@ -408,7 +397,7 @@ public class HttpRequestParser implements IHttpRequestParser {
             }
         }
         catch (IOException ex) {
-            Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warn("Error", ex); //TODO Enter precise error message
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
 
@@ -472,7 +461,7 @@ public class HttpRequestParser implements IHttpRequestParser {
             }
         }
         catch (IOException ex) {
-            Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warn("Error", ex); //TODO Enter precise error message
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
 
@@ -493,7 +482,7 @@ public class HttpRequestParser implements IHttpRequestParser {
             ch = cis.read();
         }
         catch (IOException ex) {
-            Logger.getLogger(HttpRequestParser.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warn("Error", ex); //TODO Enter precise error message
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
 

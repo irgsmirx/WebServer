@@ -2,18 +2,7 @@ package com.ramforth.webserver;
 
 import com.ramforth.webserver.exceptions.HttpException;
 import com.ramforth.webserver.exceptions.ResourceNotFoundException;
-import com.ramforth.webserver.http.HttpContext;
-import com.ramforth.webserver.http.HttpResponse;
-import com.ramforth.webserver.http.HttpResponseWriter;
-import com.ramforth.webserver.http.HttpStatusCode;
-import com.ramforth.webserver.http.HttpVersion;
-import com.ramforth.webserver.http.IHttpContext;
-import com.ramforth.webserver.http.IHttpContextHandler;
-import com.ramforth.webserver.http.IHttpRequest;
-import com.ramforth.webserver.http.IHttpResponse;
-import com.ramforth.webserver.http.IHttpResponseWriter;
-import com.ramforth.webserver.http.IHttpStatusCode;
-import com.ramforth.webserver.http.WebContainer;
+import com.ramforth.webserver.http.*;
 import com.ramforth.webserver.http.handlers.HttpRequestHandlers;
 import com.ramforth.webserver.http.handlers.IHttpRequestHandler;
 import com.ramforth.webserver.http.handlers.IHttpRequestHandlers;
@@ -21,6 +10,9 @@ import com.ramforth.webserver.http.headers.StringHttpHeader;
 import com.ramforth.webserver.http.parsers.HttpRequestParser;
 import com.ramforth.webserver.http.parsers.IHttpRequestParser;
 import com.ramforth.webserver.web.ConnectionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -28,10 +20,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class WebServerThread implements Runnable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebServerThread.class);
 
     final static int BUF_SIZE = 4096;
     static final byte SP = (byte) ' ';
@@ -84,7 +76,7 @@ public class WebServerThread implements Runnable {
             handleClient();
         }
         catch (IOException ex) {
-            Logger.getLogger(WebServerThread.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warn("Error", ex); //TODO Enter precise error message
         }
 
         socket = null;

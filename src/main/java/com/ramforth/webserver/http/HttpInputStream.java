@@ -1,13 +1,15 @@
 package com.ramforth.webserver.http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class HttpInputStream extends InputStream {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpInputStream.class);
     private InputStream input;
     private long timeout;
 
@@ -43,7 +45,7 @@ public class HttpInputStream extends InputStream {
             waitForAvailable();
         }
         catch (TimeoutException ex) {
-            Logger.getLogger(HttpInputStream.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warn("Error", ex); //TODO Enter precise error message
         }
         return input.read();
     }
@@ -59,7 +61,7 @@ public class HttpInputStream extends InputStream {
             waitForAvailable();
         }
         catch (TimeoutException ex) {
-            Logger.getLogger(HttpInputStream.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warn("Error", ex); //TODO Enter precise error message
         }
         int n = available();
         return input.read(b, off, Math.min(len, n));
