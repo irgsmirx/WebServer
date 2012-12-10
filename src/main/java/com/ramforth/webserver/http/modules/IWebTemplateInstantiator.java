@@ -6,7 +6,6 @@ package com.ramforth.webserver.http.modules;
 
 import com.ramforth.webserver.http.resources.HttpDynamicTemplateResource;
 import com.ramforth.webserver.http.templates.IWebTemplate;
-import com.ramforth.webserver.http.templates.WebFileTemplate;
 
 /**
  *

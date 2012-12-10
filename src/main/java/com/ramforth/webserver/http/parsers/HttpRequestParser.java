@@ -73,7 +73,7 @@ public class HttpRequestParser implements IHttpRequestParser {
             }
         }
         catch (HttpException ex) {
-            LOGGER.warn("Error", ex); //TODO Enter precise error message
+            LOGGER.warn("Probably malformed HTTP request.", ex);
         }
 
         return httpRequest;
@@ -118,7 +118,7 @@ public class HttpRequestParser implements IHttpRequestParser {
                     result.add(URLDecoder.decode(name, "UTF-8"), URLDecoder.decode(value, "UTF-8"));
                 }
                 catch (UnsupportedEncodingException ex) {
-                    LOGGER.warn("Error", ex); //TODO Enter precise error message
+                    LOGGER.warn("Encoding UTF-8 not supported.", ex);
                 }
             } else {
                 result.add(name, value);
@@ -246,7 +246,7 @@ public class HttpRequestParser implements IHttpRequestParser {
             ch = is.read();
         }
         catch (IOException ex) {
-            LOGGER.warn("Error", ex); //TODO Enter precise error message
+            LOGGER.warn("Could not read request line from client!", ex);
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
 
@@ -256,7 +256,7 @@ public class HttpRequestParser implements IHttpRequestParser {
                 ch = is.read();
             }
             catch (IOException ex) {
-                LOGGER.warn("Error", ex); //TODO Enter precise error message
+                LOGGER.warn("Could not read request line from client!", ex);
                 throw new com.ramforth.webserver.exceptions.IOException(ex);
             }
         }
@@ -287,7 +287,7 @@ public class HttpRequestParser implements IHttpRequestParser {
                 ch = is.read();
             }
             catch (IOException ex) {
-                LOGGER.warn("Error", ex); //TODO Enter precise error message
+                LOGGER.warn("Could not read after request line from client!", ex);
                 throw new com.ramforth.webserver.exceptions.IOException(ex);
             }
         }
@@ -307,7 +307,7 @@ public class HttpRequestParser implements IHttpRequestParser {
                         ch = is.read();
                     }
                     catch (IOException ex) {
-                        LOGGER.warn("Error", ex); //TODO Enter precise error message
+                        LOGGER.warn("Preliminary end of input in header key name.", ex);
                         throw new com.ramforth.webserver.exceptions.IOException(ex);
                     }
 
@@ -333,7 +333,7 @@ public class HttpRequestParser implements IHttpRequestParser {
             }
         }
         catch (IOException ex) {
-            LOGGER.warn("Error", ex); //TODO Enter precise error message
+            LOGGER.warn("Could not read header key from client.", ex);
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
 
@@ -376,7 +376,7 @@ public class HttpRequestParser implements IHttpRequestParser {
                             // LF character not allowed in quoted text
                             throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
                                     "Your HTTP client's request header contained an LF character in quoted text, which is not allowed.");
-                        }
+                        } //TODO Enter precise error message
                     }
                 } else if (currentCharacter == '\"') {
                     beforeValue = false;
@@ -397,7 +397,7 @@ public class HttpRequestParser implements IHttpRequestParser {
             }
         }
         catch (IOException ex) {
-            LOGGER.warn("Error", ex); //TODO Enter precise error message
+            LOGGER.warn("Could not read header value from client.", ex);
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
 
@@ -461,7 +461,7 @@ public class HttpRequestParser implements IHttpRequestParser {
             }
         }
         catch (IOException ex) {
-            LOGGER.warn("Error", ex); //TODO Enter precise error message
+            LOGGER.warn("Could not read plain content from client.", ex);
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
 
@@ -482,7 +482,7 @@ public class HttpRequestParser implements IHttpRequestParser {
             ch = cis.read();
         }
         catch (IOException ex) {
-            LOGGER.warn("Error", ex); //TODO Enter precise error message
+            LOGGER.warn("Could not read plain content from client.", ex); //TODO Enter precise error message
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
 

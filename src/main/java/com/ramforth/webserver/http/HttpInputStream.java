@@ -45,7 +45,7 @@ public class HttpInputStream extends InputStream {
             waitForAvailable();
         }
         catch (TimeoutException ex) {
-            LOGGER.warn("Error", ex); //TODO Enter precise error message
+            LOGGER.warn("Input stream timed out!", ex);
         }
         return input.read();
     }
@@ -61,7 +61,7 @@ public class HttpInputStream extends InputStream {
             waitForAvailable();
         }
         catch (TimeoutException ex) {
-            LOGGER.warn("Error", ex); //TODO Enter precise error message
+            LOGGER.warn("Input stream timed out!", ex);
         }
         int n = available();
         return input.read(b, off, Math.min(len, n));
@@ -95,6 +95,7 @@ public class HttpInputStream extends InputStream {
                 Thread.sleep(100);
             }
             catch (InterruptedException ignore) {
+                /* do nothing */
             }
         }
     }

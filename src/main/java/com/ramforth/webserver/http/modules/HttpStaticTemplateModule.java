@@ -4,6 +4,9 @@
  */
 package com.ramforth.webserver.http.modules;
 
+import com.ramforth.utilities.templates.FileTemplate;
+import com.ramforth.utilities.templates.ITemplate;
+import com.ramforth.utilities.templates.StringTemplate;
 import com.ramforth.webserver.exceptions.HttpException;
 import com.ramforth.webserver.http.HttpResponseWriter;
 import com.ramforth.webserver.http.HttpStatusCode;
@@ -12,13 +15,9 @@ import com.ramforth.webserver.http.IHttpResponse;
 import com.ramforth.webserver.http.IHttpResponseWriter;
 import com.ramforth.webserver.http.resources.HttpStaticTemplateResource;
 import com.ramforth.webserver.http.resources.HttpStaticTemplateResourceProvider;
-import com.ramforth.utilities.templates.FileTemplate;
-import com.ramforth.utilities.templates.ITemplate;
-import com.ramforth.utilities.templates.StringTemplate;
 import com.ramforth.webserver.web.MimeTypeMap;
-import org.apache.commons.io.FilenameUtils;
-
 import java.io.File;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  *

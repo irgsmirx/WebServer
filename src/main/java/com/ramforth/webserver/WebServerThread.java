@@ -75,7 +75,7 @@ public class WebServerThread implements Runnable {
             handleClient();
         }
         catch (IOException ex) {
-            LOGGER.warn("Error", ex); //TODO Enter precise error message
+            LOGGER.warn("Error handling incoming client request!", ex);
         }
 
         socket = null;

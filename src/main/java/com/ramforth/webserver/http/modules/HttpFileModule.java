@@ -10,11 +10,10 @@ import com.ramforth.webserver.http.*;
 import com.ramforth.webserver.http.resources.HttpFileResource;
 import com.ramforth.webserver.http.resources.HttpFileResourceProvider;
 import com.ramforth.webserver.web.MimeTypeMap;
+import java.io.*;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
 
 /**
  *
@@ -78,14 +77,14 @@ public class HttpFileModule extends AbstractHttpModule {
                 }
             }
             catch (IOException ex) {
-                LOGGER.warn("Error", ex); //TODO Enter precise error message
+                LOGGER.warn("Could not read from file or could not write to output stream.", ex);
                 throw new HttpException(HttpStatusCode.STATUS_500_INTERNAL_SERVER_ERROR, "Could not read file.");
             }
             finally {
             }
         }
         catch (FileNotFoundException ex) {
-            LOGGER.warn("Error", ex); //TODO Enter precise error message
+            LOGGER.warn("File ' + " + file.getPath() + "' not found!", ex);
             throw new ResourceNotFoundException("File not found.");
         }
     }
