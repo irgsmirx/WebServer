@@ -151,7 +151,7 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
             //listener.RequestReceived += OnRequest;
             //listener.ContentLengthLimit = ContentLengthLimit;
             listener.setContextHandler(this);
-            listener.startListening();
+			new Thread((Runnable) listener).start();
         }
         running = true;
     }

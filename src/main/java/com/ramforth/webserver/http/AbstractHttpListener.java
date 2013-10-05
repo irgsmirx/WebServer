@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public abstract class AbstractHttpListener implements IHttpListener {
+public abstract class AbstractHttpListener implements IHttpListener, Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHttpListener.class);
 
@@ -169,4 +169,9 @@ public abstract class AbstractHttpListener implements IHttpListener {
     public void unsetContextHandler() {
         this.contextHandler = null;
     }
+
+	@Override
+	public void run() {
+		startListening();
+	}
 }
