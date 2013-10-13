@@ -153,7 +153,7 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
         }
     }
 
-    protected void generateDefaultHeader() {
+    protected final void generateDefaultHeader() {
     }
 
 //	protected XHTMLDocument errorDocument(Exception e, String title) {
@@ -284,7 +284,7 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 //				XHTMLAnchor anchor21 = new XHTMLAnchor();
 //				anchor21.setHref(list[i]);
 //				anchor21.setName(list[i]);
-//				XHTMLPCData pcdata21 = new XHTMLPCData(list[i]);
+//			addContentLength	XHTMLPCData pcdata21 = new XHTMLPCData(list[i]);
 //				anchor21.add(pcdata21);
 //				td21.add(anchor21);
 //				tr2.add(td21);
