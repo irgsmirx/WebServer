@@ -64,7 +64,7 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 
         //XHTMLDocument document = errorDocument(e, title);
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         //document.appendXML(sb);
 
         body = sb.toString();
@@ -89,7 +89,7 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 
                     //XHTMLDocument document = directoryListing(f);
 
-                    StringBuffer sb = new StringBuffer();
+                    StringBuilder sb = new StringBuilder();
                     //document.appendXML(sb);
 
                     body = sb.toString();
@@ -116,7 +116,7 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 
                 //XHTMLDocument document = accessDenied(f, title);
 
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 //document.appendXML(sb);
 
                 body = sb.toString();
@@ -142,7 +142,7 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 
             //XHTMLDocument document = fileNotFound(f, title);
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             //document.appendXML(sb);
 
             body = sb.toString();
@@ -319,6 +319,7 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 //
 //		return document;
 //	}
+    
     protected static int contains(String[] array, String value) {
         for (int i = 0; i < array.length; i++) {
             if (array[i].compareTo(value) == 0) {
