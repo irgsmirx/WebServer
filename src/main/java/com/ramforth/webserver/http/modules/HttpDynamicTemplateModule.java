@@ -97,7 +97,7 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
     }
 
     private void writeWebFileTemplateHeadersToHttpResponse(IHttpResponse httpResponse, WebFileTemplate webFileTemplate) {
-        File file = webFileTemplate.getTemplate();
+        File file = (File)webFileTemplate.getTemplate();
 
         assertFileExists(file);
         assertFileIsReadable(file);

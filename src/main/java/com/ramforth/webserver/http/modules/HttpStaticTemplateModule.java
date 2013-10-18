@@ -81,7 +81,7 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
     }
 
     private void writeFileTemplateHeadersToHttpResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
-        File file = fileTemplate.getTemplate();
+        File file = (File)fileTemplate.getTemplate();
 
         assertFileExists(file);
         assertFileIsReadable(file);
@@ -113,7 +113,7 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
 
     private void addHttpHeadersForFileTemplateToResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
         httpResponse.setStatusCode(HttpStatusCode.STATUS_200_OK);
-        addContentTypeHeaderForFile(httpResponse, fileTemplate.getTemplate());
+        addContentTypeHeaderForFile(httpResponse, (File)fileTemplate.getTemplate());
         addContentLengthHeaderForTemplate(httpResponse, fileTemplate);
     }
 
