@@ -144,20 +144,8 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
         httpResponse.setContentType("text/html");
     }
 
-    private void addContentTypeHeaderForJSON(IHttpResponse httpResponse) {
-        httpResponse.setContentType("application/json");
-    }
-
-    private void addContentLengthHeaderForFile(IHttpResponse httpResponse, File file) {
-        httpResponse.setContentLength(file.length());
-    }
-
     private void addContentLengthHeaderForTemplate(IHttpResponse httpResponse, WebFileTemplate webFileTemplate) {
-        httpResponse.setContentLength(webFileTemplate.getLength());
-    }
-
-    private void addContentLengthHeaderForString(IHttpResponse httpResponse, String string) {
-        httpResponse.setContentLength(string.getBytes().length);
+        httpResponse.setContentLength(webFileTemplate.getLength(webFileTemplate.getCharset()));
     }
 
     private void addContentLengthHeaderForStringTemplate(IHttpResponse httpResponse, StringTemplate stringTemplate) {
