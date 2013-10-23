@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class HttpModules implements IHttpModules {
 
-    private List<IHttpModule> modules = new ArrayList<>();
+    private final List<IHttpModule> modules = new ArrayList<>();
 
     @Override
     public void add(IHttpModule module) {

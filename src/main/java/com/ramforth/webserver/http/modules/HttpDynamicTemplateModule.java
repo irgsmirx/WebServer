@@ -37,7 +37,6 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
             if (resourceExists(httpContext.getRequest().getUri().getPath())) {
                 HttpDynamicTemplateResource templateResource = getTemplateResource(httpContext.getRequest().getUri().getPath());
 
-
                 IWebTemplate template = fileInstantiator.instantiate(templateResource);
                 template.setContext(httpContext);
                 template.load();
@@ -82,7 +81,7 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
                 throw new HttpException(HttpStatusCode.STATUS_404_NOT_FOUND, "Resource not found!");
             }
         } else {
-            throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Error");
+            throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Method not allowed");
         }
     }
 
