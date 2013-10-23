@@ -10,7 +10,6 @@ import com.ramforth.webserver.web.MimeTypeMap;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
-import java.nio.charset.Charset;
 
 /**
  *
@@ -18,7 +17,6 @@ import java.nio.charset.Charset;
  */
 public class WebFileTemplate extends FileTemplate implements IWebTemplate {
 
-    protected Charset charset = Charset.defaultCharset();
     protected IHttpContext context;
 
     public WebFileTemplate(File file) {
@@ -75,16 +73,6 @@ public class WebFileTemplate extends FileTemplate implements IWebTemplate {
     @Override
     public String getContentType() {
         return getMimeTypeForFile();
-    }
-    
-    @Override
-    public Charset getCharset() {
-        return charset;
-    }
-
-    @Override
-    public void setCharset(Charset charset) {
-        this.charset = charset;
     }
     
     @Override

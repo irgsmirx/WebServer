@@ -5,7 +5,6 @@
 package com.ramforth.webserver.http.templates;
 
 import com.ramforth.webserver.http.IHttpContext;
-import java.nio.charset.Charset;
 
 /**
  *
@@ -24,9 +23,5 @@ public interface IWebTemplate {
     void get();
 
     String getContentType();
-    
-    Charset getCharset();
-    
-    void setCharset(Charset charset);
     
 }

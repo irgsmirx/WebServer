@@ -5,7 +5,6 @@
 package com.ramforth.webserver.http.templates;
 
 import com.ramforth.webserver.http.IHttpContext;
-import java.nio.charset.Charset;
 
 /**
  *
@@ -13,7 +12,6 @@ import java.nio.charset.Charset;
  */
 public abstract class AbstractWebTemplate implements IWebTemplate {
     
-    protected Charset charset = Charset.defaultCharset();
     protected IHttpContext context;
     
     @Override
@@ -24,16 +22,6 @@ public abstract class AbstractWebTemplate implements IWebTemplate {
     @Override
     public void setContext(IHttpContext context) {
         this.context = context;
-    }
-
-    @Override
-    public Charset getCharset() {
-        return charset;
-    }
-
-    @Override
-    public void setCharset(Charset charset) {
-        this.charset = charset;
     }
     
 }

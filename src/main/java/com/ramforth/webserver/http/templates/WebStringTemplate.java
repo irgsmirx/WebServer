@@ -6,7 +6,6 @@ package com.ramforth.webserver.http.templates;
 
 import com.ramforth.utilities.templates.StringTemplate;
 import com.ramforth.webserver.http.IHttpContext;
-import java.nio.charset.Charset;
 
 /**
  *
@@ -14,7 +13,6 @@ import java.nio.charset.Charset;
  */
 public class WebStringTemplate extends StringTemplate implements IWebTemplate {
 
-    protected Charset charset = Charset.defaultCharset();
     private static final String DEFAULT_CONTENT_TYPE = "text/html";
     protected IHttpContext context;
     protected String contentType = DEFAULT_CONTENT_TYPE;
@@ -48,16 +46,6 @@ public class WebStringTemplate extends StringTemplate implements IWebTemplate {
     @Override
     public final String getContentType() {
         return contentType;
-    }
-    
-    @Override
-    public Charset getCharset() {
-        return charset;
-    }
-
-    @Override
-    public void setCharset(Charset charset) {
-        this.charset = charset;
     }
     
     @Override
