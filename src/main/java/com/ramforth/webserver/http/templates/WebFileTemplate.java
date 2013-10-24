@@ -75,13 +75,4 @@ public class WebFileTemplate extends FileTemplate implements IWebTemplate {
         return getMimeTypeForFile();
     }
     
-    @Override
-    public long getLength() {
-        if (charset != null) {
-            return getLength(charset);
-        } else {
-            return super.getLength();
-        }
-    }
-    
 }

@@ -48,13 +48,4 @@ public class WebStringTemplate extends StringTemplate implements IWebTemplate {
         return contentType;
     }
     
-    @Override
-    public long getLength() {
-        if (charset != null) {
-            return getLength(charset);
-        } else {
-            return super.getLength();
-        }
-    }
-
 }

@@ -116,7 +116,7 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
     private void addHttpHeadersForWebFileTemplateToResponse(IHttpResponse httpResponse, WebFileTemplate fileTemplate) {
         httpResponse.setStatusCode(HttpStatusCode.STATUS_200_OK);
         addContentTypeHeaderForFile(httpResponse, (File)fileTemplate.getTemplate());
-        addContentLengthHeaderForTemplate(httpResponse, fileTemplate);
+        addContentLengthHeaderForWebFileTemplate(httpResponse, fileTemplate);
     }
 
     private void addHttpHeadersForWebStringTemplateToResponse(IHttpResponse httpResponse, WebStringTemplate stringTemplate) {
@@ -140,12 +140,12 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
         httpResponse.setContentLength(file.length());
     }
 
-    private void addContentLengthHeaderForTemplate(IHttpResponse httpResponse, WebFileTemplate fileTemplate) {
-        httpResponse.setContentLength(fileTemplate.getLength());
+    private void addContentLengthHeaderForWebFileTemplate(IHttpResponse httpResponse, WebFileTemplate fileTemplate) {
+        httpResponse.setContentLength(fileTemplate.getLengthInBytes());
     }
 
     private void addContentLengthHeaderForStringTemplate(IHttpResponse httpResponse, WebStringTemplate stringTemplate) {
-        httpResponse.setContentLength(stringTemplate.getLength());
+        httpResponse.setContentLength(stringTemplate.getLengthInBytes());
     }
 
     public HttpStaticTemplateResourceProvider getTemplateResources() {

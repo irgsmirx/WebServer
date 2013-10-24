@@ -126,7 +126,7 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
     private void addHttpHeadersForWebFileTemplateToResponse(IHttpResponse httpResponse, WebFileTemplate webFileTemplate) {
         httpResponse.setStatusCode(HttpStatusCode.STATUS_200_OK);
         addContentTypeHeaderForFileTemplate(httpResponse, webFileTemplate);
-        addContentLengthHeaderForTemplate(httpResponse, webFileTemplate);
+        addContentLengthHeaderForWebFileTemplate(httpResponse, webFileTemplate);
     }
 
     private void addHttpHeadersForStringTemplateToResponse(IHttpResponse httpResponse, StringTemplate stringTemplate) {
@@ -143,12 +143,12 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
         httpResponse.setContentType("text/html");
     }
 
-    private void addContentLengthHeaderForTemplate(IHttpResponse httpResponse, WebFileTemplate webFileTemplate) {
-        httpResponse.setContentLength(webFileTemplate.getLength(webFileTemplate.getCharset()));
+    private void addContentLengthHeaderForWebFileTemplate(IHttpResponse httpResponse, WebFileTemplate webFileTemplate) {
+        httpResponse.setContentLength(webFileTemplate.getLengthInBytes());
     }
 
     private void addContentLengthHeaderForStringTemplate(IHttpResponse httpResponse, StringTemplate stringTemplate) {
-        httpResponse.setContentLength(stringTemplate.getLength());
+        httpResponse.setContentLength(stringTemplate.getLengthInBytes());
     }
 
     public HttpDynamicTemplateResourceProvider getTemplateResources() {
