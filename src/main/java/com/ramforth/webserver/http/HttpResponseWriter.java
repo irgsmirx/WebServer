@@ -17,6 +17,7 @@ public class HttpResponseWriter implements IHttpResponseWriter {
     public static final String CR = "\r";
     public static final String LF = "\n";
     public static final String EOL = CR + LF;
+    
     private OutputStream outputStream;
 
     public HttpResponseWriter(OutputStream outputStream) {

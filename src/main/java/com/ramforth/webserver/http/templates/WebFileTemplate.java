@@ -58,7 +58,7 @@ public class WebFileTemplate extends FileTemplate implements IWebTemplate {
     }
     
     private String getMimeTypeForFile() {
-        String extension = FilenameUtils.getExtension(getTemplate().getName());
+        String extension = FilenameUtils.getExtension(((File)getTemplate()).getName());
         return getMimeTypeForExtension(extension);
     }
 

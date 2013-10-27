@@ -23,4 +23,5 @@ public interface IWebTemplate {
     void get();
 
     String getContentType();
+    
 }

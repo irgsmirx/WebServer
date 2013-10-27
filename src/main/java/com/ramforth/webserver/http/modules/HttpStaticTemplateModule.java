@@ -15,6 +15,8 @@ import com.ramforth.webserver.http.IHttpResponse;
 import com.ramforth.webserver.http.IHttpResponseWriter;
 import com.ramforth.webserver.http.resources.HttpStaticTemplateResource;
 import com.ramforth.webserver.http.resources.HttpStaticTemplateResourceProvider;
+import com.ramforth.webserver.http.templates.WebFileTemplate;
+import com.ramforth.webserver.http.templates.WebStringTemplate;
 import com.ramforth.webserver.web.MimeTypeMap;
 import java.io.File;
 import org.apache.commons.io.FilenameUtils;
@@ -52,7 +54,7 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
                 throw new HttpException(HttpStatusCode.STATUS_404_NOT_FOUND, "Resource not found!");
             }
         } else {
-            throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Error");
+            throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Method not allowed");
         }
     }
 
@@ -63,61 +65,61 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
     private void writeTemplateResourceToHttpResponse(IHttpResponse httpResponse, HttpStaticTemplateResource templateResource) {
         ITemplate template = templateResource.getTemplate();
 
-        if (template instanceof FileTemplate) {
-            writeFileTemplateToHttpResponse(httpResponse, (FileTemplate) template);
-        } else if (template instanceof StringTemplate) {
-            writeStringTemplateToHttpResponse(httpResponse, (StringTemplate) template);
+        if (template instanceof WebFileTemplate) {
+            writeFileTemplateToHttpResponse(httpResponse, (WebFileTemplate) template);
+        } else if (template instanceof WebStringTemplate) {
+            writeWebStringTemplateToHttpResponse(httpResponse, (WebStringTemplate) template);
         }
     }
 
     private void writeTemplateResourceHeadersToHttpResponse(IHttpResponse httpResponse, HttpStaticTemplateResource templateResource) {
         ITemplate template = templateResource.getTemplate();
 
-        if (template instanceof FileTemplate) {
-            writeFileTemplateHeadersToHttpResponse(httpResponse, (FileTemplate) template);
-        } else if (template instanceof StringTemplate) {
-            writeStringTemplateHeadersToHttpResponse(httpResponse, (StringTemplate) template);
+        if (template instanceof WebFileTemplate) {
+            writeFileTemplateHeadersToHttpResponse(httpResponse, (WebFileTemplate) template);
+        } else if (template instanceof WebStringTemplate) {
+            writeWebStringTemplateHeadersToHttpResponse(httpResponse, (WebStringTemplate) template);
         }
     }
 
-    private void writeFileTemplateHeadersToHttpResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
-        File file = fileTemplate.getTemplate();
+    private void writeFileTemplateHeadersToHttpResponse(IHttpResponse httpResponse, WebFileTemplate fileTemplate) {
+        File file = (File)fileTemplate.getTemplate();
 
         assertFileExists(file);
         assertFileIsReadable(file);
 
-        addHttpHeadersForFileTemplateToResponse(httpResponse, fileTemplate);
+        addHttpHeadersForWebFileTemplateToResponse(httpResponse, fileTemplate);
         IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
 
         httpResponseWriter.writeResponse(httpResponse);
     }
 
-    private void writeFileTemplateToHttpResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
+    private void writeFileTemplateToHttpResponse(IHttpResponse httpResponse, WebFileTemplate fileTemplate) {
         writeFileTemplateHeadersToHttpResponse(httpResponse, fileTemplate);
 
         fileTemplate.renderTo(httpResponse.getOutputStream());
     }
 
-    private void writeStringTemplateHeadersToHttpResponse(IHttpResponse httpResponse, StringTemplate stringTemplate) {
-        addHttpHeadersForStringTemplateToResponse(httpResponse, stringTemplate);
+    private void writeWebStringTemplateHeadersToHttpResponse(IHttpResponse httpResponse, WebStringTemplate stringTemplate) {
+        addHttpHeadersForWebStringTemplateToResponse(httpResponse, stringTemplate);
         IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
 
         httpResponseWriter.writeResponse(httpResponse);
     }
 
-    private void writeStringTemplateToHttpResponse(IHttpResponse httpResponse, StringTemplate stringTemplate) {
-        writeStringTemplateHeadersToHttpResponse(httpResponse, stringTemplate);
+    private void writeWebStringTemplateToHttpResponse(IHttpResponse httpResponse, WebStringTemplate stringTemplate) {
+        writeWebStringTemplateHeadersToHttpResponse(httpResponse, stringTemplate);
 
         stringTemplate.renderTo(httpResponse.getOutputStream());
     }
 
-    private void addHttpHeadersForFileTemplateToResponse(IHttpResponse httpResponse, FileTemplate fileTemplate) {
+    private void addHttpHeadersForWebFileTemplateToResponse(IHttpResponse httpResponse, WebFileTemplate fileTemplate) {
         httpResponse.setStatusCode(HttpStatusCode.STATUS_200_OK);
-        addContentTypeHeaderForFile(httpResponse, fileTemplate.getTemplate());
-        addContentLengthHeaderForTemplate(httpResponse, fileTemplate);
+        addContentTypeHeaderForFile(httpResponse, (File)fileTemplate.getTemplate());
+        addContentLengthHeaderForWebFileTemplate(httpResponse, fileTemplate);
     }
 
-    private void addHttpHeadersForStringTemplateToResponse(IHttpResponse httpResponse, StringTemplate stringTemplate) {
+    private void addHttpHeadersForWebStringTemplateToResponse(IHttpResponse httpResponse, WebStringTemplate stringTemplate) {
         httpResponse.setStatusCode(HttpStatusCode.STATUS_200_OK);
         addContentTypeHeaderForString(httpResponse);
         addContentLengthHeaderForStringTemplate(httpResponse, stringTemplate);
@@ -138,16 +140,12 @@ public class HttpStaticTemplateModule extends AbstractHttpModule {
         httpResponse.setContentLength(file.length());
     }
 
-    private void addContentLengthHeaderForTemplate(IHttpResponse httpResponse, FileTemplate fileTemplate) {
-        httpResponse.setContentLength(fileTemplate.getLength());
+    private void addContentLengthHeaderForWebFileTemplate(IHttpResponse httpResponse, WebFileTemplate fileTemplate) {
+        httpResponse.setContentLength(fileTemplate.getLengthInBytes());
     }
 
-    private void addContentLengthHeaderForString(IHttpResponse httpResponse, String string) {
-        httpResponse.setContentLength(string.getBytes().length);
-    }
-
-    private void addContentLengthHeaderForStringTemplate(IHttpResponse httpResponse, StringTemplate stringTemplate) {
-        httpResponse.setContentLength(stringTemplate.getLength());
+    private void addContentLengthHeaderForStringTemplate(IHttpResponse httpResponse, WebStringTemplate stringTemplate) {
+        httpResponse.setContentLength(stringTemplate.getLengthInBytes());
     }
 
     public HttpStaticTemplateResourceProvider getTemplateResources() {

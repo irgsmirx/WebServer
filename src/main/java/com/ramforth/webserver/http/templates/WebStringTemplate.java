@@ -47,4 +47,5 @@ public class WebStringTemplate extends StringTemplate implements IWebTemplate {
     public final String getContentType() {
         return contentType;
     }
+    
 }

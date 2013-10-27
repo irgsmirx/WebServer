@@ -37,7 +37,6 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
             if (resourceExists(httpContext.getRequest().getUri().getPath())) {
                 HttpDynamicTemplateResource templateResource = getTemplateResource(httpContext.getRequest().getUri().getPath());
 
-
                 IWebTemplate template = fileInstantiator.instantiate(templateResource);
                 template.setContext(httpContext);
                 template.load();
@@ -82,7 +81,7 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
                 throw new HttpException(HttpStatusCode.STATUS_404_NOT_FOUND, "Resource not found!");
             }
         } else {
-            throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Error");
+            throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Method not allowed");
         }
     }
 
@@ -97,7 +96,7 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
     }
 
     private void writeWebFileTemplateHeadersToHttpResponse(IHttpResponse httpResponse, WebFileTemplate webFileTemplate) {
-        File file = webFileTemplate.getTemplate();
+        File file = (File)webFileTemplate.getTemplate();
 
         assertFileExists(file);
         assertFileIsReadable(file);
@@ -127,7 +126,7 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
     private void addHttpHeadersForWebFileTemplateToResponse(IHttpResponse httpResponse, WebFileTemplate webFileTemplate) {
         httpResponse.setStatusCode(HttpStatusCode.STATUS_200_OK);
         addContentTypeHeaderForFileTemplate(httpResponse, webFileTemplate);
-        addContentLengthHeaderForTemplate(httpResponse, webFileTemplate);
+        addContentLengthHeaderForWebFileTemplate(httpResponse, webFileTemplate);
     }
 
     private void addHttpHeadersForStringTemplateToResponse(IHttpResponse httpResponse, StringTemplate stringTemplate) {
@@ -144,24 +143,12 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
         httpResponse.setContentType("text/html");
     }
 
-    private void addContentTypeHeaderForJSON(IHttpResponse httpResponse) {
-        httpResponse.setContentType("application/json");
-    }
-
-    private void addContentLengthHeaderForFile(IHttpResponse httpResponse, File file) {
-        httpResponse.setContentLength(file.length());
-    }
-
-    private void addContentLengthHeaderForTemplate(IHttpResponse httpResponse, WebFileTemplate webFileTemplate) {
-        httpResponse.setContentLength(webFileTemplate.getLength());
-    }
-
-    private void addContentLengthHeaderForString(IHttpResponse httpResponse, String string) {
-        httpResponse.setContentLength(string.getBytes().length);
+    private void addContentLengthHeaderForWebFileTemplate(IHttpResponse httpResponse, WebFileTemplate webFileTemplate) {
+        httpResponse.setContentLength(webFileTemplate.getLengthInBytes());
     }
 
     private void addContentLengthHeaderForStringTemplate(IHttpResponse httpResponse, StringTemplate stringTemplate) {
-        httpResponse.setContentLength(stringTemplate.getLength());
+        httpResponse.setContentLength(stringTemplate.getLengthInBytes());
     }
 
     public HttpDynamicTemplateResourceProvider getTemplateResources() {

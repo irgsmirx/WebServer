@@ -50,7 +50,7 @@ public class HttpFileModule extends AbstractHttpModule {
                 throw new HttpException(HttpStatusCode.STATUS_404_NOT_FOUND, "Resource not found!");
             }
         } else {
-            throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Error");
+            throw new HttpException(HttpStatusCode.STATUS_405_METHOD_NOT_ALLOWED, "Method not allowed");
         }
     }
 

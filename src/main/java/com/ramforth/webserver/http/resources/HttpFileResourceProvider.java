@@ -15,7 +15,8 @@ import java.util.TreeMap;
 public class HttpFileResourceProvider implements IHttpResourceProvider {
 
     protected Map<String, IHttpResource> resources = new TreeMap<>();
-
+    protected IHttpResource defaultResource = null;
+   
     @Override
     public void addResource(IHttpResource value) {
         if (resources.containsKey(value.getRelativePath().toLowerCase())) {
@@ -32,7 +33,7 @@ public class HttpFileResourceProvider implements IHttpResourceProvider {
     @Override
     public boolean containsResource(IHttpResource value) {
         try {
-            return resources.containsKey(value.getRelativePath().toLowerCase());
+            return (defaultResource != null &&  "/".compareTo(value.getRelativePath().toLowerCase()) == 0) || resources.containsKey(value.getRelativePath().toLowerCase());
         }
         catch (NullPointerException npex) {
             return false;
@@ -42,7 +43,7 @@ public class HttpFileResourceProvider implements IHttpResourceProvider {
     @Override
     public boolean containsResource(String relativePath) {
         try {
-            return resources.containsKey(relativePath.toLowerCase());
+            return (defaultResource != null &&  "/".compareTo(relativePath) == 0) || resources.containsKey(relativePath.toLowerCase());
         }
         catch (NullPointerException npex) {
             return false;
@@ -52,7 +53,11 @@ public class HttpFileResourceProvider implements IHttpResourceProvider {
     @Override
     public IHttpResource getResource(String relativePath) {
         try {
-            return resources.get(relativePath.toLowerCase());
+            if (defaultResource != null && "/".compareTo(relativePath) == 0) {
+                return defaultResource;
+            } else {
+                return resources.get(relativePath.toLowerCase());
+            }
         }
         catch (NullPointerException npex) {
             throw new ResourceNotFoundException(npex);
@@ -62,5 +67,17 @@ public class HttpFileResourceProvider implements IHttpResourceProvider {
     @Override
     public void clearResources() {
         resources.clear();
+        defaultResource = null;
+    }
+
+    @Override
+    public void setDefaultResource(IHttpResource value) {
+        try {
+            IHttpResource found = resources.get(value.getRelativePath().toLowerCase());
+            this.defaultResource = found;
+        }
+        catch (NullPointerException npex) {
+            throw new ResourceNotFoundException(npex);
+        }        
     }
 }
