@@ -23,7 +23,7 @@ public class WebFileTemplate extends FileTemplate implements IWebTemplate {
         super(file);
     }
 
-    public WebFileTemplate(File file, char placeholderBeginTag, char placeholderEndTag, String escapeCharacter) {
+    public WebFileTemplate(File file, String placeholderBeginTag, String placeholderEndTag, String escapeCharacter) {
         super(file, placeholderBeginTag, placeholderEndTag, escapeCharacter);
     }
 
@@ -31,7 +31,7 @@ public class WebFileTemplate extends FileTemplate implements IWebTemplate {
         super(filePath);
     }
 
-    public WebFileTemplate(String filePath, char placeholderBeginTag, char placeholderEndTag, String escapeCharacter) {
+    public WebFileTemplate(String filePath, String placeholderBeginTag, String placeholderEndTag, String escapeCharacter) {
         super(filePath, placeholderBeginTag, placeholderEndTag, escapeCharacter);
     }
 
