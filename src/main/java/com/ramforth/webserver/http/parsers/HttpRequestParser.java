@@ -4,6 +4,10 @@
  */
 package com.ramforth.webserver.http.parsers;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.ramforth.webserver.exceptions.HttpException;
 import com.ramforth.webserver.http.*;
 import com.ramforth.webserver.http.headers.entity.ContentLengthHttpHeader;
@@ -67,7 +71,9 @@ public class HttpRequestParser implements IHttpRequestParser {
                     if (contentTypeHeader.getMediaType().getType().equalsIgnoreCase("application/x-www-form-urlencoded")) {
                         fillForm(httpRequest, new String(bodyBytes, contentTypeHeader.getCharset()));
                     } else if (contentTypeHeader.getValue().equalsIgnoreCase("application/json")) {
-                        // parse JSON data
+                        JsonParser jsonParser = new JsonParser();
+                        JsonObject jsonObject = (JsonObject)jsonParser.parse(new String(bodyBytes, contentTypeHeader.getCharset()));
+                        fillJSON(httpRequest, jsonObject);
                     }
                 }
             }
@@ -138,6 +144,10 @@ public class HttpRequestParser implements IHttpRequestParser {
 
     public void fillForm(IHttpRequest request, String form) {
         request.getForm().addAll(parseParameters(request, form, true));
+    }
+    
+    public void fillJSON(IHttpRequest request, JsonObject jsonObject) {
+        //request.setJSON(jsonObject);
     }
 
     @Override

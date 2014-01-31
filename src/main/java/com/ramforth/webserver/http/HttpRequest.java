@@ -59,7 +59,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
     }
 
     /**
-     * @param entity_header The entity_header to set.
+     * @param entityHeader
      */
     public void setEntityHeader(Map<String, String> entityHeader) {
         this.entityHeader = entityHeader;
@@ -73,6 +73,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
     }
 
     /**
+     * @param generalHeader
      * @param general_header The general_header to set.
      */
     public void setGeneralHeader(Map<String, String> generalHeader) {
@@ -88,6 +89,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
     }
 
     /**
+     * @param value
      * @param method The method to set.
      */
     @Override
