@@ -215,6 +215,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
         return value;
     }
 
+    @Override
     public NameValueMap getParams() {
         NameValueMap params = queryString.union(form);
 
@@ -225,6 +226,11 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
         params.addAll(serverVariables);
 
         return params;
+    }
+    
+    @Override
+    public String getParams(String key) {
+        return getParams().get(key);
     }
 
     @Override

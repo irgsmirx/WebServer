@@ -34,4 +34,7 @@ public interface IHttpRequest extends IHttpMessage, IRequest {
     public void setForm(String key, String value);
 
     public NameValueMap getParams();
+    
+    public String getParams(String key);
+    
 }
