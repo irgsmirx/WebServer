@@ -3,6 +3,7 @@ package com.ramforth.webserver.http;
 import com.ramforth.webserver.http.headers.entity.ContentTypeHttpHeader;
 import com.ramforth.webserver.http.headers.entity.ContentLengthHttpHeader;
 import java.util.Map;
+import java.util.TreeMap;
 
 public abstract class HttpMessage extends HttpCodes implements HttpConstants, IHttpMessage {
 
@@ -24,7 +25,7 @@ public abstract class HttpMessage extends HttpCodes implements HttpConstants, IH
     protected static final int ENTITYBODY = 2;
     protected Map<String, String> generalHeader;
     protected Map<String, String> entityHeader;
-    protected Map<String, HttpCookie> cookies = null;
+    protected Map<String, HttpCookie> cookies = new TreeMap<>();
     protected IHttpVersion version = HttpVersion.HTTP_11;
     protected IHttpHeaders headers = new HttpHeaders();
     protected String contentType;
