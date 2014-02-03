@@ -205,4 +205,9 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
     public void addHttpListener(IHttpListener listener) {
         this.httpListeners.add(listener);
     }
+    
+    public final Iterable<IHttpListener> getHttpListeners() {
+        return this.httpListeners;
+    }
+    
 }
