@@ -1,11 +1,14 @@
 package com.ramforth.webserver.http;
 
 import com.ramforth.webserver.exceptions.HttpException;
+import com.ramforth.webserver.http.parsers.HttpHeadersParser;
 import com.ramforth.webserver.http.parsers.HttpRequestParser;
+import com.ramforth.webserver.http.parsers.IHttpHeadersParser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class HttpRequest extends HttpMessage implements IHttpRequest {
 
@@ -18,6 +21,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
     protected byte[] body;
     protected NameValueMap queryString = new NameValueMap();
     protected NameValueMap form = new NameValueMap();
+    protected Map postedFiles = new TreeMap<>();
     protected NameValueMap serverVariables = new NameValueMap();
     protected URI urlReferrer;
     protected IHttpVersion version;
@@ -34,8 +38,8 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
     }
 
     public HttpRequest(InputStream is) throws IOException, HttpException {
-        HttpRequestParser parser = new HttpRequestParser();
-        this.headers = parser.parseHeaders(is);
+        IHttpHeadersParser headersParser = new HttpHeadersParser();
+        this.headers = headersParser.parse(is);
     }
 
     public HttpRequest(IHttpHeaders httpHeaders) {
@@ -134,7 +138,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
     }
 
     /**
-     * * @return Returns the uri.
+     * @return Returns the uri.
      */
     @Override
     public URI getUri() {
@@ -229,7 +233,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
 
         return params;
     }
-    
+
     @Override
     public String getParams(String key) {
         return getParams().get(key);
@@ -246,7 +250,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
     }
 
     public Map<String, HttpPostedFile> getFiles() {
-        return null;
+        return postedFiles;
     }
 
     public URI getUrlReferrer() {

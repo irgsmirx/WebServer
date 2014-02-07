@@ -14,7 +14,7 @@ import java.util.TreeMap;
  */
 public class NameValueMap implements Iterable<String> {
 
-    private Map<String, String> map = new TreeMap<>();
+    private final Map<String, String> map = new TreeMap<>();
 
     public void add(String name, String value) {
         map.put(name, value);

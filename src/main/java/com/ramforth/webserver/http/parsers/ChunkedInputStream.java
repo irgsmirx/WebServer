@@ -87,8 +87,8 @@ public class ChunkedInputStream extends FilterInputStream {
             if (currentChunkSize == 0) {
                 // last chunk, read headers
                 try {
-                    HttpRequestParser httpParser = new HttpRequestParser();
-                    headers = httpParser.parseHeaders(in);
+                    IHttpHeadersParser headersParser = new HttpHeadersParser();
+                    headers = headersParser.parse(in);
                 }
                 catch (HttpException e) {
                     throw new IOException(e.getMessage());

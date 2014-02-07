@@ -10,6 +10,9 @@ import com.ramforth.webserver.http.headers.AjaxHttpHeader;
 import com.ramforth.webserver.http.headers.entity.ContentTypeHttpHeader;
 import com.ramforth.webserver.http.headers.StringHttpHeader;
 import com.ramforth.webserver.http.headers.entity.ContentLengthHttpHeader;
+import com.ramforth.webserver.http.headers.general.ContentDispositionHttpHeader;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  *
@@ -17,6 +20,18 @@ import com.ramforth.webserver.http.headers.entity.ContentLengthHttpHeader;
  */
 public class HttpHeaderFactory implements IHttpHeaderFactory {
 
+    private final Map<String, IHttpHeader> headerMap = new TreeMap<>();
+    
+    public HttpHeaderFactory() {
+        headerMap.put("host", null);
+        headerMap.put("http_x_requested_with", null);
+        headerMap.put("content-length", null);
+        headerMap.put("content-type", null);
+        headerMap.put("transfer-encoding", null);
+        headerMap.put("content-disposition", createContentDispositionHttpHeader());
+        
+    }
+    
     @Override
     public IHttpHeader buildHttpHeader(String name, String rawValue) {
         IHttpHeader header;
@@ -37,11 +52,18 @@ public class HttpHeaderFactory implements IHttpHeaderFactory {
             case "transfer-encoding":
                 header = new TransferEncodingHttpHeader(rawValue);
                 break;
+            case "content-disposition":
+                header = new ContentDispositionHttpHeader(rawValue);
+                break;
             default:
                 header = new StringHttpHeader(name, rawValue);
                 break;
         }
 
         return header;
+    }
+    
+    private IHttpHeader createContentDispositionHttpHeader() {
+        return null;
     }
 }

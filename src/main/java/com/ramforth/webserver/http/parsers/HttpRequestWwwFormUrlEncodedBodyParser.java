@@ -4,17 +4,23 @@
  */
 package com.ramforth.webserver.http.parsers;
 
-import com.ramforth.webserver.http.HttpRequestBodyData;
+import com.ramforth.webserver.http.HttpRequestFormBodyData;
+import com.ramforth.webserver.http.IHttpRequestBodyData;
+import com.ramforth.webserver.http.NameValueMap;
 import java.io.InputStream;
 
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class HttpRequestWwwFormUrlEncodedBodyParser implements IHttpRequestBodyParser {
+public class HttpRequestWwwFormUrlEncodedBodyParser extends AbstractHttpRequestBodyParser {
 
+    private final ParameterParser parameterParser = new ParameterParser();
+    
     @Override
-    public HttpRequestBodyData parse(InputStream inputStream) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public IHttpRequestBodyData parse(InputStream inputStream) {
+        NameValueMap formData = parameterParser.parse(null, true);
+        return new HttpRequestFormBodyData(formData);
     }
+    
 }

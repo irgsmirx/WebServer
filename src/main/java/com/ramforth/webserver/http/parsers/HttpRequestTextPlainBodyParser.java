@@ -4,17 +4,17 @@
  */
 package com.ramforth.webserver.http.parsers;
 
-import com.ramforth.webserver.http.HttpRequestBodyData;
+import com.ramforth.webserver.http.IHttpRequestBodyData;
 import java.io.InputStream;
 
 /**
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class HttpRequestTextPlainBodyParser implements IHttpRequestBodyParser {
+public class HttpRequestTextPlainBodyParser extends AbstractHttpRequestBodyParser{
 
     @Override
-    public HttpRequestBodyData parse(InputStream inputStream) {
+    public IHttpRequestBodyData parse(InputStream inputStream) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

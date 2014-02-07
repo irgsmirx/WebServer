@@ -4,7 +4,10 @@
  */
 package com.ramforth.webserver.http.parsers;
 
-import com.ramforth.webserver.http.HttpRequestBodyData;
+import com.ramforth.webserver.http.IHttpRequestBodyData;
+import com.ramforth.webserver.http.headers.entity.ContentLengthHttpHeader;
+import com.ramforth.webserver.http.headers.entity.ContentTypeHttpHeader;
+import com.ramforth.webserver.http.headers.general.TransferEncodingHttpHeader;
 import java.io.InputStream;
 
 /**
@@ -13,5 +16,7 @@ import java.io.InputStream;
  */
 public interface IHttpRequestBodyParser {
 
-    HttpRequestBodyData parse(InputStream inputStream);
+    void setTransferEncoding(TransferEncodingHttpHeader transferEncoding);
+    void setContentType(ContentTypeHttpHeader contentType);
+    IHttpRequestBodyData parse(InputStream inputStream);
 }

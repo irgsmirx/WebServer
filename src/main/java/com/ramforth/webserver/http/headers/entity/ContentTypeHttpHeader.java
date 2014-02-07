@@ -36,7 +36,7 @@ public class ContentTypeHttpHeader extends StringHttpHeader {
                 String[] splitParameter = splitRawValue[i].split("=");
                 
                 if (splitParameter.length == 2) {
-                    mediaType.addParameter(splitParameter[0], splitParameter[1]);
+                    mediaType.addParameter(splitParameter[0].trim(), splitParameter[1].trim());
                 }
             }
         }
