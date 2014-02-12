@@ -5,14 +5,12 @@
  */
 package com.ramforth.webserver.http.parsers;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.ramforth.webserver.exceptions.HttpException;
 import com.ramforth.webserver.http.HttpStatusCode;
 import com.ramforth.webserver.http.IMediaType;
-import com.ramforth.webserver.http.headers.entity.ContentLengthHttpHeader;
 import com.ramforth.webserver.http.headers.entity.ContentTypeHttpHeader;
 import com.ramforth.webserver.http.headers.general.TransferEncodingHttpHeader;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -28,6 +26,8 @@ public class HttpRequestBodyParserFactory implements IHttpRequestBodyParserFacto
         bodyParsers.put("application/x-www-form-urlencoded", createApplicationXwwwFormUrlEncodedBodyParser());
         bodyParsers.put("application/json", createApplicationJsonBodyParser());
         bodyParsers.put("multipart/form-data", createMultipartFormDataBodyParser());
+        bodyParsers.put("text/plain", createTextPlainBodyParser());
+        bodyParsers.put("text/xml", createTextXmlBodyParser());
     }
 
     @Override
@@ -35,9 +35,10 @@ public class HttpRequestBodyParserFactory implements IHttpRequestBodyParserFacto
         IHttpRequestBodyParser bodyParser = null;
 
         if (contentType == null) {
-            bodyParser = buildEmpty(transferEncoding);
+            bodyParser = createTextPlainBodyParser();//buildEmpty(transferEncoding);
         } else {
             bodyParser = buildFromContentType(contentType, transferEncoding);
+            bodyParser.setCharset(contentType.getMediaType().getCharset());
         }
         
         bodyParser.setContentType(contentType);
@@ -72,5 +73,13 @@ public class HttpRequestBodyParserFactory implements IHttpRequestBodyParserFacto
 
     private IHttpRequestBodyParser createMultipartFormDataBodyParser() {
         return new HttpRequestMultipartFormDataBodyParser();
+    }
+    
+    private IHttpRequestBodyParser createTextPlainBodyParser() {
+        return new HttpRequestTextPlainBodyParser();
+    }
+    
+    private IHttpRequestBodyParser createTextXmlBodyParser() {
+        return new HttpRequestTextXmlBodyParser();
     }
 }

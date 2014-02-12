@@ -9,6 +9,7 @@ import com.ramforth.webserver.http.headers.entity.ContentLengthHttpHeader;
 import com.ramforth.webserver.http.headers.entity.ContentTypeHttpHeader;
 import com.ramforth.webserver.http.headers.general.TransferEncodingHttpHeader;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 /**
  *
@@ -18,5 +19,7 @@ public interface IHttpRequestBodyParser {
 
     void setTransferEncoding(TransferEncodingHttpHeader transferEncoding);
     void setContentType(ContentTypeHttpHeader contentType);
+    void setCharset(Charset charset);
+    
     IHttpRequestBodyData parse(InputStream inputStream);
 }

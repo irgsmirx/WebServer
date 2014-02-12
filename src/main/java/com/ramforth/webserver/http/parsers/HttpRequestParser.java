@@ -59,16 +59,9 @@ public class HttpRequestParser implements IHttpRequestParser {
                 transferEncodingHeader = (TransferEncodingHttpHeader) transferEncoding;
             }
 
-            IHttpRequestBodyParser bodyParser = bodyParserFactory.build(contentTypeHeader, transferEncodingHeader);
-            IHttpRequestBodyData bodyData = null;
-            if (contentLengthHeader == null) {
-                if (transferEncodingHeader != null && transferEncodingHeader.getValue().equalsIgnoreCase("chunked")) {
-                    ChunkedInputStream cis = new ChunkedInputStream(is, httpHeaders);
-                    bodyData = bodyParser.parse(cis);
-                } else {
-                    bodyData = bodyParser.parse(is);
-                }
-            } else {
+            if (contentLengthHeader != null) {
+                IHttpRequestBodyParser bodyParser = bodyParserFactory.build(contentTypeHeader, transferEncodingHeader);
+                IHttpRequestBodyData bodyData = null;
                 InputStream contentLengthInputStream = new ContentLengthInputStream(is, contentLengthHeader.getValue());
                 if (transferEncodingHeader != null && transferEncodingHeader.getValue().equalsIgnoreCase("chunked")) {
                     ChunkedInputStream cis = new ChunkedInputStream(contentLengthInputStream, httpHeaders);
@@ -76,8 +69,15 @@ public class HttpRequestParser implements IHttpRequestParser {
                 } else {
                     bodyData = bodyParser.parse(contentLengthInputStream);
                 }
+                bodyData.applyTo(httpRequest);
+            } else {
+//                if (transferEncodingHeader != null && transferEncodingHeader.getValue().equalsIgnoreCase("chunked")) {
+//                    ChunkedInputStream cis = new ChunkedInputStream(is, httpHeaders);
+//                    bodyData = bodyParser.parse(cis);
+//                } else {
+//                    bodyData = bodyParser.parse(is);
+//                }
             }
-            bodyData.applyTo(httpRequest);
         } catch (HttpException ex) {
             LOGGER.warn("Probably malformed HTTP request.", ex);
         }
@@ -104,35 +104,7 @@ public class HttpRequestParser implements IHttpRequestParser {
         Charset charset = contentTypeHeader.getMediaType().getCharset();
 
         if (transferEncodingHeader == null || transferEncodingHeader.getValue() == null) {
-            if (contentLengthHeader == null) {
-                // well, no body present, as it seems
-                return new byte[0];
-            } else {
-                if (contentType.compareTo("application/x-www-form-urlencoded") == 0
-                        || contentType.compareTo("application/json") == 0) {
-                    try {
-                        long contentLength = contentLengthHeader.getValue();
-                        return readPlain(is, contentLength, charset);
-                    }
-                    catch (NumberFormatException e) {
-                        throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
-                                String.format("Header field Content-Length contained invalid value '%1s'.", contentLengthHeader.getRawValue()));
-                    }
-                } else if (contentType.compareTo("multipart/form-data") == 0) {
-                    if (!contentTypeHeader.getMediaType().getParameters().containsName("boundary")) {
-                        throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
-                                String.format("Header field Content-Type was 'multipart/form-data' but did not contain boundary parameter: '%1s'.", contentTypeHeader.getRawValue()));
-                    }
-
-                    String boundary = contentTypeHeader.getMediaType().getParameters().get("boundary");
-
-                    readUntilBoundary(is, boundary, charset);
-
-                    throw new HttpException(HttpStatusCode.STATUS_415_UNSUPPORTED_MEDIA_TYPE, "Media type is not supported.");
-                } else {
-                    throw new HttpException(HttpStatusCode.STATUS_415_UNSUPPORTED_MEDIA_TYPE, "Media type is not supported.");
-                }
-            }
+            return null;
         } else {
             if (transferEncodingHeader.getValue().compareTo("chunked") == 0) {
                 return readChunked(is, headers);
@@ -141,52 +113,6 @@ public class HttpRequestParser implements IHttpRequestParser {
                         String.format("The Transfer-Encoding '%1s' is not supported.", transferEncoding));
             }
         }
-    }
-
-    protected byte[] readPlain(InputStream is, long contentLength, Charset charset) {
-        HttpBuffer buffer = new HttpBuffer();
-        int written = 0;
-
-        InputStreamReader isr = new InputStreamReader(is, charset);
-
-        int ch;
-        try {
-            while (written < contentLength && (ch = isr.read()) != -1) {
-                buffer.append(ch);
-                written++;
-            }
-        }
-        catch (IOException ex) {
-            LOGGER.warn("Could not read plain content from client.", ex);
-            throw new com.ramforth.webserver.exceptions.IOException(ex);
-        }
-
-        if (written < contentLength) {
-            throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Unexpected end of stream.");
-        }
-
-        return buffer.getCopy();
-    }
-
-    protected byte[] readUntilBoundary(InputStream is, String boundary, Charset charset) {
-        HttpBuffer buffer = new HttpBuffer();
-        int written = 0;
-
-        InputStreamReader isr = new InputStreamReader(is, charset);
-
-        int ch;
-        try {
-            while ((ch = isr.read()) != -1) {
-                buffer.append(ch);
-                written++;
-            }
-        }
-        catch (IOException ex) {
-            LOGGER.warn("Could not read boundary content from client.", ex);
-            throw new com.ramforth.webserver.exceptions.IOException(ex);
-        }
-
-        return buffer.getCopy();
     }
 
     protected byte[] readChunked(InputStream is, IHttpHeaders headers) {

@@ -9,6 +9,7 @@ package com.ramforth.webserver.http.parsers;
 import com.ramforth.webserver.http.headers.entity.ContentLengthHttpHeader;
 import com.ramforth.webserver.http.headers.entity.ContentTypeHttpHeader;
 import com.ramforth.webserver.http.headers.general.TransferEncodingHttpHeader;
+import java.nio.charset.Charset;
 
 /**
  *
@@ -19,6 +20,7 @@ public abstract class AbstractHttpRequestBodyParser implements IHttpRequestBodyP
     protected ContentLengthHttpHeader contentLength = null;
     protected ContentTypeHttpHeader contentType = null;
     protected TransferEncodingHttpHeader transferEncoding = null;
+    protected Charset charset = Charset.defaultCharset();
     
     @Override
     public void setContentType(ContentTypeHttpHeader contentType) {
@@ -28,6 +30,11 @@ public abstract class AbstractHttpRequestBodyParser implements IHttpRequestBodyP
     @Override
     public void setTransferEncoding(TransferEncodingHttpHeader transferEncoding) {
         this.transferEncoding = transferEncoding;
+    }
+    
+    @Override
+    public void setCharset(Charset charset) {
+        this.charset = charset;
     }
 
 }

@@ -9,6 +9,7 @@ import com.ramforth.webserver.http.HttpStatusCode;
 import com.ramforth.webserver.http.IHttpHeaders;
 import com.ramforth.webserver.http.IHttpRequestBodyData;
 import com.ramforth.webserver.http.MultipartHttpRequestBodyData;
+import com.ramforth.webserver.http.headers.entity.ContentTypeHttpHeader;
 import com.ramforth.webserver.http.headers.general.ContentDispositionHttpHeader;
 import static com.ramforth.webserver.http.parsers.HttpRequestParser.isCR;
 import static com.ramforth.webserver.http.parsers.HttpRequestParser.isCTL;
@@ -34,35 +35,60 @@ public class HttpRequestMultipartFormDataBodyParser extends AbstractHttpRequestB
     
     @Override
     public IHttpRequestBodyData parse(InputStream inputStream) {
+        MultipartHttpRequestBodyData multipartBodyData = new MultipartHttpRequestBodyData();
+        
         determineBoundary();
         
-        tryReadInterBoundary(inputStream);
+        boolean stillMorePartsToRead = true;
         
-        try {
-            int ch = inputStream.read();
-            if (!isCR(ch)) {
-                throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "");
+        while (stillMorePartsToRead) {
+            tryReadInterBoundary(inputStream);
+
+            try {
+                int firstCharacter = inputStream.read();
+                if (firstCharacter == -1) {
+                    LOGGER.error("Could not read the first of two consecutive characters after inter boundary separator.");
+                    throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "");
+                }
+                int secondCharacter = inputStream.read();
+                if (secondCharacter == -1) {
+                    LOGGER.error(String.format("Could not read the second of two consecutive characters after inter boundary separator. Already read: %s.", new String(new int[] { firstCharacter }, 0, 1)));
+                    throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "");
+                }
+                if (isCR(firstCharacter) && isLF(secondCharacter)) {
+                    stillMorePartsToRead = true;
+                } else if (firstCharacter == '-' && secondCharacter == '-') {
+                    stillMorePartsToRead = false;
+                } else {
+                    LOGGER.error(String.format("Read the two consecutive characters after inter boundary separator. Could have been either CRLF or DASHDASH but was: %s.", new String(new int[] { firstCharacter, secondCharacter }, 0, 2)));
+                    throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "");
+                }
+            } catch (IOException ioex) {
+                LOGGER.error("Tried to read the two consecutive characters after inter boundary separator. Could have been either CRLF or DASHDASH.", ioex);
+                throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, ioex.getMessage());
             }
-            ch = inputStream.read();
-            if (!isLF(ch)) {
-                throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "");
+
+            IHttpHeadersParser headersParser = new HttpHeadersParser();
+            IHttpHeaders headers = headersParser.parse(inputStream);
+
+            ContentDispositionHttpHeader contentDisposition = (ContentDispositionHttpHeader) headers.getHeader("Content-Disposition");
+            if (contentDisposition == null 
+                    || !contentDisposition.getDispositionType().getType().equalsIgnoreCase("form-data")
+                    || !contentDisposition.getDispositionType().getParameters().containsName("name")) {
+                throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
+                        String.format("Bad Content-Disposition: %s.", contentType.getRawValue()));
             }
-        } catch (IOException ioex) {
-                
+            
+            ContentTypeHttpHeader partContentType = (ContentTypeHttpHeader) headers.getHeader("Content-Type");
+            
+            IHttpRequestBodyParserFactory bodyParserFactory = new HttpRequestBodyParserFactory();
+            IHttpRequestBodyParser partBodyParser = bodyParserFactory.build(partContentType, transferEncoding);
+            
+            IHttpRequestBodyData partBodyData = partBodyParser.parse(inputStream);
+            multipartBodyData.addPart(partBodyData);
         }
         
-        IHttpHeadersParser headersParser = new HttpHeadersParser();
-        IHttpHeaders headers = headersParser.parse(inputStream);
-        
-        ContentDispositionHttpHeader contentDisposition = (ContentDispositionHttpHeader) headers.getHeader("Content-Disposition");
-        if (contentDisposition == null 
-                || !contentDisposition.getDispositionType().getType().equalsIgnoreCase("form-data")
-                || !contentDisposition.getDispositionType().getParameters().containsName("name")) {
-            throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
-                    String.format("Bad Content-Disposition: %s.", contentType.getRawValue()));
-        }
-        
-        return new MultipartHttpRequestBodyData();
+        return multipartBodyData;
     }
     
     private void determineBoundary() {
