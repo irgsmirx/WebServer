@@ -23,4 +23,8 @@ public class HttpRequestByteArrayBodyData implements IHttpRequestBodyData {
         ((HttpRequest)httpRequest).setBody(data);
     }
     
+    public final byte[] getData() {
+        return data;
+    }
+    
 }

@@ -4,13 +4,8 @@
  */
 package com.ramforth.webserver.http.parsers;
 
-import com.ramforth.webserver.exceptions.HttpException;
-import com.ramforth.webserver.http.HttpRequestByteArrayBodyData;
-import com.ramforth.webserver.http.HttpStatusCode;
 import com.ramforth.webserver.http.IHttpRequestBodyData;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,28 +20,12 @@ public class HttpRequestTextPlainBodyParser extends AbstractHttpRequestBodyParse
     
     @Override
     public IHttpRequestBodyData parse(InputStream inputStream) {
-        HttpBuffer buffer = new HttpBuffer();
-        int written = 0;
-
-        InputStreamReader isr = new InputStreamReader(inputStream, charset);
-
-        int ch;
-        try {
-            while (written < contentLength.getValue() && (ch = isr.read()) != -1) {
-                buffer.append(ch);
-                written++;
-            }
-        }
-        catch (IOException ex) {
-            LOGGER.warn("Could not read plain content from client.", ex);
-            throw new com.ramforth.webserver.exceptions.IOException(ex);
-        }
-
-        if (written < contentLength.getValue()) {
-            throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Unexpected end of stream.");
-        }
-
-        return new HttpRequestByteArrayBodyData(buffer.getCopy());
+        IHttpRequestBodyParser byteArrayParser = new HttpRequestByteArrayBodyParser();
+        byteArrayParser.setTransferEncoding(transferEncoding);
+        byteArrayParser.setContentType(contentType);
+        byteArrayParser.setCharset(charset);
+        
+        return byteArrayParser.parse(inputStream);
     }
     
 }

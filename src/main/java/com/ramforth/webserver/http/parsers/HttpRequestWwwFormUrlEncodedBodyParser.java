@@ -4,6 +4,7 @@
  */
 package com.ramforth.webserver.http.parsers;
 
+import com.ramforth.webserver.http.HttpRequestByteArrayBodyData;
 import com.ramforth.webserver.http.HttpRequestFormBodyData;
 import com.ramforth.webserver.http.IHttpRequestBodyData;
 import com.ramforth.webserver.http.NameValueMap;
@@ -19,7 +20,16 @@ public class HttpRequestWwwFormUrlEncodedBodyParser extends AbstractHttpRequestB
     
     @Override
     public IHttpRequestBodyData parse(InputStream inputStream) {
-        NameValueMap formData = parameterParser.parse(null, true);
+        IHttpRequestBodyParser byteArrayBodyParser = new HttpRequestByteArrayBodyParser();
+        byteArrayBodyParser.setTransferEncoding(transferEncoding);
+        byteArrayBodyParser.setContentType(contentType);
+        byteArrayBodyParser.setCharset(charset);
+        
+        HttpRequestByteArrayBodyData byteArrayBodyData = (HttpRequestByteArrayBodyData) byteArrayBodyParser.parse(inputStream);
+        
+        byte[] data = byteArrayBodyData.getData();
+        String parameterString = new String(data, charset);
+        NameValueMap formData = parameterParser.parse(parameterString, true);
         return new HttpRequestFormBodyData(formData);
     }
     
