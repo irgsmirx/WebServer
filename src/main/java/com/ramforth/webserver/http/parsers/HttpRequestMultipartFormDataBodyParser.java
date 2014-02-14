@@ -8,7 +8,7 @@ import com.ramforth.webserver.exceptions.HttpException;
 import com.ramforth.webserver.http.HttpStatusCode;
 import com.ramforth.webserver.http.IHttpHeaders;
 import com.ramforth.webserver.http.IHttpRequestBodyData;
-import com.ramforth.webserver.http.MultipartHttpRequestBodyData;
+import com.ramforth.webserver.http.HttpRequestMultipartBodyData;
 import com.ramforth.webserver.http.headers.entity.ContentTypeHttpHeader;
 import com.ramforth.webserver.http.headers.general.ContentDispositionHttpHeader;
 import static com.ramforth.webserver.http.parsers.HttpRequestParser.isCR;
@@ -35,7 +35,7 @@ public class HttpRequestMultipartFormDataBodyParser extends AbstractHttpRequestB
     
     @Override
     public IHttpRequestBodyData parse(InputStream inputStream) {
-        MultipartHttpRequestBodyData multipartBodyData = new MultipartHttpRequestBodyData();
+        HttpRequestMultipartBodyData multipartBodyData = new HttpRequestMultipartBodyData();
         
         determineBoundary();
         
@@ -82,7 +82,7 @@ public class HttpRequestMultipartFormDataBodyParser extends AbstractHttpRequestB
             ContentTypeHttpHeader partContentType = (ContentTypeHttpHeader) headers.getHeader("Content-Type");
             
             IHttpRequestBodyParserFactory bodyParserFactory = new HttpRequestBodyParserFactory();
-            IHttpRequestBodyParser partBodyParser = bodyParserFactory.build(partContentType, transferEncoding);
+            IHttpRequestBodyParser partBodyParser = bodyParserFactory.build(partContentType, contentDisposition);
             
             IHttpRequestBodyData partBodyData = partBodyParser.parse(inputStream);
             multipartBodyData.addPart(partBodyData);

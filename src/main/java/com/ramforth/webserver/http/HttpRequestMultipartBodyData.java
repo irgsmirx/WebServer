@@ -13,14 +13,14 @@ import java.util.List;
  *
  * @author tobias
  */
-public class MultipartHttpRequestBodyData implements IHttpRequestBodyData {
+public class HttpRequestMultipartBodyData implements IHttpRequestBodyData {
 
     private final List<IHttpRequestBodyData> parts = new ArrayList<>();
     
     @Override
     public void applyTo(IHttpRequest httpRequest) {
         for (IHttpRequestBodyData part : parts) {
-            // FIXME: do something
+            part.applyTo(httpRequest);
         }
     }
     

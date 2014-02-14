@@ -13,19 +13,32 @@ import java.io.InputStream;
 public class HttpPostedFile {
 
     private int contentLength;
-    private String contentType;
-    private String fileName;
+    private final String mimeType;
+    private final String filename;
+    private final String name;
+    private final byte[] data;
 
+    public HttpPostedFile(String name, String filename, String mimeType, byte[] data) {
+        this.name = name;
+        this.filename = filename;
+        this.mimeType = mimeType;
+        this.data = data;
+    }
+    
     public int getContentLength() {
         return contentLength;
     }
 
-    public String getContentType() {
-        return contentType;
+    public String getMimeType() {
+        return mimeType;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getFilename() {
+        return filename;
+    }
+    
+    public byte[] getData() {
+        return data;
     }
 
     public InputStream getInputStream() {

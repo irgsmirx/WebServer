@@ -9,8 +9,8 @@ import com.ramforth.webserver.exceptions.HttpException;
 import com.ramforth.webserver.http.HttpStatusCode;
 import com.ramforth.webserver.http.IMediaType;
 import com.ramforth.webserver.http.headers.entity.ContentTypeHttpHeader;
+import com.ramforth.webserver.http.headers.general.ContentDispositionHttpHeader;
 import com.ramforth.webserver.http.headers.general.TransferEncodingHttpHeader;
-import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -35,7 +35,7 @@ public class HttpRequestBodyParserFactory implements IHttpRequestBodyParserFacto
         IHttpRequestBodyParser bodyParser = null;
 
         if (contentType == null) {
-            bodyParser = createTextPlainBodyParser();//buildEmpty(transferEncoding);
+            bodyParser = createTextPlainBodyParser();
         } else {
             bodyParser = buildFromContentType(contentType, transferEncoding);
             bodyParser.setCharset(contentType.getMediaType().getCharset());
@@ -46,7 +46,32 @@ public class HttpRequestBodyParserFactory implements IHttpRequestBodyParserFacto
 
         return bodyParser;
     }
+    
+    @Override 
+    public IHttpRequestBodyParser build(ContentTypeHttpHeader contentType, ContentDispositionHttpHeader contentDisposition) {
+        IHttpRequestBodyParser bodyParser = null;
 
+        if (contentDisposition == null) {
+            if (contentType == null) {
+                bodyParser = createTextPlainBodyParser();
+            } else {
+                bodyParser = buildFromContentType(contentType, null);
+                bodyParser.setCharset(contentType.getMediaType().getCharset());
+            }
+        } else {
+            bodyParser = new HttpRequestFileBodyParser();
+            bodyParser.setContentDisposition(contentDisposition);
+            if (contentType != null) {
+                bodyParser.setCharset(contentType.getMediaType().getCharset());
+            }
+        }
+        
+        bodyParser.setContentType(contentType);
+
+        return bodyParser;
+    }
+
+            
     private IHttpRequestBodyParser buildEmpty(TransferEncodingHttpHeader transferEncoding) {
         return new EmptyHttpRequestBodyParser();
     }

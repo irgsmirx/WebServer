@@ -7,6 +7,7 @@
 package com.ramforth.webserver.http.parsers;
 
 import com.ramforth.webserver.http.headers.entity.ContentTypeHttpHeader;
+import com.ramforth.webserver.http.headers.general.ContentDispositionHttpHeader;
 import com.ramforth.webserver.http.headers.general.TransferEncodingHttpHeader;
 
 /**
@@ -16,5 +17,6 @@ import com.ramforth.webserver.http.headers.general.TransferEncodingHttpHeader;
 public interface IHttpRequestBodyParserFactory {
     
     IHttpRequestBodyParser build(ContentTypeHttpHeader contentType, TransferEncodingHttpHeader transferEncoding);
+    IHttpRequestBodyParser build(ContentTypeHttpHeader contentType, ContentDispositionHttpHeader contentDisposition);
     
 }
