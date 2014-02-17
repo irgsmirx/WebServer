@@ -5,6 +5,7 @@
 package com.ramforth.webserver.http.resources;
 
 import com.ramforth.utilities.templates.ITemplate;
+import java.io.InputStream;
 
 /**
  *
@@ -25,4 +26,10 @@ public class HttpStaticTemplateResource extends AbstractHttpResource {
     public void setTemplate(ITemplate template) {
         this.template = template;
     }
+
+    @Override
+    public InputStream tryOpenStream() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
 }

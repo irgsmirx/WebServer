@@ -4,10 +4,9 @@
  */
 package com.ramforth.webserver.http.resources;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,26 +14,26 @@ import java.util.logging.Logger;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class HttpFileResource extends AbstractHttpResource {
+public class HttpFileResource2 extends AbstractHttpResource {
 
-    protected String serverPath;
+    protected URL serverURL;
 
-    public void setServerPath(String value) {
-        this.serverPath = value;
+    public void setServerURL(URL value) {
+        this.serverURL = value;
     }
 
-    public String getServerPath() {
-        return serverPath;
+    public URL getServerURL() {
+        return serverURL;
     }
-
+    
     @Override
     public InputStream tryOpenStream() {
         try {
-            return new FileInputStream(serverPath);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(HttpFileResource.class.getName()).log(Level.SEVERE, null, ex);
+            return serverURL.openStream();
+        } catch (IOException ex) {
+            Logger.getLogger(HttpFileResource2.class.getName()).log(Level.SEVERE, null, ex);
             throw new com.ramforth.utilities.exceptions.IOException(ex);
-        }    
+        }
     }
     
 }

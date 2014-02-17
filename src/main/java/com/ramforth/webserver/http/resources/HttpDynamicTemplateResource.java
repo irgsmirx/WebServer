@@ -5,6 +5,7 @@
 package com.ramforth.webserver.http.resources;
 
 import com.ramforth.webserver.http.templates.IWebTemplate;
+import java.io.InputStream;
 
 /**
  *
@@ -25,4 +26,11 @@ public class HttpDynamicTemplateResource extends AbstractHttpResource {
     public void setTemplateServerPath(Class<? extends IWebTemplate> value) {
         this.templateType = value;
     }
+
+    @Override
+    public InputStream tryOpenStream() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
 }
