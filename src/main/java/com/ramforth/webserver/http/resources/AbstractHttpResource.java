@@ -21,4 +21,5 @@ public abstract class AbstractHttpResource implements IHttpResource {
     public String getRelativePath() {
         return relativePath;
     }
+    
 }

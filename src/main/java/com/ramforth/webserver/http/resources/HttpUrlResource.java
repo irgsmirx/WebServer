@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class HttpFileResource2 extends AbstractHttpResource {
+public class HttpUrlResource extends AbstractHttpResource {
 
     protected URL serverURL;
 
@@ -31,7 +31,7 @@ public class HttpFileResource2 extends AbstractHttpResource {
         try {
             return serverURL.openStream();
         } catch (IOException ex) {
-            Logger.getLogger(HttpFileResource2.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HttpUrlResource.class.getName()).log(Level.SEVERE, null, ex);
             throw new com.ramforth.utilities.exceptions.IOException(ex);
         }
     }
