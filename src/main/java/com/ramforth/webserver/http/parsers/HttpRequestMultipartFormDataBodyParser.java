@@ -59,6 +59,7 @@ public class HttpRequestMultipartFormDataBodyParser extends AbstractHttpRequestB
                     stillMorePartsToRead = true;
                 } else if (firstCharacter == '-' && secondCharacter == '-') {
                     stillMorePartsToRead = false;
+                    break;
                 } else {
                     LOGGER.error(String.format("Read the two consecutive characters after inter boundary separator. Could have been either CRLF or DASHDASH but was: %s.", new String(new int[] { firstCharacter, secondCharacter }, 0, 2)));
                     throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "");

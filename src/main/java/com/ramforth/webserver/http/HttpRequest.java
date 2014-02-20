@@ -1,8 +1,8 @@
 package com.ramforth.webserver.http;
 
+import com.ramforth.utilities.common.implementation.Pair;
 import com.ramforth.webserver.exceptions.HttpException;
 import com.ramforth.webserver.http.parsers.HttpHeadersParser;
-import com.ramforth.webserver.http.parsers.HttpRequestParser;
 import com.ramforth.webserver.http.parsers.IHttpHeadersParser;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +21,7 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
     protected byte[] body;
     protected NameValueMap queryString = new NameValueMap();
     protected NameValueMap form = new NameValueMap();
-    protected Map postedFiles = new TreeMap<>();
+    protected Map<String, HttpPostedFile> postedFiles = new TreeMap<>();
     protected NameValueMap serverVariables = new NameValueMap();
     protected URI urlReferrer;
     protected IHttpVersion version;
@@ -280,4 +280,20 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
     public void setInputStream(InputStream value) {
         this.inputStream = value;
     }
+    
+    @Override
+    public final Iterable<HttpPostedFile> getPostedFiles() {
+        return postedFiles.values();
+    }
+    
+    @Override
+    public final HttpPostedFile getPostedFile(String name) {
+        return postedFiles.get(name);
+    }
+    
+    @Override
+    public final int getNumberOfPostedFiles() {
+        return postedFiles.size();
+    }
+    
 }

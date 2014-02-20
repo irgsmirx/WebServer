@@ -4,7 +4,14 @@
  */
 package com.ramforth.webserver.http;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -46,5 +53,21 @@ public class HttpPostedFile {
     }
 
     public void saveAs(String filename) {
+        saveAs(Paths.get(filename));
     }
+
+    public void saveAs(Path filename) {
+        try {
+            Files.write(filename, data);
+        }
+        catch (IOException ex) {
+            throw new com.ramforth.utilities.exceptions.IOException("Could not save posted file '" + name + "' as '" + filename + "'.", ex);
+        }
+    }
+    
+    public void saveAt(Path parent) {
+        Path completePath = parent.resolve(this.filename);
+        saveAs(completePath);
+    }
+   
 }

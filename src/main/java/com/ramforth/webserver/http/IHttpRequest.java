@@ -4,6 +4,7 @@
  */
 package com.ramforth.webserver.http;
 
+import com.ramforth.utilities.common.implementation.Pair;
 import com.ramforth.webserver.web.IRequest;
 import java.net.URI;
 
@@ -21,20 +22,26 @@ public interface IHttpRequest extends IHttpMessage, IRequest {
 
     void setUri(URI value);
 
-    public NameValueMap getQueryString();
+    NameValueMap getQueryString();
 
-    public String getQueryString(String key);
+    String getQueryString(String key);
 
-    public void setQueryString(String key, String value);
+    void setQueryString(String key, String value);
 
-    public NameValueMap getForm();
+    NameValueMap getForm();
 
-    public String getForm(String key);
+    String getForm(String key);
 
-    public void setForm(String key, String value);
+    void setForm(String key, String value);
 
-    public NameValueMap getParams();
+    NameValueMap getParams();
     
-    public String getParams(String key);
+    String getParams(String key);
+    
+    Iterable<HttpPostedFile> getPostedFiles();
+    
+    HttpPostedFile getPostedFile(String name);
+    
+    int getNumberOfPostedFiles();
     
 }
