@@ -5,6 +5,7 @@
 package com.ramforth.webserver.http.parsers;
 
 import com.ramforth.webserver.exceptions.HttpException;
+import com.ramforth.webserver.http.HttpRequestFileBodyData;
 import com.ramforth.webserver.http.HttpStatusCode;
 import com.ramforth.webserver.http.IHttpHeaders;
 import com.ramforth.webserver.http.IHttpRequestBodyData;
@@ -28,8 +29,10 @@ public class HttpRequestMultipartFormDataBodyParser extends AbstractHttpRequestB
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestMultipartFormDataBodyParser.class);
 
+    private int boundaryLength;
     private int interBoundaryLength;
     private int lastBoundaryLength;
+    private byte[] boundary;
     private String interPartBoundary;
     private String lastBoundary;
     
@@ -41,9 +44,9 @@ public class HttpRequestMultipartFormDataBodyParser extends AbstractHttpRequestB
         
         boolean stillMorePartsToRead = true;
         
-        while (stillMorePartsToRead) {
-            tryReadInterBoundary(inputStream);
+        tryReadInterBoundary(inputStream);
 
+        while (stillMorePartsToRead) {
             try {
                 int firstCharacter = inputStream.read();
                 if (firstCharacter == -1) {
@@ -72,20 +75,50 @@ public class HttpRequestMultipartFormDataBodyParser extends AbstractHttpRequestB
             IHttpHeadersParser headersParser = new HttpHeadersParser();
             IHttpHeaders headers = headersParser.parse(inputStream);
 
-            ContentDispositionHttpHeader contentDisposition = (ContentDispositionHttpHeader) headers.getHeader("Content-Disposition");
-            if (contentDisposition == null 
-                    || !contentDisposition.getDispositionType().getType().equalsIgnoreCase("form-data")
-                    || !contentDisposition.getDispositionType().getParameters().containsName("name")) {
+            ContentDispositionHttpHeader partContentDisposition = (ContentDispositionHttpHeader) headers.getHeader("Content-Disposition");
+            if (partContentDisposition == null 
+                    || !partContentDisposition.getDispositionType().getType().equalsIgnoreCase("form-data")
+                    || !partContentDisposition.getDispositionType().getParameters().containsName("name")) {
                 throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
-                        String.format("Bad Content-Disposition: %s.", contentType.getRawValue()));
+                        String.format("Bad Content-Disposition: %s.", partContentDisposition.getRawValue()));
             }
             
             ContentTypeHttpHeader partContentType = (ContentTypeHttpHeader) headers.getHeader("Content-Type");
             
-            IHttpRequestBodyParserFactory bodyParserFactory = new HttpRequestBodyParserFactory();
-            IHttpRequestBodyParser partBodyParser = bodyParserFactory.build(partContentType, contentDisposition);
+            HttpBuffer buffer = new HttpBuffer();
+            int boundaryPosition = 0;
+            int ch = -1;
+            try {
+                while ((ch = inputStream.read()) != -1) {
+                    if (ch == boundary[boundaryPosition]) {
+                        if (boundaryPosition == boundaryLength - 1) {
+                            break;
+                        } else {
+                            boundaryPosition++;
+                        }
+                    } else {
+                        for (int i = 0; i < boundaryPosition; i++) {
+                            buffer.append(boundary[i]);
+                        }
+                        boundaryPosition = 0;
+                        buffer.append(ch);
+                    }
+                }
+            } catch (IOException ex) {
+                LOGGER.error("Could not read part from multipart/form-data", ex);
+                throw new com.ramforth.utilities.exceptions.IOException(ex);
+            }
+
+            String name = partContentDisposition.getDispositionType().getValue("name");
+            String filename = partContentDisposition.getDispositionType().getValue("filename");
+            String mimeType = partContentType.getMediaType().getType();
             
-            IHttpRequestBodyData partBodyData = partBodyParser.parse(inputStream);
+            IHttpRequestBodyData partBodyData = new HttpRequestFileBodyData(name, filename, mimeType, buffer.getCopy());
+                        
+//            IHttpRequestBodyParserFactory bodyParserFactory = new HttpRequestBodyParserFactory();
+//            IHttpRequestBodyParser partBodyParser = bodyParserFactory.build(partContentType, contentDisposition);
+//            
+//            IHttpRequestBodyData partBodyData = partBodyParser.parse(inputStream);
             multipartBodyData.addPart(partBodyData);
         }
         
@@ -102,6 +135,8 @@ public class HttpRequestMultipartFormDataBodyParser extends AbstractHttpRequestB
         
         this.interPartBoundary = String.format("--%s", boundary);
         this.interBoundaryLength = interPartBoundary.length();
+        this.boundary = this.interPartBoundary.getBytes(charset);
+        this.boundaryLength = this.boundary.length;
         this.lastBoundary = String.format("--%s--", boundary);
         this.lastBoundaryLength = lastBoundary.length();
     }

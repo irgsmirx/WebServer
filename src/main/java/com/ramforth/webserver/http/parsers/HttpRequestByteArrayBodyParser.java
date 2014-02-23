@@ -41,10 +41,6 @@ public class HttpRequestByteArrayBodyParser extends AbstractHttpRequestBodyParse
             LOGGER.warn("Could not read plain content from client.", ex);
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
-
-//        if (written < contentLength.getValue()) {
-//            throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Unexpected end of stream.");
-//        }
         
         return new HttpRequestByteArrayBodyData(buffer.getCopy());
     }
