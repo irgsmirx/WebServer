@@ -1,4 +1,4 @@
-/*
+ /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -8,7 +8,6 @@ package com.ramforth.webserver.http.parsers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 /**
  *
@@ -25,78 +24,74 @@ public class BoundaryDelimitedInputStream extends InputStream {
     private long bytesRead = 0;
     private int currentBoundaryPosition = 0;
     
-    private final byte[] buffer;
-    private int buffered = 0;
-    private int currentBufferPosition = 0;
+    private byte[] buffer;
+    private int currentBufferIndex = 0;
+    private int bufferEndIndex = 0;
     
     
     public BoundaryDelimitedInputStream(InputStream wrappedInputStream, byte[] boundaryBytes) {
         this.wrappedInputStream = wrappedInputStream;
         this.boundaryBytes = boundaryBytes;
         this.boundaryLength = boundaryBytes.length;
+        
         this.buffer = new byte[this.boundaryLength];
     }
     
     @Override
     public int read() throws IOException {
-        if (currentBoundaryPosition == boundaryLength - 1) {
-            return BoundaryDelimitedInputStream.EOF;
-        }
-        
-        if (buffered < boundaryLength) {
-            int actuallyBuffered = wrappedInputStream.read(buffer, buffered, boundaryLength - buffered);
-            if (actuallyBuffered != (boundaryLength - buffered)) {
-                throw new RuntimeException("");
-            }
-            buffered = boundaryLength;
-        } else {
-            System.arraycopy(buffer, 1, buffer, 0, buffer.length - 1);
-            buffer[buffer.length - 1] = (byte)wrappedInputStream.read();
-        }
-        
-        if (Arrays.equals(buffer, boundaryBytes)) {
-            return BoundaryDelimitedInputStream.EOF;
-        }
-        
-        int b = buffer[currentBufferPosition];
-        currentBufferPosition++;
+        int b = -1;
 
-        if (b == BoundaryDelimitedInputStream.EOF) {
-            throw new RuntimeException("Unexpected end of input at byte " + this.bytesRead + ".");
-        }
-        
-        if (boundaryBytes[currentBoundaryPosition] == b) {
-            currentBoundaryPosition++;
+        if (currentBufferIndex <  bufferEndIndex) {
+            b = buffer[currentBufferIndex];
+            currentBufferIndex++;
         } else {
+            currentBufferIndex = 0;
+            bufferEndIndex = 0;
             currentBoundaryPosition = 0;
-        }
-        
-        bytesRead++;
+            
+            while ((b = wrappedInputStream.read()) != -1) { 
+                buffer[bufferEndIndex] = (byte)b;
+                bufferEndIndex++;
+                
+                if (b == boundaryBytes[currentBoundaryPosition]) {
+                    if (currentBoundaryPosition == boundaryLength - 1) {
+                        return BoundaryDelimitedInputStream.EOF;
+                    } else {
+                        currentBoundaryPosition++;
+                    }
+                } else {
+                    currentBoundaryPosition = 0;
+                    break;
+                }
+            }
+         
+            if (b == -1) {
+                return BoundaryDelimitedInputStream.EOF;
+            }
+            
+            if (bufferEndIndex > 0) {
+                b = buffer[currentBufferIndex];
+                currentBufferIndex++;
+            }
+        }        
   
         return b;
     }
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
-        if (currentBoundaryPosition == boundaryLength - 1) {
-            return BoundaryDelimitedInputStream.EOF;
-        }
-
-        //if ((this.bytesRead + len) > this.maximumLength) {
-            //len = (int)(this.maximumLength - this.bytesRead);
-        //}
+        int totalBytesRead = 0;
         
-        int currentBytesRead = this.wrappedInputStream.read(b, off, len);
-        
-        //if (currentBytesRead == BoundaryDelimitedInputStream.EOF && !maximumLengthReached()) {
-        //    throw new RuntimeException("Unexpected end of input at byte " + this.bytesRead + ". Expected " + (this.maximumLength - this.bytesRead) + " more bytes!");
-        //}
-        
-        if (currentBytesRead > 0) {
-            this.bytesRead += currentBytesRead;
+        for (int i = 0; i < len; i++) {
+            int readByte = read();
+            if (readByte == -1) {
+                break;
+            }
+            b[off + totalBytesRead] = (byte)readByte;
+            totalBytesRead++;
         }
         
-        return currentBytesRead;
+        return totalBytesRead;
     }
 
     @Override
