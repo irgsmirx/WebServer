@@ -13,6 +13,8 @@ import com.ramforth.webserver.http.headers.general.ContentDispositionHttpHeader;
 import com.ramforth.webserver.http.headers.general.TransferEncodingHttpHeader;
 import java.util.Map;
 import java.util.TreeMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -20,6 +22,9 @@ import java.util.TreeMap;
  */
 public class HttpRequestBodyParserFactory implements IHttpRequestBodyParserFactory {
 
+     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestBodyParserFactory.class);
+
+    
     private final Map<String, IHttpRequestBodyParser> bodyParsers = new TreeMap<>();
 
     public HttpRequestBodyParserFactory() {
@@ -83,7 +88,8 @@ public class HttpRequestBodyParserFactory implements IHttpRequestBodyParserFacto
 
         IHttpRequestBodyParser bodyParser = bodyParsers.get(loweredMimeTypeString);
         if (bodyParser == null) {
-            throw new HttpException(HttpStatusCode.STATUS_415_UNSUPPORTED_MEDIA_TYPE, "The media type '" + mimeTypeString + "' is not (yet) supported.");
+            LOGGER.warn("Unsupported media type. Trying application/octet-stream.", new HttpException(HttpStatusCode.STATUS_415_UNSUPPORTED_MEDIA_TYPE, "The media type '" + mimeTypeString + "' is not (yet) supported."));
+            bodyParser = new HttpRequestFileBodyParser();
         }
         return bodyParser;
     }

@@ -28,11 +28,15 @@ public class BoundaryDelimitedInputStream extends InputStream {
     private int currentBufferIndex = 0;
     private int bufferEndIndex = 0;
     
+    private boolean reachedBoundary = false;
     
     public BoundaryDelimitedInputStream(InputStream wrappedInputStream, byte[] boundaryBytes) {
         this.wrappedInputStream = wrappedInputStream;
-        this.boundaryBytes = boundaryBytes;
-        this.boundaryLength = boundaryBytes.length;
+        this.boundaryBytes = new byte[boundaryBytes.length + 2];
+        System.arraycopy(boundaryBytes, 0, this.boundaryBytes, 2, boundaryBytes.length);
+        this.boundaryBytes[0] = '\r';
+        this.boundaryBytes[1] = '\n';
+        this.boundaryLength = this.boundaryBytes.length;
         
         this.buffer = new byte[this.boundaryLength];
     }
@@ -41,6 +45,10 @@ public class BoundaryDelimitedInputStream extends InputStream {
     public int read() throws IOException {
         int b = -1;
 
+        if (reachedBoundary) {
+            return b;
+        }
+        
         if (currentBufferIndex <  bufferEndIndex) {
             b = buffer[currentBufferIndex];
             currentBufferIndex++;
@@ -55,6 +63,7 @@ public class BoundaryDelimitedInputStream extends InputStream {
                 
                 if (b == boundaryBytes[currentBoundaryPosition]) {
                     if (currentBoundaryPosition == boundaryLength - 1) {
+                        reachedBoundary = true;
                         return BoundaryDelimitedInputStream.EOF;
                     } else {
                         currentBoundaryPosition++;
@@ -85,7 +94,11 @@ public class BoundaryDelimitedInputStream extends InputStream {
         for (int i = 0; i < len; i++) {
             int readByte = read();
             if (readByte == -1) {
-                break;
+                if (totalBytesRead > 0) {
+                    break;
+                } else {
+                    return BoundaryDelimitedInputStream.EOF;
+                }
             }
             b[off + totalBytesRead] = (byte)readByte;
             totalBytesRead++;

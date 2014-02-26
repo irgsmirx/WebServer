@@ -84,41 +84,44 @@ public class HttpRequestMultipartFormDataBodyParser extends AbstractHttpRequestB
             }
             
             ContentTypeHttpHeader partContentType = (ContentTypeHttpHeader) headers.getHeader("Content-Type");
+            BoundaryDelimitedInputStream bdis = new BoundaryDelimitedInputStream(inputStream, boundary);
             
-            HttpBuffer buffer = new HttpBuffer();
-            int boundaryPosition = 0;
-            int ch = -1;
-            try {
-                while ((ch = inputStream.read()) != -1) {
-                    if (ch == boundary[boundaryPosition]) {
-                        if (boundaryPosition == boundaryLength - 1) {
-                            break;
-                        } else {
-                            boundaryPosition++;
-                        }
-                    } else {
-                        for (int i = 0; i < boundaryPosition; i++) {
-                            buffer.append(boundary[i]);
-                        }
-                        boundaryPosition = 0;
-                        buffer.append(ch);
-                    }
-                }
-            } catch (IOException ex) {
-                LOGGER.error("Could not read part from multipart/form-data", ex);
-                throw new com.ramforth.utilities.exceptions.IOException(ex);
-            }
-
-            String name = partContentDisposition.getDispositionType().getValue("name");
-            String filename = partContentDisposition.getDispositionType().getValue("filename");
-            String mimeType = partContentType.getMediaType().getType();
+            IHttpRequestBodyParserFactory bodyParserFactory = new HttpRequestBodyParserFactory();
+            IHttpRequestBodyParser partBodyParser = bodyParserFactory.build(partContentType, partContentDisposition);
             
-            IHttpRequestBodyData partBodyData = new HttpRequestFileBodyData(name, filename, mimeType, buffer.getCopy());
-                        
-//            IHttpRequestBodyParserFactory bodyParserFactory = new HttpRequestBodyParserFactory();
-//            IHttpRequestBodyParser partBodyParser = bodyParserFactory.build(partContentType, contentDisposition);
+            IHttpRequestBodyData partBodyData = partBodyParser.parse(bdis);
+            
+            
+//            HttpBuffer buffer = new HttpBuffer();
+//            int boundaryPosition = 0;
+//            int ch = -1;
+//            try {
+//                while ((ch = inputStream.read()) != -1) {
+//                    if (ch == boundary[boundaryPosition]) {
+//                        if (boundaryPosition == boundaryLength - 1) {
+//                            break;
+//                        } else {
+//                            boundaryPosition++;
+//                        }
+//                    } else {
+//                        for (int i = 0; i < boundaryPosition; i++) {
+//                            buffer.append(boundary[i]);
+//                        }
+//                        boundaryPosition = 0;
+//                        buffer.append(ch);
+//                    }
+//                }
+//            } catch (IOException ex) {
+//                LOGGER.error("Could not read part from multipart/form-data", ex);
+//                throw new com.ramforth.utilities.exceptions.IOException(ex);
+//            }
+//
+//            String name = partContentDisposition.getDispositionType().getValue("name");
+//            String filename = partContentDisposition.getDispositionType().getValue("filename");
+//            String mimeType = partContentType.getMediaType().getType();
 //            
-//            IHttpRequestBodyData partBodyData = partBodyParser.parse(inputStream);
+//            IHttpRequestBodyData partBodyData = new HttpRequestFileBodyData(name, filename, mimeType, buffer.getCopy());
+                        
             multipartBodyData.addPart(partBodyData);
         }
         
