@@ -79,7 +79,7 @@ public class BoundaryDelimitedInputStream extends InputStream {
             }
             
             if (bufferEndIndex > 0) {
-                b = buffer[currentBufferIndex];
+                b = buffer[currentBufferIndex] & 0xff;
                 currentBufferIndex++;
             }
         }        

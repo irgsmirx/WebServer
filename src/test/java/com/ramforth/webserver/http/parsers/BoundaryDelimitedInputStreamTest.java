@@ -88,6 +88,13 @@ public class BoundaryDelimitedInputStreamTest {
             Logger.getLogger(BoundaryDelimitedInputStreamTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    @Test
+    public void intCastingToByteTest() {
+        for (int i = 0; i < 256; i++) {
+            System.out.println((byte)i);
+        }
+    }
 
     
     

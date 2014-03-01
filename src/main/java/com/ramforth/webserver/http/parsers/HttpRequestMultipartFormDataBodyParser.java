@@ -29,12 +29,18 @@ public class HttpRequestMultipartFormDataBodyParser extends AbstractHttpRequestB
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestMultipartFormDataBodyParser.class);
 
+    private static final int DASH = '-';
+    
     private int boundaryLength;
     private int interBoundaryLength;
     private int lastBoundaryLength;
     private byte[] boundary;
     private String interPartBoundary;
     private String lastBoundary;
+    
+    private boolean isDash(int character) {
+        return HttpRequestMultipartFormDataBodyParser.DASH == character;
+    }
     
     @Override
     public IHttpRequestBodyData parse(InputStream inputStream) {
@@ -60,11 +66,11 @@ public class HttpRequestMultipartFormDataBodyParser extends AbstractHttpRequestB
                 }
                 if (isCR(firstCharacter) && isLF(secondCharacter)) {
                     stillMorePartsToRead = true;
-                } else if (firstCharacter == '-' && secondCharacter == '-') {
+                } else if (isDash(firstCharacter) && isDash(secondCharacter)) {
                     stillMorePartsToRead = false;
                     break;
                 } else {
-                    LOGGER.error(String.format("Read the two consecutive characters after inter boundary separator. Could have been either CRLF or DASHDASH but was: %s.", new String(new int[] { firstCharacter, secondCharacter }, 0, 2)));
+                    LOGGER.error(String.format("Read the two consecutive characters after inter boundary separator. Could have been either CRLF or DASHDASH but was: %s (%d %d).", new String(new int[] { firstCharacter, secondCharacter }, 0, 2), firstCharacter, secondCharacter));
                     throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "");
                 }
             } catch (IOException ioex) {
