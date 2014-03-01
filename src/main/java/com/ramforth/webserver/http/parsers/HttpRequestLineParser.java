@@ -121,10 +121,8 @@ public class HttpRequestLineParser implements IHttpRequestLineParser {
             }
         }
 
-        while (true) {
-            if (ch == -1) {
-                throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request ended unexpectedly.");
-            } else if (isCR(ch)) {
+        while (ch != -1) {
+			if (isCR(ch)) {
                 last = ch;
             } else if (isLF(ch)) {
                 if (isCR(last)) {
