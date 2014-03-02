@@ -82,7 +82,10 @@ public class BoundaryDelimitedInputStreamTest {
         
         try {
             byte b = (byte)bdis.read();
-            assertEquals(-1, b);
+            assertEquals('-', b);
+
+            b = (byte)bdis.read();
+            assertEquals('-', b);
         }
         catch (IOException ex) {
             Logger.getLogger(BoundaryDelimitedInputStreamTest.class.getName()).log(Level.SEVERE, null, ex);
