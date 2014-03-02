@@ -1,9 +1,6 @@
 package com.ramforth.webserver;
 
-/**
- * An example of a very simple, multi-threaded HTTP server. Implementation notes
- * are in WebServer.html, and also as comments in the source code.
- */
+import com.ramforth.utilities.common.implementation.SystemProperties;
 import com.ramforth.webserver.http.HttpApplicationFactory;
 import com.ramforth.webserver.http.IHttpContext;
 import com.ramforth.webserver.http.IHttpContextHandler;
@@ -25,15 +22,11 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebServer.class);
     
     private boolean running;
-    /*
-     * the server's name and version
-     */
+
     public String serverid = "com.ramforth.webserver/0.0.2";
 
-    /*
-     * our server's configuration information is stored in these properties
-     */
-    protected Properties properties = new Properties();
+    protected Properties configurationProperties = new Properties();
+
     protected final List<IHttpListener> httpListeners = Collections.synchronizedList(new ArrayList<IHttpListener>());
     protected final List<IHttpRequestHandler> requestHandlers = Collections.synchronizedList(new ArrayList<IHttpRequestHandler>());
     protected final List<IHttpModule> modules = Collections.synchronizedList(new ArrayList<IHttpModule>());
@@ -43,11 +36,8 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
 
     protected static HttpApplicationFactory httpApplicationFactory;
 
-    /*
-     * load server properties from user's home
-     */
-    protected void loadProps() throws IOException {
-        String propertiesFile = System.getProperty("user.home") + File.separator + ".com.ramforth.webserver" + File.separator + "webserver.conf";
+    protected void loadConfiguration() throws IOException {
+        String propertiesFile = SystemProperties.getUserHomeDirectory() + File.separator + ".com.ramforth.webserver" + File.separator + "webserver.conf";
 
         File f = new File(propertiesFile);
         int port = 0;
@@ -55,15 +45,15 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
 
         if (f.exists()) {
             try (InputStream is = new BufferedInputStream(new FileInputStream(f))) {
-                properties.load(is);
+                configurationProperties.load(is);
             }
 
-            String r = properties.getProperty("port");
+            String r = configurationProperties.getProperty("port");
             if (r != null) {
                 port = Integer.parseInt(r);
             }
 
-            r = properties.getProperty("root");
+            r = configurationProperties.getProperty("root");
             if (r != null) {
                 root = new File(r);
                 if (!root.exists()) {
@@ -71,12 +61,12 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
                 }
             }
 
-            r = properties.getProperty("timeout");
+            r = configurationProperties.getProperty("timeout");
             if (r != null) {
                 clientConnectionTimeout = Integer.parseInt(r);
             }
 
-            r = properties.getProperty("threadlimit");
+            r = configurationProperties.getProperty("threadlimit");
             if (r != null) {
                 maximumNumberOfWorkerThreads = Integer.parseInt(r);
             }
