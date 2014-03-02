@@ -40,45 +40,29 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
         String propertiesFile = SystemProperties.getUserHomeDirectory() + File.separator + ".com.ramforth.webserver" + File.separator + "webserver.conf";
 
         File f = new File(propertiesFile);
-        int port = 0;
-        File root = new File("");
 
         if (f.exists()) {
             try (InputStream is = new BufferedInputStream(new FileInputStream(f))) {
                 configurationProperties.load(is);
             }
 
-            String r = configurationProperties.getProperty("port");
-            if (r != null) {
-                port = Integer.parseInt(r);
-            }
-
-            r = configurationProperties.getProperty("root");
-            if (r != null) {
-                root = new File(r);
-                if (!root.exists()) {
-                    throw new Error(root + " doesn't exist as server root");
+            String clientConnectionTimeoutStringValue = configurationProperties.getProperty("clientConnectionTimeout");
+            if (clientConnectionTimeoutStringValue != null) {
+                try {
+                    clientConnectionTimeout = Integer.parseInt(clientConnectionTimeoutStringValue);
+                } catch (NumberFormatException nfex) {
+                    LOGGER.warn(String.format("Could not parse clientConnectionTimeout (%s).", clientConnectionTimeoutStringValue), nfex);
                 }
             }
 
-            r = configurationProperties.getProperty("timeout");
-            if (r != null) {
-                clientConnectionTimeout = Integer.parseInt(r);
+            String maximumNumberOfWorkerThreadsStringValue = configurationProperties.getProperty("maximumNumberOfWorkerThreads");
+            if (maximumNumberOfWorkerThreadsStringValue != null) {
+                try {
+                    maximumNumberOfWorkerThreads = Integer.parseInt(maximumNumberOfWorkerThreadsStringValue);
+                } catch (NumberFormatException nfex) {
+                    LOGGER.warn(String.format("Could not parse maximumNumberOfWorkerThreads (%s).", maximumNumberOfWorkerThreadsStringValue), nfex);
+                }
             }
-
-            r = configurationProperties.getProperty("threadlimit");
-            if (r != null) {
-                maximumNumberOfWorkerThreads = Integer.parseInt(r);
-            }
-        }
-
-        /* if no properties were specified, choose defaults */
-        if (port == 0) {
-            port = 8080;
-        }
-
-        if (root == null) {
-            root = new File(System.getProperty("user.dir"));
         }
 
         if (clientConnectionTimeout <= 1000) {
