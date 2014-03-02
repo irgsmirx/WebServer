@@ -19,6 +19,7 @@ package com.ramforth.webserver;
 import com.ramforth.webserver.http.HttpListener;
 import com.ramforth.webserver.http.IHttpContext;
 import com.ramforth.webserver.http.IHttpListener;
+import com.ramforth.webserver.http.modules.HttpCgiModule;
 import com.ramforth.webserver.http.modules.HttpFileModule;
 import com.ramforth.webserver.http.modules.IHttpModule;
 import com.ramforth.webserver.http.resources.HttpFileResource;
@@ -37,11 +38,20 @@ public class WebServerTest {
 
         IHttpListener httpListener = new HttpListener(11111);
 
+        HttpCgiModule httpCgiModule = new HttpCgiModule("/usr/bin/perl", ".pl");
+        HttpFileResource perlFile = new HttpFileResource();
+        perlFile.setRelativePath("/index.pl");
+        perlFile.setServerPath("/home/tobias/perlcgitest.pl");
+        httpCgiModule.getResources().addResource(perlFile);
+
+        
         HttpFileModule httpFileModule = new HttpFileModule();
         HttpFileResource hfr = new HttpFileResource();
         hfr.setRelativePath("/index.htm");
         hfr.setServerPath("/home/tobias/test.htm");
         httpFileModule.getResources().addResource(hfr);
+        
+        webServer.addModule(httpCgiModule);
         webServer.addModule(httpFileModule);
 
         webServer.addHttpListener(httpListener);
