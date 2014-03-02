@@ -233,16 +233,15 @@ public class WebServerThread implements Runnable {
 
         // log("From " + socket.getInetAddress().getHostAddress() + ": GET " +
         // w.getFilename() + "-->" + returnCode);
-
         p.print("Server: Jackey 0.0.1");
         p.write(EOL);
-        p.print("Date: " + ( new Date() ));
+        p.print("Date: " + (new Date()));
         p.write(EOL);
 
         if (result) {
             p.print("Content-length: " + w.getContentLength());
             p.write(EOL);
-            p.print("Last Modified: " + ( new Date() ));
+            p.print("Last Modified: " + (new Date()));
             p.write(EOL);
         }
 
@@ -266,13 +265,13 @@ public class WebServerThread implements Runnable {
         //log("From " + socket.getInetAddress().getHostAddress() + ": GET " + targ.getAbsolutePath() + "-->" + rCode);
         ps.print("Server: Simple java");
         ps.write(EOL);
-        ps.print("Date: " + ( new Date() ));
+        ps.print("Date: " + (new Date()));
         ps.write(EOL);
         if (ret) {
             if (!targ.isDirectory()) {
                 ps.print("Content-length: " + targ.length());
                 ps.write(EOL);
-                ps.print("Last Modified: " + ( new Date(targ.lastModified()) ));
+                ps.print("Last Modified: " + (new Date(targ.lastModified())));
                 ps.write(EOL);
                 String name = targ.getName();
                 int ind = name.lastIndexOf('.');

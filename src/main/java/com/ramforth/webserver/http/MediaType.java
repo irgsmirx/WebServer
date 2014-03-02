@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 public class MediaType implements IMediaType {
 
     private static final String DEFAULT_MEDIA_TYPE = "application/octet-stream";
-    
+
     protected String type = DEFAULT_MEDIA_TYPE;
     protected NameValueMap parameters = new NameValueMap();
 
@@ -51,17 +51,17 @@ public class MediaType implements IMediaType {
     public int numberOfParameters() {
         return parameters.numberOfEntries();
     }
-    
+
     @Override
     public String getValue(String name) {
         return parameters.get(name);
     }
-    
+
     @Override
     public boolean containsParameter(String name) {
         return parameters.containsName(name);
     }
-    
+
     @Override
     public Charset getCharset() {
         try {
@@ -72,5 +72,5 @@ public class MediaType implements IMediaType {
             return Charset.defaultCharset();
         }
     }
-    
+
 }

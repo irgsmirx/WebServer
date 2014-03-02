@@ -21,6 +21,6 @@ public interface IHttpResourceProvider {
     IHttpResource getResource(String relativePath);
 
     void setDefaultResource(IHttpResource value);
-    
+
     void clearResources();
 }

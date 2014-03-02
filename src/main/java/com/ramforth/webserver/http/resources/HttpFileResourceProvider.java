@@ -16,7 +16,7 @@ public class HttpFileResourceProvider implements IHttpResourceProvider {
 
     protected Map<String, IHttpResource> resources = new TreeMap<>();
     protected IHttpResource defaultResource = null;
-   
+
     @Override
     public void addResource(IHttpResource value) {
         if (resources.containsKey(value.getRelativePath().toLowerCase())) {
@@ -33,7 +33,7 @@ public class HttpFileResourceProvider implements IHttpResourceProvider {
     @Override
     public boolean containsResource(IHttpResource value) {
         try {
-            return (defaultResource != null &&  "/".compareTo(value.getRelativePath().toLowerCase()) == 0) || resources.containsKey(value.getRelativePath().toLowerCase());
+            return (defaultResource != null && "/".compareTo(value.getRelativePath().toLowerCase()) == 0) || resources.containsKey(value.getRelativePath().toLowerCase());
         }
         catch (NullPointerException npex) {
             return false;
@@ -43,7 +43,7 @@ public class HttpFileResourceProvider implements IHttpResourceProvider {
     @Override
     public boolean containsResource(String relativePath) {
         try {
-            return (defaultResource != null &&  "/".compareTo(relativePath) == 0) || resources.containsKey(relativePath.toLowerCase());
+            return (defaultResource != null && "/".compareTo(relativePath) == 0) || resources.containsKey(relativePath.toLowerCase());
         }
         catch (NullPointerException npex) {
             return false;
@@ -78,6 +78,6 @@ public class HttpFileResourceProvider implements IHttpResourceProvider {
         }
         catch (NullPointerException npex) {
             throw new ResourceNotFoundException(npex);
-        }        
+        }
     }
 }

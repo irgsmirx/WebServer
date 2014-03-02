@@ -34,7 +34,7 @@ public class WebStringTemplate extends StringTemplate implements IWebTemplate {
     @Override
     public void load() {
     }
-    
+
     @Override
     public void post() {
     }
@@ -47,5 +47,5 @@ public class WebStringTemplate extends StringTemplate implements IWebTemplate {
     public final String getContentType() {
         return contentType;
     }
-    
+
 }

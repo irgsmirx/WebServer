@@ -11,7 +11,7 @@ import java.io.InputStream;
  *
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
-public class HttpRequestTextXmlBodyParser extends AbstractHttpRequestBodyParser{
+public class HttpRequestTextXmlBodyParser extends AbstractHttpRequestBodyParser {
 
     @Override
     public IHttpRequestBodyData parse(InputStream inputStream) {

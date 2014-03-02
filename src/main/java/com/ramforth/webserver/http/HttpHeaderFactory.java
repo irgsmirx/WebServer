@@ -21,7 +21,7 @@ import java.util.TreeMap;
 public class HttpHeaderFactory implements IHttpHeaderFactory {
 
     private final Map<String, IHttpHeader> headerMap = new TreeMap<>();
-    
+
     public HttpHeaderFactory() {
         headerMap.put("host", null);
         headerMap.put("http_x_requested_with", null);
@@ -29,9 +29,9 @@ public class HttpHeaderFactory implements IHttpHeaderFactory {
         headerMap.put("content-type", null);
         headerMap.put("transfer-encoding", null);
         headerMap.put("content-disposition", createContentDispositionHttpHeader());
-        
+
     }
-    
+
     @Override
     public IHttpHeader buildHttpHeader(String name, String rawValue) {
         IHttpHeader header;
@@ -62,7 +62,7 @@ public class HttpHeaderFactory implements IHttpHeaderFactory {
 
         return header;
     }
-    
+
     private IHttpHeader createContentDispositionHttpHeader() {
         return null;
     }

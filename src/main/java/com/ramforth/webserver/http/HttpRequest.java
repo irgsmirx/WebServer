@@ -280,20 +280,20 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
     public void setInputStream(InputStream value) {
         this.inputStream = value;
     }
-    
+
     @Override
     public final Iterable<HttpPostedFile> getPostedFiles() {
         return postedFiles.values();
     }
-    
+
     @Override
     public final HttpPostedFile getPostedFile(String name) {
         return postedFiles.get(name);
     }
-    
+
     @Override
     public final int getNumberOfPostedFiles() {
         return postedFiles.size();
     }
-    
+
 }

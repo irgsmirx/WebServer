@@ -17,20 +17,20 @@ import java.io.InputStream;
 public class HttpRequestWwwFormUrlEncodedBodyParser extends AbstractHttpRequestBodyParser {
 
     private final ParameterParser parameterParser = new ParameterParser();
-    
+
     @Override
     public IHttpRequestBodyData parse(InputStream inputStream) {
         IHttpRequestBodyParser byteArrayBodyParser = new HttpRequestByteArrayBodyParser();
         byteArrayBodyParser.setTransferEncoding(transferEncoding);
         byteArrayBodyParser.setContentType(contentType);
         byteArrayBodyParser.setCharset(charset);
-        
+
         HttpRequestByteArrayBodyData byteArrayBodyData = (HttpRequestByteArrayBodyData) byteArrayBodyParser.parse(inputStream);
-        
+
         byte[] data = byteArrayBodyData.getData();
         String parameterString = new String(data, charset);
         NameValueMap formData = parameterParser.parse(parameterString, true);
         return new HttpRequestFormBodyData(formData);
     }
-    
+
 }

@@ -28,7 +28,7 @@ public class HttpPostedFile {
         this.mimeType = mimeType;
         this.data = data;
     }
-    
+
     public int getContentLength() {
         return contentLength;
     }
@@ -40,7 +40,7 @@ public class HttpPostedFile {
     public String getFilename() {
         return filename;
     }
-    
+
     public byte[] getData() {
         return data;
     }
@@ -61,10 +61,10 @@ public class HttpPostedFile {
             throw new com.ramforth.utilities.exceptions.IOException("Could not save posted file '" + name + "' as '" + filename + "'.", ex);
         }
     }
-    
+
     public void saveAt(Path parent) {
         Path completePath = parent.resolve(this.filename);
         saveAs(completePath);
     }
-   
+
 }

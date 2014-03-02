@@ -63,7 +63,6 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
         String title = "ERROR " + status + " (" + reason + ")";
 
         //XHTMLDocument document = errorDocument(e, title);
-
         StringBuilder sb = new StringBuilder();
         //document.appendXML(sb);
 
@@ -88,7 +87,6 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
                     entityHeader = new HashMap<>();
 
                     //XHTMLDocument document = directoryListing(f);
-
                     StringBuilder sb = new StringBuilder();
                     //document.appendXML(sb);
 
@@ -115,7 +113,6 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
                 String title = "ERROR " + status + " (" + reason + ")";
 
                 //XHTMLDocument document = accessDenied(f, title);
-
                 StringBuilder sb = new StringBuilder();
                 //document.appendXML(sb);
 
@@ -141,7 +138,6 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
             String title = "ERROR " + status + " (" + reason + ")";
 
             //XHTMLDocument document = fileNotFound(f, title);
-
             StringBuilder sb = new StringBuilder();
             //document.appendXML(sb);
 
@@ -319,7 +315,6 @@ public class HttpResponse extends HttpMessage implements IHttpResponse {
 //
 //		return document;
 //	}
-    
     protected static int contains(String[] array, String value) {
         for (int i = 0; i < array.length; i++) {
             if (array[i].compareTo(value) == 0) {

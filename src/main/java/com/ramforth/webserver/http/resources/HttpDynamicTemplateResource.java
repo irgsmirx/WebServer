@@ -31,6 +31,5 @@ public class HttpDynamicTemplateResource extends AbstractHttpResource {
     public InputStream tryOpenStream() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
+
 }

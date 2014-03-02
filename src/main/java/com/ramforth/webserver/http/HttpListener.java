@@ -18,9 +18,9 @@ public class HttpListener extends AbstractHttpListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpListener.class);
 
     static {
-       serverSocketFactory = ServerSocketFactory.getDefault();
+        serverSocketFactory = ServerSocketFactory.getDefault();
     }
-    
+
     public HttpListener(int port) {
         super(port);
     }

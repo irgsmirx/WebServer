@@ -20,9 +20,9 @@ public class HttpsListener extends AbstractHttpListener {
     static {
         serverSocketFactory = SSLServerSocketFactory.getDefault();
     }
-    
+
     public HttpsListener(int port) {
-       super(port);
+        super(port);
     }
 
     public HttpsListener(InetAddress listenAddress, int port) {

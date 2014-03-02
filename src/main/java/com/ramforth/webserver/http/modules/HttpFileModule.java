@@ -72,7 +72,7 @@ public class HttpFileModule extends AbstractHttpModule {
         try {
             is = new FileInputStream(file);
             try {
-                while (( r = is.read() ) != -1) {
+                while ((r = is.read()) != -1) {
                     httpResponse.getOutputStream().write(r);
                 }
             }

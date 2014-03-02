@@ -63,17 +63,17 @@ public class HttpUrlModule extends AbstractHttpModule {
 
     private void writeUrlToHttpResponse(IHttpResponse httpResponse, URL url) {
         try {
-            URLConnection urlConnection  = url.openConnection();
+            URLConnection urlConnection = url.openConnection();
 
             addHttpHeadersForUrlToResponse(httpResponse, urlConnection);
 
             IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
             httpResponseWriter.writeResponse(httpResponse);
-            
+
             InputStream is = urlConnection.getInputStream();
             int r = -1;
             try {
-                while (( r = is.read() ) != -1) {
+                while ((r = is.read()) != -1) {
                     httpResponse.getOutputStream().write(r);
                 }
             }
@@ -98,10 +98,11 @@ public class HttpUrlModule extends AbstractHttpModule {
             URLConnection urlConnection = url.openConnection();
 
             addHttpHeadersForUrlToResponse(httpResponse, urlConnection);
-            
+
             IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpResponse.getOutputStream());
             httpResponseWriter.writeResponse(httpResponse);
-        } catch (IOException ioex) {
+        }
+        catch (IOException ioex) {
             LOGGER.warn("Colud not read from URL ' + " + url.getPath() + "'!", ioex);
             throw new ResourceNotFoundException("File not found.");
         }
@@ -123,7 +124,7 @@ public class HttpUrlModule extends AbstractHttpModule {
 
     private void addContentTypeHeaderForURL(IHttpResponse httpResponse, URLConnection urlConnection) {
         String mimeType = urlConnection.getContentType();
-        
+
         if (StringUtilities.isNullOrEmpty(mimeType) || "content/unknown".equals(mimeType)) {
             String extension = FilenameUtils.getExtension(urlConnection.getURL().getPath());
 
@@ -135,7 +136,7 @@ public class HttpUrlModule extends AbstractHttpModule {
                 }
             }
         }
-        
+
         httpResponse.setContentType(mimeType);
     }
 

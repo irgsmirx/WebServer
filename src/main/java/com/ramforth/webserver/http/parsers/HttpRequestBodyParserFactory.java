@@ -22,9 +22,8 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpRequestBodyParserFactory implements IHttpRequestBodyParserFactory {
 
-     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestBodyParserFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestBodyParserFactory.class);
 
-    
     private final Map<String, IHttpRequestBodyParser> bodyParsers = new TreeMap<>();
 
     public HttpRequestBodyParserFactory() {
@@ -45,14 +44,14 @@ public class HttpRequestBodyParserFactory implements IHttpRequestBodyParserFacto
             bodyParser = buildFromContentType(contentType, transferEncoding);
             bodyParser.setCharset(contentType.getMediaType().getCharset());
         }
-        
+
         bodyParser.setContentType(contentType);
         bodyParser.setTransferEncoding(transferEncoding);
 
         return bodyParser;
     }
-    
-    @Override 
+
+    @Override
     public IHttpRequestBodyParser build(ContentTypeHttpHeader contentType, ContentDispositionHttpHeader contentDisposition) {
         IHttpRequestBodyParser bodyParser = null;
 
@@ -70,17 +69,16 @@ public class HttpRequestBodyParserFactory implements IHttpRequestBodyParserFacto
                 bodyParser.setCharset(contentType.getMediaType().getCharset());
             }
         }
-        
+
         bodyParser.setContentType(contentType);
 
         return bodyParser;
     }
 
-            
     private IHttpRequestBodyParser buildEmpty(TransferEncodingHttpHeader transferEncoding) {
         return new EmptyHttpRequestBodyParser();
     }
-    
+
     private IHttpRequestBodyParser buildFromContentType(ContentTypeHttpHeader contentType, TransferEncodingHttpHeader transferEncoding) {
         IMediaType mediaType = contentType.getMediaType();
         String mimeTypeString = mediaType.getType();
@@ -93,7 +91,7 @@ public class HttpRequestBodyParserFactory implements IHttpRequestBodyParserFacto
         }
         return bodyParser;
     }
-    
+
     private IHttpRequestBodyParser createApplicationXwwwFormUrlEncodedBodyParser() {
         return new HttpRequestWwwFormUrlEncodedBodyParser();
     }
@@ -105,11 +103,11 @@ public class HttpRequestBodyParserFactory implements IHttpRequestBodyParserFacto
     private IHttpRequestBodyParser createMultipartFormDataBodyParser() {
         return new HttpRequestMultipartFormDataBodyParser();
     }
-    
+
     private IHttpRequestBodyParser createTextPlainBodyParser() {
         return new HttpRequestTextPlainBodyParser();
     }
-    
+
     private IHttpRequestBodyParser createTextXmlBodyParser() {
         return new HttpRequestTextXmlBodyParser();
     }

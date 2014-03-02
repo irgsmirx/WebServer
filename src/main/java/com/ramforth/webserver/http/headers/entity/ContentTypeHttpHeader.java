@@ -20,34 +20,34 @@ public class ContentTypeHttpHeader extends StringHttpHeader {
 
     public ContentTypeHttpHeader(String rawValue) {
         super(CONTENT_TYPE, rawValue);
-        
+
         parseMediaType();
     }
-    
+
     private void parseMediaType() {
         this.mediaType = new MediaType();
-                
+
         String[] splitRawValue = rawValue.split(";");
-        
+
         if (splitRawValue.length > 0) {
             mediaType.setType(splitRawValue[0]);
-            
+
             for (int i = 1; i < splitRawValue.length; i++) {
                 String[] splitParameter = splitRawValue[i].split("=");
-                
+
                 if (splitParameter.length == 2) {
                     mediaType.addParameter(splitParameter[0].trim(), splitParameter[1].trim());
                 }
             }
         }
     }
-    
+
     public final IMediaType getMediaType() {
         return mediaType;
     }
-    
+
     public final Charset getCharset() {
         return mediaType.getCharset();
     }
-     
+
 }

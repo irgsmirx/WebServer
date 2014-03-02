@@ -11,9 +11,9 @@ import com.ramforth.webserver.http.IHttpContext;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public abstract class AbstractWebTemplate implements IWebTemplate {
-    
+
     protected IHttpContext context;
-    
+
     @Override
     public IHttpContext getContext() {
         return context;
@@ -23,5 +23,5 @@ public abstract class AbstractWebTemplate implements IWebTemplate {
     public void setContext(IHttpContext context) {
         this.context = context;
     }
-    
+
 }

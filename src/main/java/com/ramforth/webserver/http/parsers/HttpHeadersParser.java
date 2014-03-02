@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.ramforth.webserver.http.parsers;
 
 import com.ramforth.webserver.exceptions.HttpException;
@@ -32,13 +31,13 @@ public class HttpHeadersParser implements IHttpHeadersParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpHeadersParser.class);
 
     private final IHttpHeaderFactory httpHeaderFactory = new HttpHeaderFactory();
-    
+
     @Override
     public IHttpHeaders parse(InputStream is) {
         IHttpHeaders httpHeaders = new HttpHeaders();
 
         IHttpHeader header;
-        while (( header = parseHeader(is) ) != null) {
+        while ((header = parseHeader(is)) != null) {
             httpHeaders.addHeader(header);
         }
 
@@ -62,14 +61,14 @@ public class HttpHeadersParser implements IHttpHeadersParser {
 
         return header;
     }
-    
+
     protected HttpBuffer readHeaderKey(InputStream is) {
         HttpBuffer buffer = new HttpBuffer();
 
         int last = -1;
         int ch = -1;
         try {
-            while (( ch = is.read() ) != ':') {
+            while ((ch = is.read()) != ':') {
                 if (isCR(ch)) {
                     try {
                         ch = is.read();
@@ -88,10 +87,10 @@ public class HttpHeadersParser implements IHttpHeadersParser {
                     throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request ended unexpectedly.");
                 } else if (isCTL(ch)) {
                     throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
-                            String.format("Your HTTP client's request header contained an unallowed CTL character: '%1s'.", (char) ( ch & 0xff )));
+                            String.format("Your HTTP client's request header contained an unallowed CTL character: '%1s'.", (char) (ch & 0xff)));
                 } else if (isSeparator(ch)) {
                     throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
-                            String.format("Your HTTP client's request header contained an unallowed separator character: '%1s'.", (char) ( ch & 0xff )));
+                            String.format("Your HTTP client's request header contained an unallowed separator character: '%1s'.", (char) (ch & 0xff)));
                 } else {
                     buffer.append(ch);
                 }
@@ -101,7 +100,6 @@ public class HttpHeadersParser implements IHttpHeadersParser {
             LOGGER.warn("Could not read header key from client.", ex);
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
-
 
         return buffer;
     }
@@ -116,7 +114,7 @@ public class HttpHeadersParser implements IHttpHeadersParser {
             boolean insideQuote = false;
             boolean beforeValue = true;
 
-            while (( currentCharacter = is.read() ) != -1) {
+            while ((currentCharacter = is.read()) != -1) {
                 if (beforeValue && isLWS(currentCharacter)) {
                     continue;
                 } else if (isCR(currentCharacter)) {
@@ -169,6 +167,4 @@ public class HttpHeadersParser implements IHttpHeadersParser {
         return buffer;
     }
 
-
-    
 }

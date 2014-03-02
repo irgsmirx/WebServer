@@ -33,7 +33,7 @@ public abstract class AbstractHttpListener implements IHttpListener, Runnable {
     private int acceptedSockets = 0;
     private ExecutorService threadPool;
     private IHttpContextHandler contextHandler = null;
-    
+
     public AbstractHttpListener(int port) {
         try {
             this.listenAddress = InetAddress.getLocalHost();
@@ -170,8 +170,8 @@ public abstract class AbstractHttpListener implements IHttpListener, Runnable {
         this.contextHandler = null;
     }
 
-	@Override
-	public void run() {
-		startListening();
-	}
+    @Override
+    public void run() {
+        startListening();
+    }
 }

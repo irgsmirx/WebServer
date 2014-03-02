@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 public class DispositionType implements IDispositionType {
 
     private static final String DEFAULT_MEDIA_TYPE = "application/octet-stream";
-    
+
     protected String type = DEFAULT_MEDIA_TYPE;
     protected NameValueMap parameters = new NameValueMap();
 
@@ -51,17 +51,17 @@ public class DispositionType implements IDispositionType {
     public int numberOfParameters() {
         return parameters.numberOfEntries();
     }
-    
+
     @Override
     public String getValue(String name) {
         return parameters.get(name);
     }
-    
+
     @Override
     public boolean containsParameter(String name) {
         return parameters.containsName(name);
     }
-    
+
     @Override
     public Charset getCharset() {
         try {
@@ -72,10 +72,10 @@ public class DispositionType implements IDispositionType {
             return Charset.defaultCharset();
         }
     }
-    
+
     @Override
     public String getName() {
         return parameters.get("name");
     }
-    
+
 }

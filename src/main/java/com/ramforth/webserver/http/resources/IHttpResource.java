@@ -15,7 +15,7 @@ public interface IHttpResource {
     void setRelativePath(String value);
 
     String getRelativePath();
-    
+
     InputStream tryOpenStream();
-    
+
 }

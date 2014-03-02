@@ -42,15 +42,15 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
                 template.load();
 
                 switch (httpContext.getRequest().getMethod()) {
-                        case GET:
-                        case HEAD:
-                            template.get();
-                            break;
-                        case POST:
-                            template.post();
-                            break;                    
+                    case GET:
+                    case HEAD:
+                        template.get();
+                        break;
+                    case POST:
+                        template.post();
+                        break;
                 }
-                
+
                 if (template instanceof WebFileTemplate) {
                     switch (httpContext.getRequest().getMethod()) {
                         case GET:
@@ -96,7 +96,7 @@ public class HttpDynamicTemplateModule extends AbstractHttpModule {
     }
 
     private void writeWebFileTemplateHeadersToHttpResponse(IHttpResponse httpResponse, WebFileTemplate webFileTemplate) {
-        File file = (File)webFileTemplate.getTemplate();
+        File file = (File) webFileTemplate.getTemplate();
 
         assertFileExists(file);
         assertFileIsReadable(file);

@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.ramforth.webserver.http.parsers;
 
 import java.io.IOException;
@@ -17,35 +16,34 @@ public class MaximumLengthInputStream extends InputStream {
 
     private static final int EOF = -1;
     private static final int SKIP_BUFFER_SIZE = 4096;
-    
+
     private final InputStream wrappedInputStream;
     private final long maximumLength;
     private long bytesRead = 0;
-    
-    
+
     public MaximumLengthInputStream(InputStream wrappedInputStream, long maximumLength) {
         this.wrappedInputStream = wrappedInputStream;
         this.maximumLength = maximumLength;
     }
-    
+
     private boolean maximumLengthReached() {
         return (bytesRead >= maximumLength);
     }
-    
+
     @Override
     public int read() throws IOException {
         if (maximumLengthReached()) {
             return MaximumLengthInputStream.EOF;
         }
-        
+
         int b = wrappedInputStream.read();
-        
+
         if (b == MaximumLengthInputStream.EOF) {
             if (!maximumLengthReached()) {
                 throw new RuntimeException("Unexpected end of input at byte " + this.bytesRead + ". Expected " + (this.maximumLength - this.bytesRead) + " more bytes!");
             }
         }
-        
+
         if (b != MaximumLengthInputStream.EOF) {
             bytesRead++;
         }
@@ -57,21 +55,21 @@ public class MaximumLengthInputStream extends InputStream {
         if (maximumLengthReached()) {
             return MaximumLengthInputStream.EOF;
         }
-        
+
         if ((this.bytesRead + len) > this.maximumLength) {
-            len = (int)(this.maximumLength - this.bytesRead);
+            len = (int) (this.maximumLength - this.bytesRead);
         }
-        
+
         int currentBytesRead = this.wrappedInputStream.read(b, off, len);
-        
+
         if (currentBytesRead == MaximumLengthInputStream.EOF && !maximumLengthReached()) {
             throw new RuntimeException("Unexpected end of input at byte " + this.bytesRead + ". Expected " + (this.maximumLength - this.bytesRead) + " more bytes!");
         }
-        
+
         if (currentBytesRead > 0) {
             this.bytesRead += currentBytesRead;
         }
-        
+
         return currentBytesRead;
     }
 
@@ -79,7 +77,7 @@ public class MaximumLengthInputStream extends InputStream {
     public int read(byte[] b) throws IOException {
         return read(b, 0, b.length);
     }
-    
+
     @Override
     public boolean markSupported() {
         return wrappedInputStream.markSupported();
@@ -110,25 +108,24 @@ public class MaximumLengthInputStream extends InputStream {
         if (n <= 0) {
             return 0;
         }
-        
+
         long stillSkippableBytes = Math.min(n, (this.maximumLength - this.bytesRead));
-        
+
         byte[] skipBuffer = new byte[SKIP_BUFFER_SIZE];
-        
+
         long skippedBytes = 0;
         while (stillSkippableBytes > 0) {
             int couldRead = read(skipBuffer, 0, SKIP_BUFFER_SIZE);
-            
+
             if (couldRead == MaximumLengthInputStream.EOF) {
                 break;
             }
-            
+
             stillSkippableBytes -= couldRead;
             skippedBytes += couldRead;
-        }     
-        
-        
+        }
+
         return skippedBytes;
     }
-    
+
 }

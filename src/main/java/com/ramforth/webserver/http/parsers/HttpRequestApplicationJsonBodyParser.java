@@ -22,8 +22,8 @@ public class HttpRequestApplicationJsonBodyParser extends AbstractHttpRequestBod
     public IHttpRequestBodyData parse(InputStream inputStream) {
         JsonParser jsonParser = new JsonParser();
         Reader reader = new InputStreamReader(inputStream, contentType.getCharset());
-        JsonObject jsonObject = (JsonObject)jsonParser.parse(reader);
-        
+        JsonObject jsonObject = (JsonObject) jsonParser.parse(reader);
+
         return new HttpRequestJsonBodyData(jsonObject);
     }
 }

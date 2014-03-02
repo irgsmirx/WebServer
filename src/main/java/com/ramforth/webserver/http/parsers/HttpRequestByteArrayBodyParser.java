@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.ramforth.webserver.http.parsers;
 
 import com.ramforth.webserver.exceptions.HttpException;
@@ -23,7 +22,7 @@ import org.slf4j.LoggerFactory;
 public class HttpRequestByteArrayBodyParser extends AbstractHttpRequestBodyParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestByteArrayBodyParser.class);
-    
+
     @Override
     public IHttpRequestBodyData parse(InputStream inputStream) {
         HttpBuffer buffer = new HttpBuffer();
@@ -37,12 +36,13 @@ public class HttpRequestByteArrayBodyParser extends AbstractHttpRequestBodyParse
                 buffer.append(ch);
                 written++;
             }
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             LOGGER.warn("Could not read plain content from client.", ex);
             throw new com.ramforth.webserver.exceptions.IOException(ex);
         }
-        
+
         return new HttpRequestByteArrayBodyData(buffer.getCopy());
     }
-    
+
 }

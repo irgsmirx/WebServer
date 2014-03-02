@@ -31,10 +31,11 @@ public class HttpFileResource extends AbstractHttpResource {
     public InputStream tryOpenStream() {
         try {
             return new FileInputStream(serverPath);
-        } catch (FileNotFoundException ex) {
+        }
+        catch (FileNotFoundException ex) {
             Logger.getLogger(HttpFileResource.class.getName()).log(Level.SEVERE, null, ex);
             throw new com.ramforth.utilities.exceptions.IOException(ex);
-        }    
+        }
     }
-    
+
 }

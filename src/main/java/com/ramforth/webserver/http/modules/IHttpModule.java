@@ -14,5 +14,5 @@ import com.ramforth.webserver.web.modules.IModule;
 public interface IHttpModule extends IModule {
 
     boolean processHttpContext(IHttpContext httpContext);
-    
+
 }

@@ -35,13 +35,13 @@ public interface IHttpRequest extends IHttpMessage, IRequest {
     void setForm(String key, String value);
 
     NameValueMap getParams();
-    
+
     String getParams(String key);
-    
+
     Iterable<HttpPostedFile> getPostedFiles();
-    
+
     HttpPostedFile getPostedFile(String name);
-    
+
     int getNumberOfPostedFiles();
-    
+
 }

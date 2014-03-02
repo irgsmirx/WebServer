@@ -73,7 +73,7 @@ public class FileContainer implements WebContainer {
 
     @Override
     public boolean isConsistent() {
-        return ( file != null && file.exists() && file.isFile() );
+        return (file != null && file.exists() && file.isFile());
     }
 
     /**

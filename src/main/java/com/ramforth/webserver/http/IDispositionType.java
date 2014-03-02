@@ -25,13 +25,13 @@ public interface IDispositionType {
     void clearParameters();
 
     int numberOfParameters();
-    
+
     String getValue(String name);
-    
+
     boolean containsParameter(String name);
-    
+
     Charset getCharset();
-    
+
     String getName();
-    
+
 }

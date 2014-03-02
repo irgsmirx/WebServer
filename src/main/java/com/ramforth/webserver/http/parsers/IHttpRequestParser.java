@@ -17,5 +17,5 @@ public interface IHttpRequestParser {
     IHttpRequest parseRequest(InputStream is);
 
     byte[] parseBody(InputStream is, IHttpHeaders headers);
-    
+
 }

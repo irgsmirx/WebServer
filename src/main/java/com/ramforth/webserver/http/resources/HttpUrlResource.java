@@ -25,15 +25,16 @@ public class HttpUrlResource extends AbstractHttpResource {
     public URL getServerURL() {
         return serverURL;
     }
-    
+
     @Override
     public InputStream tryOpenStream() {
         try {
             return serverURL.openStream();
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             Logger.getLogger(HttpUrlResource.class.getName()).log(Level.SEVERE, null, ex);
             throw new com.ramforth.utilities.exceptions.IOException(ex);
         }
     }
-    
+
 }

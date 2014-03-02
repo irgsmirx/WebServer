@@ -18,9 +18,12 @@ import java.nio.charset.Charset;
 public interface IHttpRequestBodyParser {
 
     void setTransferEncoding(TransferEncodingHttpHeader transferEncoding);
+
     void setContentType(ContentTypeHttpHeader contentType);
+
     void setContentDisposition(ContentDispositionHttpHeader contentDisposition);
+
     void setCharset(Charset charset);
-    
+
     IHttpRequestBodyData parse(InputStream inputStream);
 }

@@ -34,7 +34,7 @@ public class HttpBuffer {
     }
 
     protected void expandCapacity(int minimumCapacity) {
-        int newCapacity = ( buf.length + 1 ) * 2;
+        int newCapacity = (buf.length + 1) * 2;
         if (newCapacity < 0) {
             newCapacity = Integer.MAX_VALUE;
         } else if (minimumCapacity > newCapacity) {

@@ -48,7 +48,7 @@ public class WebFileTemplate extends FileTemplate implements IWebTemplate {
     @Override
     public void load() {
     }
-    
+
     @Override
     public void post() {
     }
@@ -56,9 +56,9 @@ public class WebFileTemplate extends FileTemplate implements IWebTemplate {
     @Override
     public void get() {
     }
-    
+
     private String getMimeTypeForFile() {
-        String extension = FilenameUtils.getExtension(((File)getTemplate()).getName());
+        String extension = FilenameUtils.getExtension(((File) getTemplate()).getName());
         return getMimeTypeForExtension(extension);
     }
 
@@ -74,5 +74,5 @@ public class WebFileTemplate extends FileTemplate implements IWebTemplate {
     public String getContentType() {
         return getMimeTypeForFile();
     }
-    
+
 }

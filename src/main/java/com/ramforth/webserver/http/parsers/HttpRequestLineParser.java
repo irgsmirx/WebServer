@@ -122,7 +122,7 @@ public class HttpRequestLineParser implements IHttpRequestLineParser {
         }
 
         while (ch != -1) {
-			if (isCR(ch)) {
+            if (isCR(ch)) {
                 last = ch;
             } else if (isLF(ch)) {
                 if (isCR(last)) {

@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.ramforth.webserver.http;
 
 /**
@@ -23,11 +22,11 @@ public class HttpRequestFileBodyData implements IHttpRequestBodyData {
         this.mimeType = mimeType;
         this.data = data;
     }
-    
+
     @Override
     public void applyTo(IHttpRequest httpRequest) {
         HttpPostedFile httpPostedFile = new HttpPostedFile(this.name, this.filename, this.mimeType, this.data);
-        ((HttpRequest)httpRequest).postedFiles.put(this.name, httpPostedFile);
+        ((HttpRequest) httpRequest).postedFiles.put(this.name, httpPostedFile);
     }
-    
+
 }

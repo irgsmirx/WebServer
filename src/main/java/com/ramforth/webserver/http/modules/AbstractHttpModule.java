@@ -33,7 +33,7 @@ public abstract class AbstractHttpModule implements IHttpModule {
 
     protected void assertFileExists(File file) {
         if (!file.exists()) {
-                throw new ResourceNotFoundException("File not found.");
+            throw new ResourceNotFoundException("File not found.");
         }
     }
 

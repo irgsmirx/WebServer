@@ -17,76 +17,53 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebServer.class);
+    
     private boolean running;
     /*
      * the server's name and version
      */
-    public String serverid = "Jackey/0.0.1";
-
-    /*
-     * stream to log to
-     */
-    protected PrintStream log = null;
+    public String serverid = "com.ramforth.webserver/0.0.2";
 
     /*
      * our server's configuration information is stored in these properties
      */
-    protected Properties props = new Properties();
+    protected Properties properties = new Properties();
     protected final List<IHttpListener> httpListeners = Collections.synchronizedList(new ArrayList<IHttpListener>());
     protected final List<IHttpRequestHandler> requestHandlers = Collections.synchronizedList(new ArrayList<IHttpRequestHandler>());
     protected final List<IHttpModule> modules = Collections.synchronizedList(new ArrayList<IHttpModule>());
-    /*
-     * timeout on client connections
-     */
-    protected int timeout = 0;
 
-    /*
-     * max # worker threads
-     */
-    protected int threadlimit = 0;
+    protected int clientConnectionTimeout = 0;
+    protected int maximumNumberOfWorkerThreads = 0;
+
     protected static HttpApplicationFactory httpApplicationFactory;
-
-    /*
-     * print to stdout
-     */
-    protected void p(String s) {
-        System.out.println(s);
-    }
-
-    /*
-     * print to the log file
-     */
-    protected void log(String s) {
-        synchronized (log) {
-            log.println(s);
-            log.flush();
-        }
-    }
 
     /*
      * load server properties from user's home
      */
     protected void loadProps() throws IOException {
-        String propFile = System.getProperty("user.home") + File.separator + ".jackey" + File.separator + "jackey.conf";
+        String propertiesFile = System.getProperty("user.home") + File.separator + ".com.ramforth.webserver" + File.separator + "webserver.conf";
 
-        File f = new File(propFile);
+        File f = new File(propertiesFile);
         int port = 0;
         File root = new File("");
 
         if (f.exists()) {
             try (InputStream is = new BufferedInputStream(new FileInputStream(f))) {
-                props.load(is);
+                properties.load(is);
             }
 
-            String r = props.getProperty("port");
+            String r = properties.getProperty("port");
             if (r != null) {
                 port = Integer.parseInt(r);
             }
 
-            r = props.getProperty("root");
+            r = properties.getProperty("root");
             if (r != null) {
                 root = new File(r);
                 if (!root.exists()) {
@@ -94,20 +71,14 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
                 }
             }
 
-            r = props.getProperty("timeout");
+            r = properties.getProperty("timeout");
             if (r != null) {
-                timeout = Integer.parseInt(r);
+                clientConnectionTimeout = Integer.parseInt(r);
             }
 
-            r = props.getProperty("threadlimit");
+            r = properties.getProperty("threadlimit");
             if (r != null) {
-                threadlimit = Integer.parseInt(r);
-            }
-
-            r = props.getProperty("log");
-            if (r != null) {
-                p("opening log file: " + r);
-                log = new PrintStream(new BufferedOutputStream(new FileOutputStream(r)));
+                maximumNumberOfWorkerThreads = Integer.parseInt(r);
             }
         }
 
@@ -120,25 +91,18 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
             root = new File(System.getProperty("user.dir"));
         }
 
-        if (timeout <= 1000) {
-            timeout = 5000;
+        if (clientConnectionTimeout <= 1000) {
+            clientConnectionTimeout = 5000;
         }
 
-        if (threadlimit == 0) {
-            threadlimit = 5;
-        }
-
-        if (log == null) {
-            p("logging to stdout");
-            log = System.out;
+        if (maximumNumberOfWorkerThreads == 0) {
+            maximumNumberOfWorkerThreads = 5;
         }
     }
 
-    protected void printProps() {
-        //p("port=" + port);
-        //p("root=" + root);
-        p("timeout=" + timeout);
-        p("threadlimit=" + threadlimit);
+    protected void logProperties() {
+        LOGGER.debug("timeout=" + clientConnectionTimeout);
+        LOGGER.debug("threadlimit=" + maximumNumberOfWorkerThreads);
     }
 
     public boolean isRunning() {
@@ -151,7 +115,7 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
             //listener.RequestReceived += OnRequest;
             //listener.ContentLengthLimit = ContentLengthLimit;
             listener.setContextHandler(this);
-			new Thread((Runnable) listener).start();
+            new Thread((Runnable) listener).start();
         }
         running = true;
     }
@@ -205,9 +169,9 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
     public void addHttpListener(IHttpListener listener) {
         this.httpListeners.add(listener);
     }
-    
+
     public final Iterable<IHttpListener> getHttpListeners() {
         return this.httpListeners;
     }
-    
+
 }

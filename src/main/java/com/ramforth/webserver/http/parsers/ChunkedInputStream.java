@@ -146,11 +146,11 @@ public class ChunkedInputStream extends FilterInputStream {
     }
 
     public static boolean isDIGIT(int ch) {
-        return ( ch >= 48 && ch <= 57 );
+        return (ch >= 48 && ch <= 57);
     }
 
     protected boolean isHEX(int ch) {
-        return ( ch == 'a' || ch == 'b' || ch == 'c' || ch == 'd' || ch == 'e' || ch == 'f' || ch == 'A' || ch == 'B'
-                || ch == 'C' || ch == 'D' || ch == 'E' || ch == 'F' || isDIGIT(ch) );
+        return (ch == 'a' || ch == 'b' || ch == 'c' || ch == 'd' || ch == 'e' || ch == 'f' || ch == 'A' || ch == 'B'
+                || ch == 'C' || ch == 'D' || ch == 'E' || ch == 'F' || isDIGIT(ch));
     }
 }

@@ -78,7 +78,8 @@ public class HttpRequestParser implements IHttpRequestParser {
 //                    bodyData = bodyParser.parse(is);
 //                }
             }
-        } catch (HttpException ex) {
+        }
+        catch (HttpException ex) {
             LOGGER.warn("Probably malformed HTTP request.", ex);
         }
 

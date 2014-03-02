@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.ramforth.webserver.http;
 
 /**
@@ -13,14 +12,14 @@ package com.ramforth.webserver.http;
 public class HttpRequestFormBodyData implements IHttpRequestBodyData {
 
     private final NameValueMap formData;
-    
+
     public HttpRequestFormBodyData(NameValueMap formData) {
         this.formData = formData;
     }
-    
+
     @Override
     public void applyTo(IHttpRequest httpRequest) {
         httpRequest.getForm().addAll(formData);
     }
-    
+
 }

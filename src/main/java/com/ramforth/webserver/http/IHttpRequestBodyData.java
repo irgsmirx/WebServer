@@ -9,7 +9,7 @@ package com.ramforth.webserver.http;
  * @author Tobias Ramforth <tobias.ramforth at tu-dortmund.de>
  */
 public interface IHttpRequestBodyData {
-    
+
     void applyTo(IHttpRequest httpRequest);
-    
+
 }

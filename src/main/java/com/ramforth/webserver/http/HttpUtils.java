@@ -14,65 +14,65 @@ public abstract class HttpUtils {
     }
 
     public static boolean isCHAR(int ch) {
-        return ( ch >= 0 && ch <= 127 );
+        return (ch >= 0 && ch <= 127);
     }
 
     public static boolean isUPALPHA(int ch) {
-        return ( ch >= 65 && ch <= 90 );
+        return (ch >= 65 && ch <= 90);
     }
 
     public static boolean isLOALPHA(int ch) {
-        return ( ch >= 97 && ch <= 122 );
+        return (ch >= 97 && ch <= 122);
     }
 
     public static boolean isALPHA(int ch) {
-        return ( isUPALPHA(ch) || isLOALPHA(ch) );
+        return (isUPALPHA(ch) || isLOALPHA(ch));
     }
 
     public static boolean isCTL(int ch) {
-        return ( ch >= 0 && ch <= 31 || ch == 127 );
+        return (ch >= 0 && ch <= 31 || ch == 127);
     }
 
     public static boolean isDIGIT(int ch) {
-        return ( ch >= 48 && ch <= 57 );
+        return (ch >= 48 && ch <= 57);
     }
 
     public static boolean isCR(int ch) {
-        return ( ch == 13 );
+        return (ch == 13);
     }
 
     public static boolean isLF(int ch) {
-        return ( ch == 10 );
+        return (ch == 10);
     }
 
     public static boolean isSP(int ch) {
-        return ( ch == 32 );
+        return (ch == 32);
     }
 
     public static boolean isHT(int ch) {
-        return ( ch == 9 );
+        return (ch == 9);
     }
 
     public static boolean isDoubleQuoteMark(int ch) {
-        return ( ch == 34 );
+        return (ch == 34);
     }
 
     public static boolean isGreaterThan(int ch) {
-        return ( ch == 62 );
+        return (ch == 62);
     }
 
     public static boolean isLessThan(int ch) {
-        return ( ch == 60 );
+        return (ch == 60);
     }
 
     public static boolean isAmpersand(int ch) {
-        return ( ch == 38 );
+        return (ch == 38);
     }
 
     public static boolean isSeparator(int ch) {
-        return ( ch == '(' || ch == ')' || ch == '<' || ch == '>' || ch == '@' || ch == ',' || ch == ';' || ch == ':'
+        return (ch == '(' || ch == ')' || ch == '<' || ch == '>' || ch == '@' || ch == ',' || ch == ';' || ch == ':'
                 || ch == '\\' || ch == '\"' || ch == '/' || ch == '[' || ch == ']' || ch == '?' || ch == '=' || ch == '{'
-                || ch == '}' || ch == ' ' || ch == '\t' );
+                || ch == '}' || ch == ' ' || ch == '\t');
     }
 
     public static String encode(String s) {
