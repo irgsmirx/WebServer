@@ -79,7 +79,7 @@ public class HttpHeadersParser implements IHttpHeadersParser {
         int last = -1;
         int ch = -1;
         try {
-            while ((ch = is.read()) != ':') {
+            while ((ch = is.read()) != -1) {
                 if (isCR(ch)) {
                     try {
                         ch = is.read();
@@ -94,8 +94,11 @@ public class HttpHeadersParser implements IHttpHeadersParser {
                     } else {
                         throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request contained an unallowed CR control character.");
                     }
-                } else if (ch == -1) {
-                    throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request ended unexpectedly.");
+                } else if (isLF(ch)) {
+                    break;
+                } else if (ch == ':') {
+                    break;
+                    //throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request ended unexpectedly.");
                 } else if (isCTL(ch)) {
                     throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
                             String.format("Your HTTP client's request header contained an unallowed CTL character: '%1s'.", (char) (ch & 0xff)));
@@ -150,7 +153,9 @@ public class HttpHeadersParser implements IHttpHeadersParser {
                             // LF character not allowed in quoted text
                             throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST,
                                     "Your HTTP client's request header contained an LF character in quoted text, which is not allowed.");
-                        } //TODO Enter precise error message
+                        } else {
+                            break;
+                        }
                     }
                 } else if (currentCharacter == '\"') {
                     beforeValue = false;

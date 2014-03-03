@@ -11,6 +11,7 @@ import com.ramforth.webserver.http.HttpStatusCodeClass;
 import com.ramforth.webserver.http.IHttpContext;
 import com.ramforth.webserver.http.IHttpHeader;
 import com.ramforth.webserver.http.IHttpHeaders;
+import com.ramforth.webserver.http.headers.entity.ContentLengthHttpHeader;
 import com.ramforth.webserver.http.parsers.HttpHeadersParser;
 import com.ramforth.webserver.http.resources.HttpFileResource;
 import com.ramforth.webserver.http.resources.HttpFileResourceProvider;
@@ -90,6 +91,16 @@ public class HttpCgiModule extends AbstractHttpModule {
         }
         
         ProcessBuilder cgiProcessBuilder = new ProcessBuilder(pathToCgiExecutable, ((HttpFileResource)getResource(requestedPath)).getServerPath());
+        String queryString = httpContext.getRequest().getUri().getQuery();
+        if (queryString != null) {
+            cgiProcessBuilder.environment().put("QUERY_STRING", queryString);
+        }
+
+        IHttpHeader requestHeader = httpContext.getRequest().getHeaders().getHeader("Content-Length");
+        if (requestHeader != null) {
+            ContentLengthHttpHeader contentLengthRequestHeader = (ContentLengthHttpHeader)requestHeader;
+            cgiProcessBuilder.environment().put("CONTENT_LENGTH", String.valueOf(contentLengthRequestHeader.getValue()));
+        }
         
         Process cgiProcess;
         try {
@@ -99,7 +110,7 @@ public class HttpCgiModule extends AbstractHttpModule {
             Logger.getLogger(HttpCgiModule.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
-        
+
         OutputStream cgiOutputStream = cgiProcess.getOutputStream();
         
         for (IHttpHeader header : httpContext.getRequest().getHeaders()) {
@@ -111,33 +122,21 @@ public class HttpCgiModule extends AbstractHttpModule {
             }
         }
         
-//        BufferedInputStream bis = new BufferedInputStream(httpContext.getRequest().getInputStream());
-        byte[] buffer = new byte[4096];
-        int bytesRead = -1;
-//        try {
-//            while ((bytesRead = bis.read(buffer)) != -1) {
-//                cgiOutputStream.write(buffer);
-//            }
-//        }
-//        catch (IOException ioex) {
-//            Logger.getLogger(HttpCgiModule.class.getName()).log(Level.SEVERE, null, ioex);
-//            throw new com.ramforth.webserver.exceptions.IOException(ioex);
-//        }
-        
         httpContext.getResponse().setStatusCode(new HttpStatusCode(HttpStatusCodeClass.SUCCESS, 200, ""));
         httpContext.getResponse().setConnectionType(ConnectionType.CLOSE);
         
         HttpHeadersParser httpHeadersParser = new HttpHeadersParser();
         IHttpHeaders responseHeaders = httpHeadersParser.parse(cgiProcess.getInputStream());
-        
-        if (responseHeaders.contains("Content-Type")) {
-            httpContext.getResponse().setContentType(responseHeaders.getHeader("Content-Type").getRawValue());
+        for (IHttpHeader responseHeader : responseHeaders) {
+            httpContext.getResponse().getHeaders().addHeader(responseHeader);
         }
         
-        BufferedInputStream bis2 = new BufferedInputStream(cgiProcess.getInputStream());
+        BufferedInputStream bis = new BufferedInputStream(cgiProcess.getInputStream());
+        byte[] buffer = new byte[4096];
+        int bytesRead = -1;
         try {
-            while ((bytesRead = bis2.read(buffer)) != -1) {
-                httpContext.getResponse().getOutputStream().write(buffer);
+            while ((bytesRead = bis.read(buffer)) != -1) {
+                httpContext.getResponse().getOutputStream().write(buffer, 0, bytesRead);
             }
         }
         catch (IOException ioex) {
