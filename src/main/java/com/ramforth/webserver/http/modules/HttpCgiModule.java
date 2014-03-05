@@ -6,11 +6,13 @@
 
 package com.ramforth.webserver.http.modules;
 
+import com.ramforth.webserver.http.HttpResponseWriter;
 import com.ramforth.webserver.http.HttpStatusCode;
 import com.ramforth.webserver.http.HttpStatusCodeClass;
 import com.ramforth.webserver.http.IHttpContext;
 import com.ramforth.webserver.http.IHttpHeader;
 import com.ramforth.webserver.http.IHttpHeaders;
+import com.ramforth.webserver.http.IHttpResponseWriter;
 import com.ramforth.webserver.http.headers.entity.ContentLengthHttpHeader;
 import com.ramforth.webserver.http.parsers.HttpHeadersParser;
 import com.ramforth.webserver.http.resources.HttpFileResource;
@@ -19,8 +21,6 @@ import com.ramforth.webserver.web.ConnectionType;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -130,6 +130,9 @@ public class HttpCgiModule extends AbstractHttpModule {
         for (IHttpHeader responseHeader : responseHeaders) {
             httpContext.getResponse().getHeaders().addHeader(responseHeader);
         }
+
+        IHttpResponseWriter httpResponseWriter = new HttpResponseWriter(httpContext.getResponse().getOutputStream());
+        httpResponseWriter.writeResponse(httpContext.getResponse());
         
         BufferedInputStream bis = new BufferedInputStream(cgiProcess.getInputStream());
         byte[] buffer = new byte[4096];
