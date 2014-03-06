@@ -18,6 +18,7 @@ package com.ramforth.webserver.http;
 
 import com.ramforth.utilities.common.implementation.Pair;
 import com.ramforth.webserver.web.IRequest;
+import java.net.InetAddress;
 import java.net.URI;
 
 /**
@@ -56,4 +57,9 @@ public interface IHttpRequest extends IHttpMessage, IRequest {
 
     int getNumberOfPostedFiles();
 
+    String getClientHostAddress();
+    void setClientHostAddress(String value);
+    String getClientHostName();
+    void setClientHostName(String value);
+    
 }

@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
@@ -113,7 +114,7 @@ public class WebServerThread implements Runnable {
         clearBuffer();
 
         try {
-            IHttpContext context = establishContext(is, os);
+            IHttpContext context = establishContext(is, socket.getInetAddress(), os);
 
             handleContext(context);
         }
@@ -146,6 +147,7 @@ public class WebServerThread implements Runnable {
                     socket.close();
                 }
                 catch (Exception ex) {
+                    LOGGER.error("Could not flush/close socket.", ex);
                 }
             }
         }
@@ -158,11 +160,18 @@ public class WebServerThread implements Runnable {
         }
     }
 
-    private IHttpContext establishContext(InputStream is, OutputStream os) throws IOException, HttpException {
+    private IHttpContext establishContext(InputStream is, InetAddress clientAddress, OutputStream os) throws IOException, HttpException {
         try {
             IHttpRequest httpRequest = parseHttpRequest(is);
             httpRequest.setInputStream(is);
 
+            try {
+                httpRequest.setClientHostAddress(clientAddress.getHostAddress());
+                httpRequest.setClientHostName(clientAddress.getHostName());
+            } catch (Exception ex) {
+                LOGGER.warn("Could not determine client ip/hostname.", ex);
+            }
+            
             IHttpResponse httpResponse = createHttpResponseFromHttpRequest(httpRequest);
             httpResponse.setOutputStream(os);
 

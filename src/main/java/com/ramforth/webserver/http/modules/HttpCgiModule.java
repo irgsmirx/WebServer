@@ -14,6 +14,7 @@ import com.ramforth.webserver.http.IHttpHeader;
 import com.ramforth.webserver.http.IHttpHeaders;
 import com.ramforth.webserver.http.IHttpResponseWriter;
 import com.ramforth.webserver.http.headers.entity.ContentLengthHttpHeader;
+import com.ramforth.webserver.http.headers.entity.ContentTypeHttpHeader;
 import com.ramforth.webserver.http.parsers.HttpHeadersParser;
 import com.ramforth.webserver.http.resources.HttpFileResource;
 import com.ramforth.webserver.http.resources.HttpFileResourceProvider;
@@ -101,6 +102,36 @@ public class HttpCgiModule extends AbstractHttpModule {
             ContentLengthHttpHeader contentLengthRequestHeader = (ContentLengthHttpHeader)requestHeader;
             cgiProcessBuilder.environment().put("CONTENT_LENGTH", String.valueOf(contentLengthRequestHeader.getValue()));
         }
+        
+        requestHeader = httpContext.getRequest().getHeaders().getHeader("Content-Type");
+        if (requestHeader != null) {
+            ContentTypeHttpHeader contentTypeRequestHeader = (ContentTypeHttpHeader)requestHeader;
+            cgiProcessBuilder.environment().put("CONTENT_TYPE", String.valueOf(contentTypeRequestHeader.getValue()));
+        }
+        
+        cgiProcessBuilder.environment().put("GATEWAY_INTERFACE", "CGI/1.1");
+        cgiProcessBuilder.environment().put("REMOTE_ADDR", httpContext.getRequest().getClientHostAddress());
+        cgiProcessBuilder.environment().put("REMOTE_HOST", httpContext.getRequest().getClientHostName());
+        
+        
+//      AUTH_TYPE
+//      CONTENT_LENGTH
+//      CONTENT_TYPE
+//      GATEWAY_INTERFACE
+//      HTTP_*
+//      PATH_INFO
+//      PATH_TRANSLATED
+//      QUERY_STRING
+//      REMOTE_ADDR
+//      REMOTE_HOST
+//      REMOTE_IDENT
+//      REMOTE_USER
+//      REQUEST_METHOD
+//      SCRIPT_NAME
+//      SERVER_NAME
+//      SERVER_PORT
+//      SERVER_PROTOCOL
+//      SERVER_SOFTWARE
         
         Process cgiProcess;
         try {

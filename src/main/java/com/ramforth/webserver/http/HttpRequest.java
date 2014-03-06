@@ -16,7 +16,6 @@
  */
 package com.ramforth.webserver.http;
 
-import com.ramforth.utilities.common.implementation.Pair;
 import com.ramforth.webserver.exceptions.HttpException;
 import com.ramforth.webserver.http.parsers.HttpHeadersParser;
 import com.ramforth.webserver.http.parsers.IHttpHeadersParser;
@@ -42,10 +41,10 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
     protected URI urlReferrer;
     protected IHttpVersion version;
     protected String userAgent;
-    protected String userHostAddress;
-    protected String userHostName;
     protected String[] userLanguages;
-
+    protected String clientHostAddress;
+    protected String clientHostName;
+    
     public HttpRequest() {
         method = HttpMethod.GET;
         uri = null;
@@ -275,12 +274,24 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
         return userAgent;
     }
 
-    public String getUserHostAddress() {
-        return userHostAddress;
+    @Override
+    public void setClientHostAddress(String value) {
+        this.clientHostAddress = value;
     }
 
-    public String getUserHostName() {
-        return userHostName;
+    @Override
+    public void setClientHostName(String value) {
+        this.clientHostName = value;
+    }
+    
+    @Override
+    public final String getClientHostAddress() {
+        return clientHostAddress;
+    }
+
+    @Override
+    public final String getClientHostName() {
+        return clientHostName;
     }
 
     public String[] getUserLanguages() {
@@ -311,5 +322,5 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
     public final int getNumberOfPostedFiles() {
         return postedFiles.size();
     }
-
+    
 }
