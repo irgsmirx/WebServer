@@ -37,4 +37,5 @@ public interface IHttpMessage extends IMessage {
     String getContentType();
 
     void setContentType(String value);
+    
 }

@@ -29,4 +29,5 @@ public interface IHttpResponse extends IHttpMessage, IResponse {
     void setStatusCode(IHttpStatusCode value);
 
     void redirect(String destination);
+    
 }

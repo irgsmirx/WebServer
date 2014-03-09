@@ -6,6 +6,7 @@
 
 package com.ramforth.webserver.http.modules;
 
+import com.ramforth.webserver.WebServer;
 import com.ramforth.webserver.http.HttpResponseWriter;
 import com.ramforth.webserver.http.HttpStatusCode;
 import com.ramforth.webserver.http.HttpStatusCodeClass;
@@ -33,6 +34,8 @@ import java.util.regex.Pattern;
  */
 public class HttpCgiModule extends AbstractHttpModule {
 
+    public static final String CGI_VERSION = "CGI/1.1";
+    
     private final String pathToCgiExecutable;
     private final String[] extensions;
     private final Pattern extensionsPattern;
@@ -109,29 +112,27 @@ public class HttpCgiModule extends AbstractHttpModule {
             cgiProcessBuilder.environment().put("CONTENT_TYPE", String.valueOf(contentTypeRequestHeader.getValue()));
         }
         
-        cgiProcessBuilder.environment().put("GATEWAY_INTERFACE", "CGI/1.1");
+        cgiProcessBuilder.environment().put("GATEWAY_INTERFACE", HttpCgiModule.CGI_VERSION);
         cgiProcessBuilder.environment().put("REMOTE_ADDR", httpContext.getRequest().getClientHostAddress());
         cgiProcessBuilder.environment().put("REMOTE_HOST", httpContext.getRequest().getClientHostName());
+        cgiProcessBuilder.environment().put("REMOTE_USER", "NULL");
+        cgiProcessBuilder.environment().put("REQUEST_METHOD", httpContext.getRequest().getMethod().toString());
+        cgiProcessBuilder.environment().put("SERVER_NAME", httpContext.getRequest().getUri().getHost());
+        cgiProcessBuilder.environment().put("SERVER_PORT", String.valueOf(httpContext.getRequest().getUri().getPort()));
+        cgiProcessBuilder.environment().put("SERVER_PROTOCOL", httpContext.getRequest().getUri().getScheme());
+        cgiProcessBuilder.environment().put("SERVER_SOFTWARE", String.format("%s/%s", WebServer.NAME, WebServer.VERSION.toString()));
         
-        
+        for (IHttpHeader header : httpContext.getRequest().getHeaders()) {
+            cgiProcessBuilder.environment().put(String.format("HTTP_%s", header.getName().toUpperCase().replaceAll("-", "_")), header.getRawValue());
+        }
+
+//TODO:                
 //      AUTH_TYPE
-//      CONTENT_LENGTH
-//      CONTENT_TYPE
-//      GATEWAY_INTERFACE
-//      HTTP_*
 //      PATH_INFO
 //      PATH_TRANSLATED
-//      QUERY_STRING
-//      REMOTE_ADDR
-//      REMOTE_HOST
 //      REMOTE_IDENT
 //      REMOTE_USER
-//      REQUEST_METHOD
 //      SCRIPT_NAME
-//      SERVER_NAME
-//      SERVER_PORT
-//      SERVER_PROTOCOL
-//      SERVER_SOFTWARE
         
         Process cgiProcess;
         try {

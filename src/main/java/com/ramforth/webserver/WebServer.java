@@ -17,6 +17,8 @@
 package com.ramforth.webserver;
 
 import com.ramforth.utilities.common.implementation.SystemProperties;
+import com.ramforth.utilities.common.implementation.Version;
+import com.ramforth.utilities.common.interfaces.IVersion;
 import com.ramforth.webserver.http.HttpApplicationFactory;
 import com.ramforth.webserver.http.IHttpContext;
 import com.ramforth.webserver.http.IHttpContextHandler;
@@ -37,9 +39,10 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebServer.class);
     
+    public static final IVersion VERSION = new Version(0, 0, 0, 3);
+    public static final String NAME = WebServer.class.getName();
+    
     private boolean running;
-
-    public String serverid = "com.ramforth.webserver/0.0.2";
 
     protected Properties configurationProperties = new Properties();
 
