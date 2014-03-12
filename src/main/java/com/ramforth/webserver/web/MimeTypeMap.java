@@ -25,15 +25,14 @@ import java.util.TreeMap;
  */
 public class MimeTypeMap {
 
-    private Map<String, String> mimeTypeToExtensionMap = new TreeMap<>();
-    private Map<String, String> extensionToMimeTypeMap = new TreeMap<>();
+    private final Map<String, String> mimeTypeToExtensionMap = new TreeMap<>();
+    private final Map<String, String> extensionToMimeTypeMap = new TreeMap<>();
 
     private MimeTypeMap() {
         initialize();
     }
 
     private static class MimeTypeMapHolder {
-
         public static final MimeTypeMap INSTANCE = new MimeTypeMap();
     }
 
