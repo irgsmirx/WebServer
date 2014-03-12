@@ -28,9 +28,6 @@ public interface IHttpListener {
 
     void unsetContextHandler();
 
-//  void addModule(IHttpModule value);
-//  void removeModule(IHttpModule value);
-//  void clearModules();
     int getPort();
 
     void setPort(int value);
@@ -48,4 +45,9 @@ public interface IHttpListener {
     void stopListening();
 
     boolean isListening();
+    
+    void setMaximumRequestLengthInBytes(long value);
+    
+    long getMaximumRequestLengthInBytes();
+    
 }

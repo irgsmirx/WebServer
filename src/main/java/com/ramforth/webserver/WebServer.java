@@ -27,6 +27,8 @@ import com.ramforth.webserver.http.IHttpRequest;
 import com.ramforth.webserver.http.handlers.IHttpRequestHandler;
 import com.ramforth.webserver.http.modules.IHttpModule;
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -53,16 +55,20 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
     protected int clientConnectionTimeout = 0;
     protected int maximumNumberOfWorkerThreads = 0;
 
+    protected long maximumRequestLengthInBytes = 4096;
+    
     protected static HttpApplicationFactory httpApplicationFactory;
 
-    protected void loadConfiguration() throws IOException {
-        String propertiesFile = SystemProperties.getUserHomeDirectory() + File.separator + ".com.ramforth.webserver" + File.separator + "webserver.conf";
+    protected void loadConfiguration() {
+        Path propertiesFilePath = Paths.get(SystemProperties.getUserHomeDirectory(), ".com.ramforth.webserver", "webserver.config");
 
-        File f = new File(propertiesFile);
+        File propertiesFile = propertiesFilePath.toFile();
 
-        if (f.exists()) {
-            try (InputStream is = new BufferedInputStream(new FileInputStream(f))) {
+        if (propertiesFile.exists()) {
+            try (InputStream is = new BufferedInputStream(new FileInputStream(propertiesFile))) {
                 configurationProperties.load(is);
+            } catch (IOException ioex) {
+                LOGGER.error(String.format("Could not open configuration file '%s' for reading.", propertiesFilePath.toString()), ioex);
             }
 
             String clientConnectionTimeoutStringValue = configurationProperties.getProperty("clientConnectionTimeout");
@@ -82,20 +88,36 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
                     LOGGER.warn(String.format("Could not parse maximumNumberOfWorkerThreads (%s).", maximumNumberOfWorkerThreadsStringValue), nfex);
                 }
             }
+            
+            String maximumRequestLengthInBytesStringValue = configurationProperties.getProperty("maximumRequestLengthInBytes");
+            if (maximumRequestLengthInBytesStringValue != null) {
+                try {
+                    maximumRequestLengthInBytes = Long.parseLong(maximumRequestLengthInBytesStringValue);
+                } catch (NumberFormatException nfex) {
+                    LOGGER.warn(String.format("Could not parse maximumRequestLengthInBytesStringValue (%s).", maximumRequestLengthInBytesStringValue), nfex);
+                }
+            }
         }
+    }
 
+    private void sanitizeConfigurationValues() {
         if (clientConnectionTimeout <= 1000) {
             clientConnectionTimeout = 5000;
         }
 
-        if (maximumNumberOfWorkerThreads == 0) {
+        if (maximumNumberOfWorkerThreads <= 0) {
             maximumNumberOfWorkerThreads = 5;
         }
+        
+        if (maximumRequestLengthInBytes <= 0) {
+            maximumRequestLengthInBytes = 4096;
+        }
     }
-
+    
     protected void logProperties() {
         LOGGER.debug("timeout=" + clientConnectionTimeout);
         LOGGER.debug("threadlimit=" + maximumNumberOfWorkerThreads);
+        LOGGER.debug("maxRequestLengthBytes=" + maximumRequestLengthInBytes);
     }
 
     public boolean isRunning() {
@@ -103,25 +125,33 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
     }
 
     public void start() {
+        loadConfiguration();
+        
+        sanitizeConfigurationValues();
+
+        startListenersAsynchronously();
+        
+        running = true;
+    }
+    
+    private void startListenersAsynchronously() {
         for (IHttpListener listener : httpListeners) {
-            //listener.ErrorPageRequested += Listener_OnErrorPage;
-            //listener.RequestReceived += OnRequest;
-            //listener.ContentLengthLimit = ContentLengthLimit;
             listener.setContextHandler(this);
             new Thread((Runnable) listener).start();
         }
-        running = true;
     }
 
     public void stop() {
+        stopListeners();
+        
+        running = false;
+    }
+    
+    private void stopListeners() {
         for (IHttpListener listener : httpListeners) {
-            //listener.ErrorPageRequested += Listener_OnErrorPage;
-            //listener.RequestReceived += OnRequest;
-            //listener.ContentLengthLimit = ContentLengthLimit;
             listener.unsetContextHandler();
             listener.stopListening();
         }
-        running = false;
     }
 
     public void addRequestHandler(IHttpRequestHandler requestHandler) {
@@ -143,7 +173,6 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
     public synchronized void handleContext(IHttpContext context) {
         Iterator<IHttpModule> moduleIterator = modules.iterator();
 
-        boolean processed = false;
         while (moduleIterator.hasNext()) {
             IHttpModule module = moduleIterator.next();
             try {
@@ -160,11 +189,20 @@ public class WebServer implements IHttpRequestHandler, IHttpContextHandler {
     }
 
     public void addHttpListener(IHttpListener listener) {
+        listener.setMaximumRequestLengthInBytes(maximumRequestLengthInBytes);
         this.httpListeners.add(listener);
     }
 
     public final Iterable<IHttpListener> getHttpListeners() {
         return this.httpListeners;
+    }
+    
+    public void setMaximumRequestLengthInBytes(long value) {
+        this.maximumRequestLengthInBytes = value;
+    }
+    
+    public final long getMaximumRequestLengthInBytes() {
+        return this.maximumRequestLengthInBytes;        
     }
 
 }

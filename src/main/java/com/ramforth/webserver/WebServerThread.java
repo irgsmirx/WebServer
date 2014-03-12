@@ -23,6 +23,7 @@ import com.ramforth.webserver.http.handlers.HttpRequestHandlers;
 import com.ramforth.webserver.http.handlers.IHttpRequestHandler;
 import com.ramforth.webserver.http.handlers.IHttpRequestHandlers;
 import com.ramforth.webserver.http.headers.StringHttpHeader;
+import com.ramforth.webserver.http.parsers.ContentLengthInputStream;
 import com.ramforth.webserver.http.parsers.HttpRequestParser;
 import com.ramforth.webserver.http.parsers.IHttpRequestParser;
 import com.ramforth.webserver.web.ConnectionType;
@@ -53,10 +54,12 @@ public class WebServerThread implements Runnable {
      */
     protected byte[] buf;
     private Socket socket;
-    private IHttpRequestHandlers requestHandlers = new HttpRequestHandlers();
-    //private IHttpModules modules = new HttpModules();
+    private final IHttpRequestHandlers requestHandlers = new HttpRequestHandlers();
+
     private IHttpContextHandler contextHandler = null;
 
+    private long maximumRequestLengthInBytes = 4096;
+    
     public WebServerThread(Socket socket) {
         initializeBuffer();
         this.socket = socket;
@@ -100,7 +103,7 @@ public class WebServerThread implements Runnable {
     }
 
     private void handleClient() throws IOException, SocketTimeoutException {
-        InputStream is = new BufferedInputStream(socket.getInputStream());
+        InputStream is = new ContentLengthInputStream(new BufferedInputStream(socket.getInputStream()), maximumRequestLengthInBytes);
         OutputStream os = new BufferedOutputStream(socket.getOutputStream());
 
         /*
@@ -110,7 +113,7 @@ public class WebServerThread implements Runnable {
          */
         socket.setSoTimeout(1000000/* WebServer.timeout */);
         socket.setTcpNoDelay(true);
-
+        
         clearBuffer();
 
         try {
@@ -146,7 +149,7 @@ public class WebServerThread implements Runnable {
 
                     socket.close();
                 }
-                catch (Exception ex) {
+                catch (IOException ex) {
                     LOGGER.error("Could not flush/close socket.", ex);
                 }
             }
@@ -177,8 +180,7 @@ public class WebServerThread implements Runnable {
 
             return new HttpContext(httpRequest, httpResponse);
         }
-        catch (Exception ex) {
-            throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request ended unexpectedly.");
+        catch (Exception ex) {            throw new HttpException(HttpStatusCode.STATUS_400_BAD_REQUEST, "Your HTTP client's request ended unexpectedly.");
         }
     }
 
@@ -235,114 +237,6 @@ public class WebServerThread implements Runnable {
         }
     }
 
-    private boolean printHeaders(WebContainer w, PrintStream p) throws IOException {
-        boolean result = false;
-        int returnCode = 0;
-
-        if (w == null) {
-            returnCode = HttpStatusCode.STATUS_404_NOT_FOUND.getCode();
-            p.print("HTTP/1.0 " + returnCode + " not found");
-            p.write(EOL);
-            result = false;
-        } else if (!w.isConsistent()) {
-            returnCode = HttpStatusCode.STATUS_503_SERVICE_UNAVAILABLE.getCode();
-            p.print("HTTP/1.0 " + returnCode + " not available");
-            p.write(EOL);
-            result = false;
-        } else {
-            returnCode = HttpStatusCode.STATUS_200_OK.getCode();
-            p.print("HTTP/1.0 " + returnCode + " OK");
-            p.write(EOL);
-            result = true;
-        }
-
-        // log("From " + socket.getInetAddress().getHostAddress() + ": GET " +
-        // w.getFilename() + "-->" + returnCode);
-        p.print("Server: Jackey 0.0.1");
-        p.write(EOL);
-        p.print("Date: " + (new Date()));
-        p.write(EOL);
-
-        if (result) {
-            p.print("Content-length: " + w.getContentLength());
-            p.write(EOL);
-            p.print("Last Modified: " + (new Date()));
-            p.write(EOL);
-        }
-
-        return result;
-    }
-
-    private boolean printHeaders(File targ, PrintStream ps) throws IOException {
-        boolean ret = false;
-        int returnCode = 0;
-        if (!targ.exists()) {
-            returnCode = HttpStatusCode.STATUS_404_NOT_FOUND.getCode();
-            ps.print("HTTP/1.0 " + returnCode + " not found");
-            ps.write(EOL);
-            ret = false;
-        } else {
-            returnCode = HttpStatusCode.STATUS_200_OK.getCode();
-            ps.print("HTTP/1.0 " + returnCode + " OK");
-            ps.write(EOL);
-            ret = true;
-        }
-        //log("From " + socket.getInetAddress().getHostAddress() + ": GET " + targ.getAbsolutePath() + "-->" + rCode);
-        ps.print("Server: Simple java");
-        ps.write(EOL);
-        ps.print("Date: " + (new Date()));
-        ps.write(EOL);
-        if (ret) {
-            if (!targ.isDirectory()) {
-                ps.print("Content-length: " + targ.length());
-                ps.write(EOL);
-                ps.print("Last Modified: " + (new Date(targ.lastModified())));
-                ps.write(EOL);
-                String name = targ.getName();
-                int ind = name.lastIndexOf('.');
-                String ct = null;
-                if (ind > 0) {
-                    //ct = (String) map.get(name.substring(ind));
-                }
-                if (ct == null) {
-                    ct = "unknown/unknown";
-                }
-                ps.print("Content-type: " + ct);
-                ps.write(EOL);
-            } else {
-                ps.print("Content-type: text/html");
-                ps.write(EOL);
-            }
-        }
-        return ret;
-    }
-
-    // private void sendFile(File targ, PrintStream ps) throws IOException {
-    // InputStream is = null;
-    // ps.write(EOL);
-    // if (targ.isDirectory()) {
-    // listDirectory(targ, ps);
-    // return;
-    // } else {
-    // is = new FileInputStream(targ.getAbsolutePath());
-    // }
-    //
-    // try {
-    // int n;
-    // while ((n = is.read(buf)) > 0) {
-    // ps.write(buf, 0, n);
-    // }
-    // } finally {
-    // is.close();
-    // }
-    // }
-    private void sendWebContainer(WebContainer w, PrintStream p) throws IOException {
-        if (w != null) {
-            p.write(EOL);
-            w.print(p);
-        }
-    }
-
     public void addRequestHandler(IHttpRequestHandler requestHandler) {
         requestHandlers.add(requestHandler);
     }
@@ -350,4 +244,13 @@ public class WebServerThread implements Runnable {
     public void setContextHandler(IHttpContextHandler contextHandler) {
         this.contextHandler = contextHandler;
     }
+    
+    public void setMaximumRequestLengthInBytes(long value) {
+        this.maximumRequestLengthInBytes = value;
+    }
+    
+    public final long getMaximumRequestLengthInBytes() {
+        return this.maximumRequestLengthInBytes;
+    }
+    
 }

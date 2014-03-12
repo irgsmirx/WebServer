@@ -32,14 +32,12 @@ public class HttpRequest extends HttpMessage implements IHttpRequest {
     protected URI uri;
     protected HttpBrowserCapabilities browser;
     protected String contentEncoding;
-    protected String contentType;
     protected byte[] body;
     protected NameValueMap queryString = new NameValueMap();
     protected NameValueMap form = new NameValueMap();
     protected Map<String, HttpPostedFile> postedFiles = new TreeMap<>();
     protected NameValueMap serverVariables = new NameValueMap();
     protected URI urlReferrer;
-    protected IHttpVersion version;
     protected String userAgent;
     protected String[] userLanguages;
     protected String clientHostAddress;

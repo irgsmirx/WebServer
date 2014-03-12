@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class HttpRequestHandlers implements IHttpRequestHandlers {
 
-    private List<IHttpRequestHandler> handlers = new ArrayList<>();
+    private final List<IHttpRequestHandler> handlers = new ArrayList<>();
 
     @Override
     public void add(IHttpRequestHandler handler) {

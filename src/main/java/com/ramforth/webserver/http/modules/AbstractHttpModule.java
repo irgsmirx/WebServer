@@ -60,4 +60,5 @@ public abstract class AbstractHttpModule implements IHttpModule {
                 || httpRequest.getMethod() == HttpMethod.HEAD
                 || httpRequest.getMethod() == HttpMethod.POST;
     }
+    
 }

@@ -25,4 +25,5 @@ import com.ramforth.webserver.http.IHttpRequest;
 public interface IHttpRequestHandler {
 
     void handleRequest(IHttpRequest request);
+    
 }

@@ -42,8 +42,11 @@ public abstract class AbstractHttpListener implements IHttpListener, Runnable {
     private boolean listening = false;
     protected static ServerSocketFactory serverSocketFactory;
     private ServerSocket listeningSocket;
-    private int acceptedSockets = 0;
+    private final int acceptedSockets = 0;
     private ExecutorService threadPool;
+      
+    private long maximumRequestLengthInBytes = 4096;
+    
     private IHttpContextHandler contextHandler = null;
 
     public AbstractHttpListener(int port) {
@@ -123,6 +126,7 @@ public abstract class AbstractHttpListener implements IHttpListener, Runnable {
                 WebServerThread wst = new WebServerThread(socket);
 
                 wst.setContextHandler(contextHandler);
+                wst.setMaximumRequestLengthInBytes(maximumRequestLengthInBytes);
 
                 threadPool.execute(wst);
             }
@@ -186,4 +190,17 @@ public abstract class AbstractHttpListener implements IHttpListener, Runnable {
     public void run() {
         startListening();
     }
+
+    @Override
+    public void setMaximumRequestLengthInBytes(long value) {
+        this.maximumRequestLengthInBytes = value;
+    }
+
+    @Override
+    public final long getMaximumRequestLengthInBytes() {
+        return this.maximumRequestLengthInBytes;
+    }
+    
+    
+    
 }
